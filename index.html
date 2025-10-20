@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnóstico - Red de Salud de Caracas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* CSS personalizado (Opcional) */
+        body { background-color: #f8f9fa; }
+        .container { max-width: 1200px; margin-top: 30px; margin-bottom: 50px; }
+        .form-section { padding: 20px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 20px; background-color: #fff; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 class="my-4 text-center">FICHA DE DIAGNÓSTICO INICIAL</h1>
+    <p class="text-center text-muted">Red de Salud de Caracas - Comisión Permanente de Salud [cite: 4, 3]</p>
+
+    <div class="form-section mb-4">
+        <h4 id="form-title">Buscar o Registrar Centro de Salud</h4>
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" id="rif-input" placeholder="Ingrese el RIF del Centro (Ej: J-12345678)" aria-label="RIF">
+            <button class="btn btn-primary" type="button" id="buscar-btn">Buscar / Nuevo</button>
+        </div>
+        <div id="alert-message" class="alert d-none" role="alert"></div>
+    </div>
+
+    <form id="diagnostico-form" class="d-none" onsubmit="return false;">
+        
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation"><button class="nav-link active" id="datos-institucion-tab" data-bs-toggle="tab" data-bs-target="#datos-institucion" type="button" role="tab">I. Institución</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="autoridades-tab" data-bs-toggle="tab" data-bs-target="#autoridades" type="button" role="tab">II. Autoridades</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="servicios-medicos-tab" data-bs-toggle="tab" data-bs-target="#servicios-medicos" type="button" role="tab">III. Servicios Médicos</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="otros-servicios-tab" data-bs-toggle="tab" data-bs-target="#otros-servicios" type="button" role="tab">IV. Otros Servicios</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="infraestructura-tab" data-bs-toggle="tab" data-bs-target="#infraestructura" type="button" role="tab">V. Infraestructura</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="proyectos-tab" data-bs-toggle="tab" data-bs-target="#proyectos" type="button" role="tab">VI. Proyectos</button></li>
+        </ul>
+
+        <div class="tab-content" id="myTabContent">
+            
+            <div class="tab-pane fade show active form-section" id="datos-institucion" role="tabpanel">
+                <h4>I. Datos de la Institución</h4>
+                <div class="mb-3">
+                    <label for="nombre-institucion" class="form-label">Nombre de la Institución [cite: 10]</label>
+                    <input type="text" class="form-control" id="nombre-institucion" required>
+                </div>
+                <div class="mb-3">
+                    <label for="parroquia" class="form-label">Parroquia [cite: 13]</label>
+                    <input type="text" class="form-control" id="parroquia">
+                </div>
+                </div>
+
+            <div class="tab-pane fade form-section" id="autoridades" role="tabpanel">
+                <h4>II. Datos de las Autoridades</h4>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="director-nombre" class="form-label">Director [cite: 20]</label>
+                        <input type="text" class="form-control" id="director-nombre">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="director-celular" class="form-label">Celular [cite: 25]</label>
+                        <input type="tel" class="form-control" id="director-celular">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="director-correo" class="form-label">Correo [cite: 30]</label>
+                        <input type="email" class="form-control" id="director-correo">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="observaciones-autoridades" class="form-label">Observaciones Autoridades [cite: 35]</label>
+                    <textarea class="form-control" id="observaciones-autoridades" rows="2"></textarea>
+                </div>
+            </div>
+
+            <div class="tab-pane fade form-section" id="servicios-medicos" role="tabpanel">
+                <h4>III. Servicios de Especialidades Médicas</h4>
+                <p>Marque el estado de cada servicio (Ej: Cardiología [cite: 38], Neumología [cite: 104], Pediatría [cite: 106]).</p>
+                
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Especialidad</th>
+                            <th>Activo</th>
+                            <th>Activo c/Prob</th>
+                            <th>Inactivo</th>
+                            <th>No Existe</th>
+                            <th>Observación</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CARDIOLOGÍA [cite: 38]</td>
+                            <td><input class="form-check-input" type="radio" name="cardiologia" value="ACTIVO" id="cardio-activo"></td>
+                            <td><input class="form-check-input" type="radio" name="cardiologia" value="ACTIVO C/PROB" id="cardio-activo-prob"></td>
+                            <td><input class="form-check-input" type="radio" name="cardiologia" value="INACTIVO" id="cardio-inactivo"></td>
+                            <td><input class="form-check-input" type="radio" name="cardiologia" value="NO EXISTE" id="cardio-no-existe"></td>
+                            <td><input type="text" class="form-control form-control-sm" name="cardiologia-obs"></td>
+                        </tr>
+                        </tbody>
+                </table>
+            </div>
+
+            <div class="tab-pane fade form-section" id="otros-servicios" role="tabpanel">
+                <h4>IV. Otros Servicios Prestados</h4>
+                <h5>Imagenología [cite: 322]</h5>
+                <p>Marque el estado del servicio de **RADIOGRAFÍA**[cite: 321].</p>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="radiografia" value="ACTIVO">
+                    <label class="form-check-label">Activo</label>
+                </div>
+                <h5>Laboratorio [cite: 323]</h5>
+                <h5>Medicinas e Insumos [cite: 353]</h5>
+                </div>
+            
+            <div class="tab-pane fade form-section" id="infraestructura" role="tabpanel">
+                <h4>V. Infraestructura y Servicios Públicos</h4>
+                <h5>Estado de Infraestructura (Ej: Consultorios [cite: 400])</h5>
+                <p>Evalúe el estado de los componentes.</p>
+                
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Área</th>
+                            <th>Paredes [cite: 370]</th>
+                            <th>Pisos [cite: 370]</th>
+                            <th>Techos [cite: 370]</th>
+                            <th>A/A [cite: 370]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CONSULTORIOS [cite: 370]</td>
+                            <td>
+                                <select class="form-select" id="paredes-consultorio">
+                                    <option value="BUENAS COND">BUENAS COND</option>
+                                    <option value="REGULAR COND">REGULAR COND</option>
+                                    <option value="MALAS COND">MALAS COND</option>
+                                </select>
+                            </td>
+                            </tr>
+                    </tbody>
+                </table>
+
+                <h5>Servicios Públicos [cite: 370]</h5>
+                <div class="mb-3">
+                    <label class="form-label">Agua [cite: 370]</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="servicio-agua" value="DISPONIBLE">
+                        <label class="form-check-label">DISPONIBLE</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="servicio-agua" value="DISP TANQUE">
+                        <label class="form-check-label">DISP TANQUE</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="servicio-agua" value="SIN SERVICIO">
+                        <label class="form-check-label">SIN SERVICIO</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade form-section" id="proyectos" role="tabpanel">
+                <h4>VI. Proyectos de Mejoras</h4>
+                <div class="mb-3">
+                    <label for="proyectos-servicios-medicos" class="form-label">ÁREA DE SERVICIOS MÉDICOS (Máx 5) [cite: 416]</label>
+                    <textarea class="form-control" id="proyectos-servicios-medicos" rows="4"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="observaciones-generales" class="form-label">VII. Observaciones Generales [cite: 446]</label>
+                    <textarea class="form-control" id="observaciones-generales" rows="3"></textarea>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-success btn-lg" id="submit-btn">Guardar Registro</button>
+        </div>
+
+    </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="app.js"></script> 
+</body>
+</html>
