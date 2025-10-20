@@ -211,125 +211,110 @@
 
             <div class="tab-pane fade form-section" id="autoridades" role="tabpanel">
                 <h4>II. Datos de las Autoridades</h4>
-                <div class="row">
-                    <div class="col-md-4 mb-3">
-                        <label for="director-nombre" class="form-label">Director [cite: 20]</label>
-                        <input type="text" class="form-control" id="director-nombre">
+                
+                <div id="autoridades-container">
                     </div>
-                    <div class="col-md-4 mb-3">
-                        <label for="director-celular" class="form-label">Celular [cite: 25]</label>
-                        <input type="tel" class="form-control" id="director-celular">
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label for="director-correo" class="form-label">Correo [cite: 30]</label>
-                        <input type="email" class="form-control" id="director-correo">
-                    </div>
-                </div>
+
                 <div class="mb-3">
-                    <label for="observaciones-autoridades" class="form-label">Observaciones Autoridades [cite: 35]</label>
+                    <label for="observaciones-autoridades" class="form-label">OBSERVACIONES AUTORIDADES:</label>
                     <textarea class="form-control" id="observaciones-autoridades" rows="2"></textarea>
                 </div>
             </div>
 
             <div class="tab-pane fade form-section" id="servicios-medicos" role="tabpanel">
-                <h4>III. Servicios de Especialidades Médicas</h4>
-                <p>Marque el estado de cada servicio (Ej: Cardiología [cite: 38], Neumología [cite: 104], Pediatría [cite: 106]).</p>
-                
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Especialidad</th>
-                            <th>Activo</th>
-                            <th>Activo c/Prob</th>
-                            <th>Inactivo</th>
-                            <th>No Existe</th>
-                            <th>Observación</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>CARDIOLOGÍA [cite: 38]</td>
-                            <td><input class="form-check-input" type="radio" name="cardiologia" value="ACTIVO" id="cardio-activo"></td>
-                            <td><input class="form-check-input" type="radio" name="cardiologia" value="ACTIVO C/PROB" id="cardio-activo-prob"></td>
-                            <td><input class="form-check-input" type="radio" name="cardiologia" value="INACTIVO" id="cardio-inactivo"></td>
-                            <td><input class="form-check-input" type="radio" name="cardiologia" value="NO EXISTE" id="cardio-no-existe"></td>
-                            <td><input type="text" class="form-control form-control-sm" name="cardiologia-obs"></td>
-                        </tr>
-                        </tbody>
-                </table>
+                <h4>III. Datos de los Servicios de Especialidades Médicas Prestados</h4>
+                <p>Marque el estado del servicio y complete los detalles de prestación.</p>
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th rowspan="2" style="width: 25%;">Especialidad</th>
+                                <th colspan="4" class="text-center">Estado del Servicio</th>
+                                <th rowspan="2" style="width: 30%;">Prestación Servicio (Día/Hora/Obs.)</th>
+                            </tr>
+                            <tr>
+                                <th>Activo</th>
+                                <th>Activo c/Prob</th>
+                                <th>Inactivo</th>
+                                <th>No Existe</th>
+                            </tr>
+                        </thead>
+                        <tbody id="servicios-medicos-body">
+                            </tbody>
+                    </table>
+                </div>
+                <div class="mb-3">
+                    <label for="observaciones-servicios-medicos" class="form-label">OBSERVACIONES SERVICIOS MÉDICOS ESPECIALIZADOS:</label>
+                    <textarea class="form-control" id="observaciones-servicios-medicos" rows="3"></textarea>
+                </div>
             </div>
 
             <div class="tab-pane fade form-section" id="otros-servicios" role="tabpanel">
-                <h4>IV. Otros Servicios Prestados</h4>
-                <h5>Imagenología [cite: 322]</h5>
-                <p>Marque el estado del servicio de **RADIOGRAFÍA**[cite: 321].</p>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="radiografia" value="ACTIVO">
-                    <label class="form-check-label">Activo</label>
-                </div>
-                <h5>Laboratorio [cite: 323]</h5>
-                <h5>Medicinas e Insumos [cite: 353]</h5>
-                </div>
-            
-            <div class="tab-pane fade form-section" id="infraestructura" role="tabpanel">
-                <h4>V. Infraestructura y Servicios Públicos</h4>
-                <h5>Estado de Infraestructura (Ej: Consultorios [cite: 400])</h5>
-                <p>Evalúe el estado de los componentes.</p>
+                <h4>IV. Datos de Otros Servicios Prestados</h4>
                 
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Área</th>
-                            <th>Paredes [cite: 370]</th>
-                            <th>Pisos [cite: 370]</th>
-                            <th>Techos [cite: 370]</th>
-                            <th>A/A [cite: 370]</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>CONSULTORIOS [cite: 370]</td>
-                            <td>
-                                <select class="form-select" id="paredes-consultorio">
-                                    <option value="BUENAS COND">BUENAS COND</option>
-                                    <option value="REGULAR COND">REGULAR COND</option>
-                                    <option value="MALAS COND">MALAS COND</option>
-                                </select>
-                            </td>
-                            </tr>
-                    </tbody>
-                </table>
-
-                <h5>Servicios Públicos [cite: 370]</h5>
+                <div id="otros-servicios-container">
+                    </div>
+                
                 <div class="mb-3">
-                    <label class="form-label">Agua [cite: 370]</label>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="servicio-agua" value="DISPONIBLE">
-                        <label class="form-check-label">DISPONIBLE</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="servicio-agua" value="DISP TANQUE">
-                        <label class="form-check-label">DISP TANQUE</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="servicio-agua" value="SIN SERVICIO">
-                        <label class="form-check-label">SIN SERVICIO</label>
-                    </div>
+                    <label for="observaciones-otros-servicios" class="form-label">OBSERVACIONES OTROS SERVICIOS PRESTADOS:</label>
+                    <textarea class="form-control" id="observaciones-otros-servicios" rows="3"></textarea>
+                </div>
+            </div>
+
+            <div class="tab-pane fade form-section" id="infraestructura" role="tabpanel">
+                <h4>V. Datos de Infraestructura y Servicios Públicos</h4>
+                
+                <h5 class="mt-4">A. Estado de la Infraestructura (BUENAS / REGULAR / MALAS CONDICIONES)</h5>
+                <div class="table-responsive mb-4">
+                    <table class="table table-sm table-bordered align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 20%;">Área</th>
+                                <th>Paredes</th>
+                                <th>Pisos</th>
+                                <th>Techos</th>
+                                <th>A/A</th>
+                            </tr>
+                        </thead>
+                        <tbody id="condiciones-infraestructura-body">
+                            </tbody>
+                    </table>
+                </div>
+
+                <h5 class="mt-4">B. Servicios Públicos y Disponibilidad</h5>
+                <div class="table-responsive mb-4">
+                    <table class="table table-sm table-bordered align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 20%;">Servicio</th>
+                                <th>Disponibilidad</th>
+                                <th>Observación / Notas</th>
+                            </tr>
+                        </thead>
+                        <tbody id="servicios-publicos-body">
+                            </tbody>
+                    </table>
+                </div>
+
+                <div class="mb-3">
+                    <label for="observaciones-infraestructura" class="form-label">OBSERVACIONES INFRAESTRUCTURA Y SERVICIOS PÚBLICOS:</label>
+                    <textarea class="form-control" id="observaciones-infraestructura" rows="3"></textarea>
                 </div>
             </div>
 
             <div class="tab-pane fade form-section" id="proyectos" role="tabpanel">
-                <h4>VI. Proyectos de Mejoras</h4>
+                <h4>VI. Proyectos de Mejoras (Máximo 5 por Categoría)</h4>
+                <p class="text-muted">Describa los proyectos prioritarios de mejoras en cada área solicitada.</p>
+
+                <div id="proyectos-container">
+                    </div>
+
+                <h4 class="mt-5">VII. Observaciones Generales</h4>
                 <div class="mb-3">
-                    <label for="proyectos-servicios-medicos" class="form-label">ÁREA DE SERVICIOS MÉDICOS (Máx 5) [cite: 416]</label>
-                    <textarea class="form-control" id="proyectos-servicios-medicos" rows="4"></textarea>
-                </div>
-                <div class="mb-3">
-                    <label for="observaciones-generales" class="form-label">VII. Observaciones Generales [cite: 446]</label>
-                    <textarea class="form-control" id="observaciones-generales" rows="3"></textarea>
+                    <label for="observaciones-generales" class="form-label">OBSERVACIONES GENERALES DEL DIAGNÓSTICO:</label>
+                    <textarea class="form-control" id="observaciones-generales" rows="4"></textarea>
                 </div>
             </div>
-
         </div>
 
         <div class="text-center mt-4">
