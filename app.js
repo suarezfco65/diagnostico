@@ -1,3 +1,24 @@
+// Lista de Parroquias de Caracas
+const PARROQUIAS_CARACAS = [
+    "Altagracia", "Antímano", "Caricuao", "Coche", "El Junquito", 
+    "El Paraíso", "El Recreo", "El Valle", "La Pastora", "La Vega", 
+    "Macarao", "San Bernardino", "San José", "San Pedro", "Sucre", 
+    "23 de Enero", "La Candelaria", "Catedral", "San Agustín", "San Juan", 
+    "Santa Rosalía", "Santa Teresa"
+];
+
+// Función para generar las opciones del select de Parroquias
+function renderParroquiasSelect() {
+    const select = document.getElementById('parroquia');
+    if (!select) return;
+
+    let htmlOptions = '<option value="" disabled selected>Seleccione una Parroquia</option>';
+    PARROQUIAS_CARACAS.forEach(parroquia => {
+        htmlOptions += `<option value="${parroquia}">${parroquia}</option>`;
+    });
+
+    select.innerHTML = htmlOptions;
+}
 // Array con la definición de los cargos y las claves que usarán en el JSON
 const CARGOS_AUTORIDADES = [
     { label: "Director(a)", key: "director" },
@@ -565,6 +586,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const SUBMIT_BTN = document.getElementById("submit-btn");
   const ALERT_MESSAGE = document.getElementById("alert-message");
 
+  // NUEVO: Dibujar el select de parroquias al cargar la página
+  renderParroquiasSelect();
   // Dibujar el formulario de autoridades al cargar la página
   renderAutoridadesForm();
   // Llamada para dibujar la tabla de servicios
@@ -786,7 +809,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function fillForm(data) {
     // Ejemplo de llenado para la Sección I: Datos de la Institución
     document.getElementById("nombre-institucion").value = data.datosInstitucion.nombre || "";
-    document.getElementById("parroquia").value = data.datosInstitucion.parroquia || "";
+    document.getElementById('parroquia').value = data.datosInstitucion.parroquia || '';
     document.getElementById("direccion").value = data.datosInstitucion.direccion || "";
     document.getElementById("punto-referencia").value = data.datosInstitucion.puntoReferencia || "";
     document.getElementById('longitud').value = data.datosInstitucion.longitud || '';
@@ -1030,7 +1053,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // I. Datos de la Institución
       datosInstitucion: {
         nombre: document.getElementById("nombre-institucion").value,
-        parroquia: document.getElementById("parroquia").value,
+        parroquia: document.getElementById('parroquia').value,
         direccion: document.getElementById("direccion").value,
         puntoReferencia: document.getElementById("punto-referencia").value,
         longitud: document.getElementById('longitud').value,
