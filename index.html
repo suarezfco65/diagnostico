@@ -47,10 +47,167 @@
                     <input type="text" class="form-control" id="nombre-institucion" required>
                 </div>
                 <div class="mb-3">
-                    <label for="parroquia" class="form-label">Parroquia [cite: 13]</label>
+                    <label for="parroquia" class="form-label">Parroquia</label>
                     <input type="text" class="form-control" id="parroquia">
                 </div>
+                <div class="mb-3">
+                    <label for="direccion" class="form-label">Dirección</label>
+                    <input type="text" class="form-control" id="direccion">
                 </div>
+                <div class="mb-3">
+                    <label for="punto-referencia" class="form-label">Punto de Referencia</label>
+                    <input type="text" class="form-control" id="punto-referencia" placeholder="Ej: Cerca de la Plaza Bolivar">
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label d-block fw-bold">Geo-Localización</label>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="longitud" class="form-label">Longitud</label>
+                            <input type="text" class="form-control" id="longitud" placeholder="-66.9036">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="latitud" class="form-label">Latitud</label>
+                            <input type="text" class="form-control" id="latitud" placeholder="10.4806">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label d-block fw-bold">Tipo de Institución</label>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-check">
+                                <label class="form-check-label" for="tipo-hospital">HOSPITAL</label>
+                                <div class="ms-4">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="tipo-institucion" id="hosp-i" value="I">
+                                        <label class="form-check-label" for="hosp-i">I</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="tipo-institucion" id="hosp-ii" value="II">
+                                        <label class="form-check-label" for="hosp-ii">II</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="tipo-institucion" id="hosp-iii" value="III">
+                                        <label class="form-check-label" for="hosp-iii">III</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="tipo-institucion" id="hosp-iv" value="IV">
+                                        <label class="form-check-label" for="hosp-iv">IV</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="tipo-institucion" id="tipo-clinica-privada" value="CLINICA PRIVADA">
+                                <label class="form-check-label" for="tipo-clinica-privada">CLINICA PRIVADA</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="tipo-institucion" id="tipo-asic" value="ASIC">
+                                <label class="form-check-label" for="tipo-asic">A.S.I.C.</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="tipo-institucion" id="tipo-clinica-popular" value="CLINICA POPULAR">
+                                <label class="form-check-label" for="tipo-clinica-popular">CLINICA POPULAR</label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="tipo-institucion" id="tipo-sri" value="SRI">
+                                <label class="form-check-label" for="tipo-sri">S.R.I.</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="tipo-institucion" id="tipo-clandestina" value="CLINICA CLANDESTINA">
+                                <label class="form-check-label" for="tipo-clandestina">CLINICA CLANDESTINA</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="tipo-institucion" id="tipo-cat" value="CAT">
+                                <label class="form-check-label" for="tipo-cat">C.A.T.</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="tipo-institucion" id="tipo-cai" value="CAI">
+                                <label class="form-check-label" for="tipo-cai">C.A.I.</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="tipo-institucion" id="tipo-cdi" value="CDI">
+                                <label class="form-check-label" for="tipo-cdi">C.D.I.</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="tipo-institucion" id="tipo-mba" value="MBA">
+                                <label class="form-check-label" for="tipo-mba">MÓDULO BARRIO ADENTRO</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="tipo-institucion" id="tipo-vet" value="VET">
+                                <label class="form-check-label" for="tipo-vet">VETERINARIA</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="tipo-institucion" id="tipo-oti" value="OTI">
+                                <label class="form-check-label" for="tipo-oti">OTROS TIPOS</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label d-block fw-bold">ENTE ADSCRITO</label>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="ente-adscrito" id="ente-mpps" value="MPPS">
+                                <label class="form-check-label" for="ente-mpps">MPPS</label>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="ente-adscrito" id="ente-ivss" value="IVSS">
+                                <label class="form-check-label" for="ente-ivss">IVSS</label>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="ente-adscrito" id="ente-ipasme" value="IPASME">
+                                <label class="form-check-label" for="ente-ipasme">IPASME</label>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="ente-adscrito" id="ente-universidad" value="UNIVERSIDAD C DE LA S">
+                                <label class="form-check-label" for="ente-universidad">UNIVERSIDAD C DE LA S</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="ente-adscrito" id="ente-gdc" value="GDC">
+                                <label class="form-check-label" for="ente-gdc">GDC</label>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="ente-adscrito" id="ente-alcaldia" value="ALCALDIA">
+                                <label class="form-check-label" for="ente-alcaldia">ALCALDÍA</label>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="ente-adscrito" id="ente-sanidad" value="SANIDAD">
+                                <label class="form-check-label" for="ente-sanidad">SANIDAD</label>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="ente-adscrito" id="ente-otros" value="OTROS ENTES">
+                                <label class="form-check-label" for="ente-otros">OTROS ENTES</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
 
             <div class="tab-pane fade form-section" id="autoridades" role="tabpanel">
                 <h4>II. Datos de las Autoridades</h4>
