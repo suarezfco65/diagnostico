@@ -1,7 +1,7 @@
 // main.js
 
 // =================================================================
-// 1. IMPORTS DE MÓDULOS
+// 1. IMPORTS DE MÓDULOS (SIN CAMBIOS)
 // =================================================================
 import * as Storage from "./storage.js";
 
@@ -16,94 +16,141 @@ import SectionVIModule from "./section_VI.js";
 // 2. CONSTANTES Y VARIABLES GLOBALES
 // =================================================================
 
-// Mapeo de módulos: Asocia una clave de objeto JSON con el módulo encargado de su gestión.
+// ... (MODULE_MAPPING sin cambios) ...
+
 const MODULE_MAPPING = [
   { key: "datosInstitucion", module: SectionIModule },
   { key: "autoridades", module: SectionIIModule },
   { key: "serviciosMedicos", module: SectionIIIModule },
   { key: "otrosServicios", module: SectionIVModule },
   { key: "infraestructura", module: SectionVModule },
-  { key: "proyectos", module: SectionVIModule }, // Incluye Proyectos y Obs. Generales (Sección VI/VII)
+  { key: "proyectos", module: SectionVIModule },
 ];
 
 // Elementos DOM principales
-const FORM = document.getElementById("diagnostico-form"); // Asegúrate de que tu form tiene este ID
+const FORM = document.getElementById("diagnostico-form");
 const RIF_INPUT = document.getElementById("rif-input");
 const SEARCH_BTN = document.getElementById("search-btn");
-const FORM_CONTAINER = document.getElementById("form-container");
 const FORM_TITLE = document.getElementById("form-title");
 
-let CURRENT_RIF = null;
+let CURRENT_KEY = null; // Almacenará el RIF o la CI, que será la clave de almacenamiento.
 
 // =================================================================
-// 3. LÓGICA DE BÚSQUEDA Y CARGA
+// 3. NUEVAS FUNCIONES DE VALIDACIÓN
 // =================================================================
 
 /**
- * Valida el RIF (formato J-12345678, por ejemplo) y maneja la búsqueda.
+ * Valida el formato del RIF. Ej: J-12345678, E-12345678, G-12345678, P-12345678.
+ * @param {string} value - El valor a validar.
+ * @returns {boolean} True si el formato es válido.
+ */
+function isValidRIF(value) {
+  // Regex: Empieza con J, E, G o P, seguido de un guión y 6 a 9 dígitos.
+  const rifRegex = /^[JEEGPN]-\d{6,9}$/i;
+  return rifRegex.test(value.toUpperCase());
+}
+
+/**
+ * Valida el formato de la Cédula de Identidad. Ej: V-12345678, E-12345678.
+ * @param {string} value - El valor a validar.
+ * @returns {boolean} True si el formato es válido.
+ */
+function isValidCI(value) {
+  // Regex: Empieza con V o E, seguido de un guión y 6 a 9 dígitos.
+  const ciRegex = /^[VE]-\d{6,9}$/i;
+  return ciRegex.test(value.toUpperCase());
+}
+
+// =================================================================
+// 4. LÓGICA DE BÚSQUEDA Y CARGA (MODIFICADA)
+// =================================================================
+
+/**
+ * Valida el formato del identificador y maneja la búsqueda.
  */
 function handleSearch() {
-  const rifValue = RIF_INPUT.value.trim().toUpperCase();
+  const rawValue = RIF_INPUT.value.trim().toUpperCase();
 
-  // Simple validación de RIF (Asegurar que no esté vacío)
-  if (!rifValue) {
-    Storage.showAlert(
-      "Por favor, ingrese el RIF del Centro de Salud.",
-      "alert-warning"
-    );
+  // 1. Obtener el tipo de ID seleccionado
+  const selectedIdType = document.querySelector(
+    'input[name="id-type"]:checked'
+  ).value;
+
+  // 2. Validación
+  if (!rawValue) {
+    Storage.showAlert("Por favor, ingrese el identificador.", "alert-warning");
     return;
   }
 
-  // Guardamos el RIF actual
-  CURRENT_RIF = rifValue;
+  let key; // La clave final que usaremos para el almacenamiento
+  let error = null;
 
-  // Obtener todos los datos guardados
+  if (selectedIdType === "RIF") {
+    if (isValidRIF(rawValue)) {
+      key = rawValue;
+    } else {
+      error = "Formato de RIF inválido. Use el formato: [J/E/G/P]-XXXXXXXX.";
+    }
+  } else if (selectedIdType === "CI") {
+    if (isValidCI(rawValue)) {
+      key = rawValue;
+    } else {
+      error = "Formato de Cédula inválido. Use el formato: [V/E]-XXXXXXXX.";
+    }
+  }
+
+  if (error) {
+    Storage.showAlert(error, "alert-danger");
+    return;
+  }
+
+  // Guardamos la clave actual (RIF o CI)
+  CURRENT_KEY = key;
+
+  // 3. Obtener y cargar datos
   const allData = Storage.getStorage();
-  const savedData = allData[CURRENT_RIF];
+  const savedData = allData[CURRENT_KEY];
+
+  const idTypeLabel = selectedIdType === "RIF" ? "RIF" : "Cédula";
 
   if (savedData) {
-    // RIF ENCONTRADO: Precargar el formulario para edición
-    FORM_TITLE.textContent = `Modificar Registro | RIF: ${CURRENT_RIF}`;
+    // ID ENCONTRADO: Precargar el formulario para edición
+    FORM_TITLE.textContent = `Modificar Registro | ${idTypeLabel}: ${CURRENT_KEY}`;
     fillForm(savedData);
     Storage.showAlert(
-      `Registro del RIF ${CURRENT_RIF} encontrado y cargado.`,
+      `Registro del ${idTypeLabel} ${CURRENT_KEY} encontrado y cargado.`,
       "alert-info"
     );
   } else {
-    // RIF NO ENCONTRADO: Habilitar formulario para nuevo registro
-    FORM_TITLE.textContent = `Nuevo Registro | RIF: ${CURRENT_RIF}`;
-    FORM.reset(); // Limpiar por si había datos anteriores
+    // ID NO ENCONTRADO: Habilitar formulario para nuevo registro
+    FORM_TITLE.textContent = `Nuevo Registro | ${idTypeLabel}: ${CURRENT_KEY}`;
+    FORM.reset();
     Storage.showAlert(
-      `RIF ${CURRENT_RIF} no encontrado. Creando nuevo registro.`,
+      `${idTypeLabel} ${CURRENT_KEY} no encontrado. Creando nuevo registro.`,
       "alert-success"
     );
   }
 
-  // Mostrar el formulario
+  // Mostrar el formulario e inhabilitar la búsqueda
   FORM.classList.remove("d-none");
   RIF_INPUT.disabled = true;
   SEARCH_BTN.disabled = true;
+  document
+    .querySelectorAll('input[name="id-type"]')
+    .forEach((radio) => (radio.disabled = true));
 }
 
-/**
- * Delega la precarga de datos a cada módulo de sección.
- * @param {Object} data - Los datos completos del registro JSON.
- */
+// ... (fillForm sin cambios) ...
 function fillForm(data) {
   if (!data) return;
 
-  // Precargar RIF y fecha, aunque no son campos del formulario
-  // Estos campos no se precargan, solo se usan como metadata
-
-  // 1. Precarga por módulos
   MODULE_MAPPING.forEach((item) => {
-    // Se llama a la función preload del módulo, pasándole la sub-sección de datos correspondiente.
     item.module.preload(data[item.key]);
   });
 }
 
 // =================================================================
-// 4. LÓGICA DE GUARDADO (SUBMIT)
+// 5. LÓGICA DE GUARDADO (SUBMIT) (MODIFICADA)
 // =================================================================
 
 /**
@@ -112,24 +159,28 @@ function fillForm(data) {
 function handleFormSubmit(e) {
   e.preventDefault();
 
-  if (!CURRENT_RIF) {
+  if (!CURRENT_KEY) {
     Storage.showAlert(
-      "Error: No hay RIF activo. Use el botón de búsqueda primero.",
+      "Error: No hay identificador activo. Use el botón de búsqueda primero.",
       "alert-danger"
     );
     return;
   }
 
   const now = new Date();
+  const selectedIdType = document.querySelector(
+    'input[name="id-type"]:checked'
+  ).value;
 
   // 1. Crear el objeto de datos
   const formData = {
     // Metadata principal
-    rif: CURRENT_RIF,
+    // Almacenamos la clave principal usada (RIF o CI)
+    identificador: CURRENT_KEY,
+    tipoIdentificador: selectedIdType,
     fechaRegistro: now.toISOString(),
 
     // 2. Recolección de datos por módulos
-    // Se llama a la función collect de cada módulo para obtener su sub-sección de datos.
     ...MODULE_MAPPING.reduce((acc, item) => {
       acc[item.key] = item.module.collect();
       return acc;
@@ -138,16 +189,21 @@ function handleFormSubmit(e) {
 
   // 3. Almacenar el objeto JSON
   const allData = Storage.getStorage();
-  allData[CURRENT_RIF] = formData;
+  allData[CURRENT_KEY] = formData; // Usamos CURRENT_KEY (RIF o CI) como clave en localStorage
   Storage.saveStorage(allData);
 
   // 4. Feedback al usuario y reseteo
+  const idTypeLabel = selectedIdType === "RIF" ? "RIF" : "Cédula";
   Storage.showAlert(
-    `Datos del RIF ${CURRENT_RIF} guardados/actualizados exitosamente.`,
+    `Datos del ${idTypeLabel} ${CURRENT_KEY} guardados/actualizados exitosamente.`,
     "alert-success"
   );
   resetInterface();
 }
+
+// =================================================================
+// 6. RESET Y MANEJO DE INTERFAZ (MODIFICADA)
+// =================================================================
 
 /**
  * Resetea el formulario y la interfaz a su estado inicial.
@@ -158,12 +214,19 @@ function resetInterface() {
   RIF_INPUT.value = "";
   RIF_INPUT.disabled = false;
   SEARCH_BTN.disabled = false;
+
+  // Habilitar y resetear los radio buttons
+  document.querySelectorAll('input[name="id-type"]').forEach((radio) => {
+    radio.disabled = false;
+  });
+  document.getElementById("id-type-rif").checked = true; // Volver a RIF por defecto
+
   FORM_TITLE.textContent = "Buscar o Registrar Centro de Salud";
-  CURRENT_RIF = null;
+  CURRENT_KEY = null;
 }
 
 // =================================================================
-// 5. INICIALIZACIÓN (DOMContentLoaded)
+// 7. INICIALIZACIÓN (DOMContentLoaded) (MODIFICADA)
 // =================================================================
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -183,9 +246,19 @@ document.addEventListener("DOMContentLoaded", () => {
     FORM.addEventListener("submit", handleFormSubmit);
   }
 
-  // Manejar el botón de "Nuevo Registro" (para resetear el estado y permitir un nuevo RIF)
-  const newRecordBtn = document.getElementById("new-record-btn"); // Asume que tienes un botón de "Nuevo Registro"
+  const newRecordBtn = document.getElementById("new-record-btn");
   if (newRecordBtn) {
     newRecordBtn.addEventListener("click", resetInterface);
   }
+
+  // Listener para cambiar el placeholder del input
+  document.querySelectorAll('input[name="id-type"]').forEach((radio) => {
+    radio.addEventListener("change", (e) => {
+      const isRif = e.target.value === "RIF";
+      RIF_INPUT.placeholder = isRif
+        ? "Ingrese el RIF del Centro (Ej: J-XXXXXXXXX)"
+        : "Ingrese la Cédula del Representante (Ej: V-XXXXXXXXX)";
+      RIF_INPUT.value = ""; // Limpiar al cambiar tipo
+    });
+  });
 });

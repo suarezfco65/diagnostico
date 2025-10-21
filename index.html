@@ -22,8 +22,21 @@
 
     <div class="form-section mb-4">
         <h4 id="form-title">Buscar o Registrar Centro de Salud</h4>
+        
+        <h6 class="mt-3">Tipo de Identificación:</h6>
+        <div class="mb-3">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="id-type" id="id-type-rif" value="RIF" checked>
+                <label class="form-check-label" for="id-type-rif">RIF del Centro</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="id-type" id="id-type-ci" value="CI">
+                <label class="form-check-label" for="id-type-ci">Cédula del Representante</label>
+            </div>
+        </div>
+        
         <div class="input-group mb-3">
-            <input type="text" class="form-control" id="rif-input" placeholder="Ingrese el RIF del Centro (Ej: J-12345678)" aria-label="RIF" required>
+            <input type="text" class="form-control" id="rif-input" placeholder="Ingrese el RIF (J-XXXXXXXXX) o la Cédula (V-XXXXXXXXX)" aria-label="ID" required>
             <button class="btn btn-primary" type="button" id="search-btn">Buscar / Cargar</button>
             <button class="btn btn-secondary" type="button" id="new-record-btn" title="Limpiar campos y preparar nuevo registro">Nuevo Registro</button>
         </div>
