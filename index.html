@@ -16,247 +16,104 @@
 
 <div class="container">
     <h1 class="my-4 text-center">FICHA DE DIAGNÓSTICO INICIAL</h1>
-    <p class="text-center text-muted">Red de Salud de Caracas - Comisión Permanente de Salud [cite: 4, 3]</p>
+    <p class="text-center text-muted">Red de Salud de Caracas - Comisión Permanente de Salud</p>
+
+    <div id="alert-container"></div> 
 
     <div class="form-section mb-4">
         <h4 id="form-title">Buscar o Registrar Centro de Salud</h4>
         <div class="input-group mb-3">
-            <input type="text" class="form-control" id="rif-input" placeholder="Ingrese el RIF del Centro (Ej: J-12345678)" aria-label="RIF">
-            <button class="btn btn-primary" type="button" id="buscar-btn">Buscar / Nuevo</button>
+            <input type="text" class="form-control" id="rif-input" placeholder="Ingrese el RIF del Centro (Ej: J-12345678)" aria-label="RIF" required>
+            <button class="btn btn-primary" type="button" id="search-btn">Buscar / Cargar</button>
+            <button class="btn btn-secondary" type="button" id="new-record-btn" title="Limpiar campos y preparar nuevo registro">Nuevo Registro</button>
         </div>
-        <div id="alert-message" class="alert d-none" role="alert"></div>
     </div>
 
-    <form id="diagnostico-form" class="d-none" onsubmit="return false;">
+    <form id="diagnostico-form" class="d-none">
         
         <ul class="nav nav-tabs" id="myTab" role="tablist">
-            <li class="nav-item" role="presentation"><button class="nav-link active" id="datos-institucion-tab" data-bs-toggle="tab" data-bs-target="#datos-institucion" type="button" role="tab">I. Institución</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link active" id="datos-tab" data-bs-toggle="tab" data-bs-target="#datos" type="button" role="tab">I. Institución</button></li>
             <li class="nav-item" role="presentation"><button class="nav-link" id="autoridades-tab" data-bs-toggle="tab" data-bs-target="#autoridades" type="button" role="tab">II. Autoridades</button></li>
-            <li class="nav-item" role="presentation"><button class="nav-link" id="servicios-medicos-tab" data-bs-toggle="tab" data-bs-target="#servicios-medicos" type="button" role="tab">III. Servicios Médicos</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="servicios-tab" data-bs-toggle="tab" data-bs-target="#servicios" type="button" role="tab">III. Servicios Médicos</button></li>
             <li class="nav-item" role="presentation"><button class="nav-link" id="otros-servicios-tab" data-bs-toggle="tab" data-bs-target="#otros-servicios" type="button" role="tab">IV. Otros Servicios</button></li>
             <li class="nav-item" role="presentation"><button class="nav-link" id="infraestructura-tab" data-bs-toggle="tab" data-bs-target="#infraestructura" type="button" role="tab">V. Infraestructura</button></li>
             <li class="nav-item" role="presentation"><button class="nav-link" id="proyectos-tab" data-bs-toggle="tab" data-bs-target="#proyectos" type="button" role="tab">VI. Proyectos</button></li>
         </ul>
 
-        <div class="tab-content" id="myTabContent">
+        <div class="tab-content border border-top-0 p-4" id="myTabContent">
             
-            <div class="tab-pane fade show active form-section" id="datos-institucion" role="tabpanel">
+            <div class="tab-pane fade show active form-section" id="datos" role="tabpanel">
                 <h4>I. Datos de la Institución</h4>
-                <div class="mb-3">
-                    <label for="nombre-institucion" class="form-label">Nombre de la Institución [cite: 10]</label>
-                    <input type="text" class="form-control" id="nombre-institucion" required>
-                </div>
-                <div class="mb-3">
-                    <label for="parroquia" class="form-label">Parroquia</label>
-                    <select class="form-select" id="parroquia" required>
-                        <option value="" disabled selected>Seleccione una Parroquia</option>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="nombre-institucion" class="form-label">Nombre de la Institución</label>
+                        <input type="text" class="form-control" id="nombre-institucion" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="parroquia" class="form-label">Parroquia</label>
+                        <select class="form-select" id="parroquia" required>
+                            <option value="" disabled selected>Seleccione una Parroquia</option>
                         </select>
+                    </div>
                 </div>
+                
                 <div class="mb-3">
                     <label for="direccion" class="form-label">Dirección</label>
-                    <input type="text" class="form-control" id="direccion">
-                </div>
-                <div class="mb-3">
-                    <label for="punto-referencia" class="form-label">Punto de Referencia</label>
-                    <input type="text" class="form-control" id="punto-referencia" placeholder="Ej: Cerca de la Plaza Bolivar">
+                    <input type="text" class="form-control" id="direccion" required>
                 </div>
 
-                <div class="mb-4">
-                    <label class="form-label d-block fw-bold">Geo-Localización</label>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="longitud" class="form-label">Longitud</label>
-                            <input type="text" class="form-control" id="longitud" placeholder="-66.9036">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="latitud" class="form-label">Latitud</label>
-                            <input type="text" class="form-control" id="latitud" placeholder="10.4806">
-                        </div>
-                    </div>
+                <h5 class="mt-4">Tipo de Institución</h5>
+                <div class="mb-3" id="tipo-institucion-container">
+                    
                 </div>
 
-                <div class="mb-4">
-                    <label class="form-label d-block fw-bold">Tipo de Institución</label>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-check">
-                                <label class="form-check-label" for="tipo-hospital">HOSPITAL</label>
-                                <div class="ms-4">
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="tipo-institucion" id="hosp-i" value="I">
-                                        <label class="form-check-label" for="hosp-i">I</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="tipo-institucion" id="hosp-ii" value="II">
-                                        <label class="form-check-label" for="hosp-ii">II</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="tipo-institucion" id="hosp-iii" value="III">
-                                        <label class="form-check-label" for="hosp-iii">III</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="tipo-institucion" id="hosp-iv" value="IV">
-                                        <label class="form-check-label" for="hosp-iv">IV</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="tipo-institucion" id="tipo-clinica-privada" value="CLINICA PRIVADA">
-                                <label class="form-check-label" for="tipo-clinica-privada">CLINICA PRIVADA</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="tipo-institucion" id="tipo-asic" value="ASIC">
-                                <label class="form-check-label" for="tipo-asic">A.S.I.C.</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="tipo-institucion" id="tipo-clinica-popular" value="CLINICA POPULAR">
-                                <label class="form-check-label" for="tipo-clinica-popular">CLINICA POPULAR</label>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-4">
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="tipo-institucion" id="tipo-sri" value="SRI">
-                                <label class="form-check-label" for="tipo-sri">S.R.I.</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="tipo-institucion" id="tipo-clandestina" value="CLINICA CLANDESTINA">
-                                <label class="form-check-label" for="tipo-clandestina">CLINICA CLANDESTINA</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="tipo-institucion" id="tipo-cat" value="CAT">
-                                <label class="form-check-label" for="tipo-cat">C.A.T.</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="tipo-institucion" id="tipo-cai" value="CAI">
-                                <label class="form-check-label" for="tipo-cai">C.A.I.</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="tipo-institucion" id="tipo-cdi" value="CDI">
-                                <label class="form-check-label" for="tipo-cdi">C.D.I.</label>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4">
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="tipo-institucion" id="tipo-mba" value="MBA">
-                                <label class="form-check-label" for="tipo-mba">MÓDULO BARRIO ADENTRO</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="tipo-institucion" id="tipo-vet" value="VET">
-                                <label class="form-check-label" for="tipo-vet">VETERINARIA</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="tipo-institucion" id="tipo-oti" value="OTI">
-                                <label class="form-check-label" for="tipo-oti">OTROS TIPOS</label>
-                            </div>
-                        </div>
-                    </div>
+                <h5 class="mt-4">Ente Adscrito</h5>
+                <div class="mb-3" id="ente-adscrito-container">
+                    
                 </div>
 
-                <div class="mb-4">
-                    <label class="form-label d-block fw-bold">ENTE ADSCRITO</label>
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="ente-adscrito" id="ente-mpps" value="MPPS">
-                                <label class="form-check-label" for="ente-mpps">MPPS</label>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="ente-adscrito" id="ente-ivss" value="IVSS">
-                                <label class="form-check-label" for="ente-ivss">IVSS</label>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="ente-adscrito" id="ente-ipasme" value="IPASME">
-                                <label class="form-check-label" for="ente-ipasme">IPASME</label>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="ente-adscrito" id="ente-universidad" value="UNIVERSIDAD C DE LA S">
-                                <label class="form-check-label" for="ente-universidad">UNIVERSIDAD C DE LA S</label>
-                            </div>
-                        </div>
-
-                        <div class="col-md-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="ente-adscrito" id="ente-gdc" value="GDC">
-                                <label class="form-check-label" for="ente-gdc">GDC</label>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="ente-adscrito" id="ente-alcaldia" value="ALCALDIA">
-                                <label class="form-check-label" for="ente-alcaldia">ALCALDÍA</label>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="ente-adscrito" id="ente-sanidad" value="SANIDAD">
-                                <label class="form-check-label" for="ente-sanidad">SANIDAD</label>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="ente-adscrito" id="ente-otros" value="OTROS ENTES">
-                                <label class="form-check-label" for="ente-otros">OTROS ENTES</label>
-                            </div>
-                        </div>
-                    </div>
+                <h5 class="mt-4">Geolocalización</h5>
+                <div class="row">
+                    <div class="col-md-4 mb-3"><label for="longitud" class="form-label">Longitud</label><input type="text" class="form-control" id="longitud"></div>
+                    <div class="col-md-4 mb-3"><label for="latitud" class="form-label">Latitud</label><input type="text" class="form-control" id="latitud"></div>
+                    <div class="col-md-4 mb-3"><label for="punto-referencia" class="form-label">Punto de Referencia</label><input type="text" class="form-control" id="punto-referencia"></div>
                 </div>
-
             </div>
 
             <div class="tab-pane fade form-section" id="autoridades" role="tabpanel">
-                <h4>II. Datos de las Autoridades</h4>
-                
-                <div id="autoridades-container">
-                    </div>
+                <h4>II. Datos de las Autoridades de la Institución</h4>
+                <div id="autoridades-container"></div> 
 
                 <div class="mb-3">
                     <label for="observaciones-autoridades" class="form-label">OBSERVACIONES AUTORIDADES:</label>
-                    <textarea class="form-control" id="observaciones-autoridades" rows="2"></textarea>
+                    <textarea class="form-control" id="observaciones-autoridades" rows="3"></textarea>
                 </div>
             </div>
 
-            <div class="tab-pane fade form-section" id="servicios-medicos" role="tabpanel">
-                <h4>III. Datos de los Servicios de Especialidades Médicas Prestados</h4>
-                <p>Marque el estado del servicio y complete los detalles de prestación.</p>
-                <div class="table-responsive">
-                    <table class="table table-striped table-bordered align-middle">
+            <div class="tab-pane fade form-section" id="servicios" role="tabpanel">
+                <h4>III. Servicios de Especialidades Médicas Prestados</h4>
+                <div class="table-responsive mb-4">
+                    <table class="table table-sm table-bordered align-middle">
                         <thead class="table-light">
                             <tr>
-                                <th rowspan="2" style="width: 25%;">Especialidad</th>
-                                <th colspan="4" class="text-center">Estado del Servicio</th>
-                                <th rowspan="2" style="width: 30%;">Prestación Servicio (Día/Hora/Obs.)</th>
-                            </tr>
-                            <tr>
-                                <th>Activo</th>
-                                <th>Activo c/Prob</th>
-                                <th>Inactivo</th>
-                                <th>No Existe</th>
+                                <th style="width: 20%;">Servicio</th>
+                                <th style="width: 10%;">ACTIVO</th>
+                                <th style="width: 12%;">ACTIVO C/PROB</th>
+                                <th style="width: 10%;">INACTIVO</th>
+                                <th style="width: 10%;">NO EXISTE</th>
+                                <th style="width: 38%;">PRESTACIÓN SERVICIO (Día y Horario)</th>
                             </tr>
                         </thead>
                         <tbody id="servicios-medicos-body">
-                            </tbody>
+                        </tbody>
                     </table>
-                </div>
-                <div class="mb-3">
-                    <label for="observaciones-servicios-medicos" class="form-label">OBSERVACIONES SERVICIOS MÉDICOS ESPECIALIZADOS:</label>
-                    <textarea class="form-control" id="observaciones-servicios-medicos" rows="3"></textarea>
                 </div>
             </div>
 
             <div class="tab-pane fade form-section" id="otros-servicios" role="tabpanel">
-                <h4>IV. Datos de Otros Servicios Prestados</h4>
-                
-                <div id="otros-servicios-container">
-                    </div>
-                
+                <h4>IV. Otros Servicios Prestados</h4>
+                <div id="otros-servicios-container"></div>
+
                 <div class="mb-3">
                     <label for="observaciones-otros-servicios" class="form-label">OBSERVACIONES OTROS SERVICIOS PRESTADOS:</label>
                     <textarea class="form-control" id="observaciones-otros-servicios" rows="3"></textarea>
@@ -279,7 +136,7 @@
                             </tr>
                         </thead>
                         <tbody id="condiciones-infraestructura-body">
-                            </tbody>
+                        </tbody>
                     </table>
                 </div>
 
@@ -294,7 +151,7 @@
                             </tr>
                         </thead>
                         <tbody id="servicios-publicos-body">
-                            </tbody>
+                        </tbody>
                     </table>
                 </div>
 
@@ -308,8 +165,7 @@
                 <h4>VI. Proyectos de Mejoras (Máximo 5 por Categoría)</h4>
                 <p class="text-muted">Describa los proyectos prioritarios de mejoras en cada área solicitada.</p>
 
-                <div id="proyectos-container">
-                    </div>
+                <div id="proyectos-container"></div>
 
                 <h4 class="mt-5">VII. Observaciones Generales</h4>
                 <div class="mb-3">
@@ -327,6 +183,14 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="app.js"></script> 
+<script src="data.js" type="module"></script>
+<script src="storage.js" type="module"></script>
+<script src="section_I.js" type="module"></script>
+<script src="section_II.js" type="module"></script>
+<script src="section_III.js" type="module"></script>
+<script src="section_IV.js" type="module"></script>
+<script src="section_V.js" type="module"></script>
+<script src="section_VI.js" type="module"></script>
+<script src="main.js" type="module"></script>
 </body>
 </html>
