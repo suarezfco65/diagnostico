@@ -64,12 +64,43 @@ const SectionIModule = (() => {
   };
 
   /**
+   * Función interna para configurar el listener de previsualización de la foto.
+   */
+  const _setupPhotoPreview = () => {
+    const input = document.getElementById("foto-fachada");
+    const preview = document.getElementById("foto-fachada-preview");
+
+    if (!input || !preview) return;
+
+    input.addEventListener("change", function (event) {
+      const file = event.target.files[0];
+
+      if (file) {
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+          preview.src = e.target.result;
+          preview.classList.remove("d-none"); // Mostrar la imagen
+        };
+
+        // Lee el archivo como una URL de datos base64 para el atributo src
+        reader.readAsDataURL(file);
+      } else {
+        preview.src = "#";
+        preview.classList.add("d-none"); // Ocultar si no hay archivo
+      }
+    });
+  };
+
+  /**
    * 1. Renderiza los elementos dinámicos de la Sección I.
    */
   const render = () => {
     renderParroquiasSelect();
     renderTipoInstitucion(); // NUEVO
     renderEnteAdscrito(); // NUEVO
+    // CONFIGURAR EL LISTENER DE PREVISUALIZACIÓN (NUEVO)
+    _setupPhotoPreview();
   };
 
   /**
@@ -82,6 +113,10 @@ const SectionIModule = (() => {
     const entesAdscritos = Array.from(
       document.querySelectorAll('input[name="ente-adscrito"]:checked')
     ).map((cb) => cb.value);
+
+    const fotoFachadaInput = document.getElementById("foto-fachada");
+    const fotoFachadaFile =
+      fotoFachadaInput.files.length > 0 ? fotoFachadaInput.files[0] : null;
 
     return {
       nombre: document.getElementById("nombre-institucion").value.trim(),
@@ -99,6 +134,8 @@ const SectionIModule = (() => {
       longitud: document.getElementById("longitud").value.trim(),
       latitud: document.getElementById("latitud").value.trim(),
       puntoReferencia: document.getElementById("punto-referencia").value.trim(),
+      // Referencia del archivo (Objeto File o null)
+      fotoFachada: fotoFachadaFile,
     };
   };
 
@@ -118,6 +155,15 @@ const SectionIModule = (() => {
     document.getElementById("latitud").value = data.latitud || "";
     document.getElementById("punto-referencia").value =
       data.puntoReferencia || "";
+
+    // Limpiar campo de archivo y vista previa
+    const fotoFachadaInput = document.getElementById("foto-fachada");
+    const preview = document.getElementById("foto-fachada-preview");
+    if (fotoFachadaInput) fotoFachadaInput.value = "";
+    if (preview) {
+      preview.src = "#";
+      preview.classList.add("d-none");
+    }
 
     // Radio buttons (Tipo Institución)
     if (data.tipoInstitucion) {
