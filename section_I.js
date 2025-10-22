@@ -1,7 +1,7 @@
 // section_I.js
 
 import {
-  PARROROQUIAS_CARACAS,
+  PARROQUIAS_CARACAS,
   TIPOS_INSTITUCION,
   ENTES_ADSCRITOS,
 } from "./data.js";
@@ -16,7 +16,7 @@ const SectionIModule = (() => {
 
     let htmlOptions =
       '<option value="" disabled selected>Seleccione una Parroquia</option>';
-    PARROROQUIAS_CARACAS.forEach((parroquia) => {
+    PARROQUIAS_CARACAS.forEach((parroquia) => {
       htmlOptions += `<option value="${parroquia}">${parroquia}</option>`;
     });
 

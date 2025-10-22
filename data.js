@@ -7,7 +7,7 @@
  */
 
 // Lista de Parroquias de Caracas (Sección I)
-export const PARROROQUIAS_CARACAS = [
+export const PARROQUIAS_CARACAS = [
   "Altagracia",
   "Antímano",
   "Caricuao",
