@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Definición de Indicadores - SISCOMRES</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+</head>
+<body>
+
+    <div class="container mt-5">
+        <header class="mb-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1>Diseñador de Indicadores y Gráficos</h1>
+                <div>
+                    <span id="welcome-message" class="me-3"></span>
+                    <button class="btn btn-danger" id="logout-btn">Cerrar Sesión</button>
+                </div>
+            </div>
+            <hr>
+        </header>
+
+        <div id="indicator-designer-content" class="d-none">
+            
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <a href="reports.html" class="btn btn-secondary">← Volver a Reportes</a>
+                </div>
+                <div class="col-md-6 text-end">
+                    <button class="btn btn-sm btn-info" id="view-definitions-btn">Ver Definiciones Guardadas</button>
+                </div>
+            </div>
+
+            <form id="indicator-form" class="card p-4">
+                <h3 class="card-title mb-4">Metadatos del Indicador</h3>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="indicator-name" class="form-label">Nombre del Indicador</label>
+                        <input type="text" class="form-control" id="indicator-name" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="indicator-id" class="form-label">ID Único del Indicador (Clave)</label>
+                        <input type="text" class="form-control" id="indicator-id" placeholder="Ej: centros_por_parroquia" required>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+                
+                <h4 class="mb-3">Configuración de Datos y Gráfico</h4>
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <label for="chart-type" class="form-label">Tipo de Gráfico</label>
+                        <select class="form-select" id="chart-type" required>
+                            <option value="column">Columna</option>
+                            <option value="bar">Barra</option>
+                            <option value="pie">Torta/Circular</option>
+                            <option value="line">Línea</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-5 mb-3">
+                        <label for="ejeX-variable" class="form-label">Variable de Agrupación (Eje X)</label>
+                        <select class="form-select" id="ejeX-variable" required>
+                            <option value="" disabled selected>Cargando variables...</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label for="ejeY-agregacion" class="form-label">Cálculo (Eje Y)</label>
+                        <select class="form-select" id="ejeY-agregacion" required>
+                            <option value="COUNT">Conteo de Centros (COUNT)</option>
+                            <option value="SUM" disabled>Suma de Campos (SUM)</option>
+                            <option value="AVG" disabled>Promedio de Campos (AVG)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <h4 class="mb-3">Control de Publicación</h4>
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <label for="indicator-status" class="form-label fw-bold">Estatus del Diseño</label>
+                        <select class="form-select" id="indicator-status" required>
+                            <option value="DISEÑO">DISEÑO (Oculto en Reportes)</option>
+                            <option value="PRUEBAS">PRUEBAS (Oculto en Reportes)</option>
+                            <option value="PRODUCCIÓN">PRODUCCIÓN (Visible en Reportes)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-6 mb-4">
+                        <label for="filtros-json" class="form-label">Filtros Fijos JSON (Opcional)</label>
+                        <textarea class="form-control" id="filtros-json" rows="3" placeholder="Ej: { 'tipoInstitucion': 'HOSPITAL' }"></textarea>
+                        <div class="form-text">Filtros permanentes antes de la agregación.</div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-success btn-lg mt-3">Guardar Definición de Indicador</button>
+            </form>
+            
+            <div id="alert-container-indicator" class="mt-4"></div>
+            
+            <div id="definitions-list-container" class="mt-5 d-none">
+                <h4>Definiciones Guardadas</h4>
+                <div id="definitions-list"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="storage.js" type="module"></script> 
+    <script src="auth.js" type="module"></script>
+    <script src="indicator_definitions.js" type="module"></script>
+</body>
+</html>
