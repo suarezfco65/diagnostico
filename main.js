@@ -3,7 +3,11 @@
 // =================================================================
 // 1. IMPORTS DE MÓDULOS (SIN CAMBIOS)
 // =================================================================
+import Auth from "./auth.js";
 import * as Storage from "./storage.js";
+
+// Roles permitidos para registrar o actualizar centros
+const REQUIRED_ROLES_FOR_REGISTRATION = ["BRIGADISTA", "ADMIN"];
 
 import SectionIModule from "./section_I.js";
 import SectionIIModule from "./section_II.js";
@@ -15,6 +19,33 @@ import SectionVIModule from "./section_VI.js";
 // =================================================================
 // 2. CONSTANTES Y VARIABLES GLOBALES
 // =================================================================
+
+// --- LÓGICA DE RESTRICCIÓN DE ROL ---
+const checkRoleAccess = () => {
+  // 1. Forzar autenticación: si no hay sesión, redirige a reports.html (login)
+  Auth.requireAuth("reports.html");
+
+  // 2. Si la sesión existe, verificar el rol
+  const currentRole = Auth.getCurrentRole();
+
+  if (!currentRole || !REQUIRED_ROLES_FOR_REGISTRATION.includes(currentRole)) {
+    // Acceso Denegado
+    const alertMessage = `Acceso Denegado. Su rol actual (${
+      currentRole || "N/A"
+    }) no permite registrar o actualizar centros de salud.`;
+
+    // Muestra una alerta y luego redirige
+    alert(alertMessage);
+
+    Auth.logout(); // Limpiar la sesión
+    window.location.href = "reports.html"; // Redirigir de nuevo al login
+
+    return false;
+  }
+
+  // Acceso permitido
+  return true;
+};
 
 // ... (MODULE_MAPPING sin cambios) ...
 
@@ -230,6 +261,11 @@ function resetInterface() {
 // =================================================================
 
 document.addEventListener("DOMContentLoaded", () => {
+  // ❗ LLAMAR A LA VERIFICACIÓN DE ROL PRIMERO ❗
+  if (!checkRoleAccess()) {
+    return; // Detiene la ejecución del resto del script si el acceso es denegado
+  }
+
   // 1. Renderizado inicial de todas las secciones dinámicas
   MODULE_MAPPING.forEach((item) => {
     item.module.render();

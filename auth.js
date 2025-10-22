@@ -1,23 +1,29 @@
 // auth.js
 
 const VALID_USERS = {
-  admin: "siscomres2024", // Usuario de ejemplo
-  reporte: "clave123", // Otro usuario de ejemplo
+  // USUARIOS DE GESTIÓN (Tienen acceso a reportes, diseñador, etc.)
+  admin: { password: "siscomres2024", role: "ADMIN" },
+  reporte: { password: "clave123", role: "REPORTE" },
+
+  // NUEVOS USUARIOS DE REGISTRO (Solo acceso a index.html)
+  brigadista1: { password: "briga123", role: "BRIGADISTA" },
+  brigadista2: { password: "briga456", role: "BRIGADISTA" },
 };
 
 const USER_SESSION_KEY = "siscomres_current_user";
+const ROLE_SESSION_KEY = "siscomres_current_role"; // NUEVA CLAVE PARA GUARDAR EL ROL
 
 const AuthModule = (() => {
   /**
-   * Intenta autenticar a un usuario.
-   * @param {string} username - Nombre de usuario.
-   * @param {string} password - Contraseña.
-   * @returns {boolean} True si la autenticación es exitosa.
+   * Intenta autenticar a un usuario y guarda el rol en la sesión.
    */
   const login = (username, password) => {
-    if (VALID_USERS[username] === password) {
-      // Guardar la sesión en localStorage (solo para simulación)
+    const userDetails = VALID_USERS[username];
+
+    if (userDetails && userDetails.password === password) {
+      // Guardar la sesión y el ROL
       localStorage.setItem(USER_SESSION_KEY, username);
+      localStorage.setItem(ROLE_SESSION_KEY, userDetails.role); // GUARDAR ROL
       return true;
     }
     return false;
@@ -28,6 +34,7 @@ const AuthModule = (() => {
    */
   const logout = () => {
     localStorage.removeItem(USER_SESSION_KEY);
+    localStorage.removeItem(ROLE_SESSION_KEY); // Limpiar el rol
   };
 
   /**
@@ -39,10 +46,26 @@ const AuthModule = (() => {
   };
 
   /**
-   * Protege una página, redirigiendo al login si no hay sesión.
-   * @param {string} loginPageUrl - URL de la página de login (ej: index.html).
+   * Obtiene el rol del usuario logueado.
+   * @returns {string|null} El rol del usuario o null.
    */
-  const requireAuth = (loginPageUrl = "index.html") => {
+  const getCurrentRole = () => {
+    return localStorage.getItem(ROLE_SESSION_KEY);
+  };
+
+  /**
+   * Verifica si el usuario logueado tiene el rol especificado.
+   * @param {string} role - El rol a verificar (ej: "BRIGADISTA").
+   * @returns {boolean}
+   */
+  const hasRole = (role) => {
+    return getCurrentRole() === role;
+  };
+
+  /**
+   * Protege una página, redirigiendo al login si no hay sesión.
+   */
+  const requireAuth = (loginPageUrl = "reports.html") => {
     if (!getCurrentUser()) {
       window.location.href = loginPageUrl;
     }
@@ -52,6 +75,8 @@ const AuthModule = (() => {
     login,
     logout,
     getCurrentUser,
+    getCurrentRole, // Exportar nueva función
+    hasRole, // Exportar nueva función
     requireAuth,
   };
 })();
