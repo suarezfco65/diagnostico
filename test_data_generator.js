@@ -1,6 +1,8 @@
 // test_data_generator.js
 
 import * as Storage from "./storage.js";
+// ❗ NUEVA IMPORTACIÓN ❗
+import Auth from "./auth.js";
 import {
   PARROQUIAS_CARACAS,
   TIPOS_INSTITUCION,
@@ -57,14 +59,16 @@ function generateRandomIdNumber() {
  * Asume que TIPOS_INSTITUCION es un array de objetos {value, label}.
  */
 function getRandomSafeTipoInstitucion() {
-    // 1. Filtrar el array para excluir el objeto con value: 'OTRO_TIPO'
-    const safeTipos = TIPOS_INSTITUCION.filter(tipo => tipo.value !== 'OTRO_TIPO');
+  // 1. Filtrar el array para excluir el objeto con value: 'OTRO_TIPO'
+  const safeTipos = TIPOS_INSTITUCION.filter(
+    (tipo) => tipo.value !== "OTRO_TIPO"
+  );
 
-    // 2. Mapear para obtener solo los valores (strings)
-    const safeValues = safeTipos.map(tipo => tipo.value);
-    
-    // 3. Seleccionar uno al azar
-    return getRandomItem(safeValues);
+  // 2. Mapear para obtener solo los valores (strings)
+  const safeValues = safeTipos.map((tipo) => tipo.value);
+
+  // 3. Seleccionar uno al azar
+  return getRandomItem(safeValues);
 }
 
 /**
@@ -72,9 +76,11 @@ function getRandomSafeTipoInstitucion() {
  * Asume que ENTES_ADSCRITOS es un array de strings.
  */
 function getRandomSafeEnteAdscrito() {
-    // Si ENTES_ADSCRITOS contiene 'OTRO_ENTE', lo filtra.
-    const safeEntes = ENTES_ADSCRITOS.filter(ente => ente.value !== 'OTRO_ENTE');
-    return getRandomItem(safeEntes);
+  // Si ENTES_ADSCRITOS contiene 'OTRO_ENTE', lo filtra.
+  const safeEntes = ENTES_ADSCRITOS.filter(
+    (ente) => ente.value !== "OTRO_ENTE"
+  );
+  return getRandomItem(safeEntes);
 }
 
 /**
@@ -203,6 +209,8 @@ document.addEventListener("DOMContentLoaded", () => {
             "Error: Las constantes de datos (PARROQUIAS_CARACAS, TIPOS_INSTITUCION, ENTES_ADSCRITOS) no se cargaron correctamente desde data.js. Asegure la exportación con 'export const'."
           );
         }
+
+        Auth.logout();
 
         const result = runDataGeneration(150);
 
