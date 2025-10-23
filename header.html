@@ -1,0 +1,52 @@
+<style>
+    .institutional-banner {
+        background-color: #e3f2fd; /* Un azul claro para el fondo */
+        padding: 5px 15px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 2px solid #0d6efd; /* Un borde inferior para destacar */
+        color: #333;
+        font-family: Arial, sans-serif;
+        flex-wrap: wrap; /* Permite que los elementos se envuelvan en pantallas pequeñas */
+    }
+    .institutional-banner img {
+        height: 60px; /* Tamaño fijo para los logos */
+        max-width: 100%; /* Asegura que no se desborde */
+        margin: 5px 10px;
+    }
+    .institutional-banner .text-center-wrapper {
+        flex-grow: 1; /* Permite que el texto ocupe el espacio central */
+        text-align: center;
+        font-size: 0.9em;
+        line-height: 1.2;
+        margin: 5px 10px;
+    }
+    .institutional-banner .text-center-wrapper strong {
+        display: block; /* Cada línea en su propio bloque */
+        font-size: 1.1em;
+    }
+    @media (max-width: 768px) {
+        .institutional-banner {
+            flex-direction: column;
+        }
+        .institutional-banner img {
+            margin-bottom: 10px;
+        }
+        .institutional-banner .text-center-wrapper {
+            margin-bottom: 10px;
+            font-size: 0.8em;
+        }
+    }
+</style>
+
+<div class="institutional-banner">
+    <img src="./logo_alcaldia_ccs_ft.png" alt="Logo Izquierdo">
+    <div class="text-center-wrapper">
+        <strong>REPÚBLICA BOLIVARIANA DE VENEZUELA</strong>
+        DISTRITO CAPITAL<br>
+        CONCEJO LEGISLATIVO DEL MUNICIPIO BOLIVARIANO<br>
+        LIBERTADOR
+    </div>
+    <img src="./escudo_alcaldia_ccs_ft.png" alt="Logo Derecho">
+</div>
