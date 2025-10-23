@@ -24,43 +24,127 @@ const SectionIModule = (() => {
   };
 
   /**
-   * Función interna para renderizar los radio buttons de Tipo de Institución.
+   * Función interna para renderizar los radio buttons de Tipo de Institución
+   * y el campo de texto para "Otro Tipo".
    */
   const renderTipoInstitucion = () => {
-    const container = document.getElementById("tipo-institucion-container");
-    if (!container) return;
+      const container = document.getElementById("tipo-institucion-container");
+      if (!container) return;
 
-    let html = "";
-    TIPOS_INSTITUCION.forEach((tipo) => {
-      const id = `tipo-${tipo.value.toLowerCase()}`;
+      let html = "";
+      TIPOS_INSTITUCION.forEach((tipo) => {
+          const id = `tipo-${tipo.value.toLowerCase().replace(/[^a-z0-9]/g, "")}`;
+          // Asegúrate de que el radio de "Otros tipos" tenga el value 'OTRO_TIPO'
+          html += `
+              <div class="form-check form-check-inline">
+                  <input class="form-check-input tipo-institucion-radio" type="radio" 
+                        name="tipo-institucion" value="${tipo.value}" id="${id}">
+                  <label class="form-check-label" for="${id}">${tipo.label}</label>
+              </div>
+          `;
+      });
+      
+      // Campo de texto para "Otro Tipo" (inicialmente oculto)
       html += `
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="tipo-institucion" value="${tipo.value}" id="${id}">
-                    <label class="form-check-label" for="${id}">${tipo.label}</label>
-                </div>
-            `;
-    });
-    container.innerHTML = html;
+          <div id="otro-tipo-input-group" class="mt-2" style="display: none;">
+              <label for="otro-tipo-institucion" class="form-label visually-hidden">Especifique Otro Tipo</label>
+              <input type="text" class="form-control" id="otro-tipo-institucion" 
+                    placeholder="Especifique cuál es el Otro Tipo de Institución" disabled>
+          </div>
+      `;
+      container.innerHTML = html;
+      
+      // ❗ Añadir Listener para mostrar/ocultar el campo ❗
+      document.querySelectorAll('.tipo-institucion-radio').forEach(radio => {
+          radio.addEventListener('change', handleTipoInstitucionChange);
+      });
   };
 
   /**
-   * Función interna para renderizar los checkboxes de Ente Adscrito.
+   * Nuevo handler para mostrar/ocultar el input de texto del Tipo Institución.
+   */
+  const handleTipoInstitucionChange = (event) => {
+      const otroTipoGroup = document.getElementById("otro-tipo-input-group");
+      const otroTipoInput = document.getElementById("otro-tipo-institucion");
+      
+      if (event.target.value === 'OTRO_TIPO') {
+          otroTipoGroup.style.display = 'block';
+          otroTipoInput.disabled = false;
+          otroTipoInput.required = true;
+      } else {
+          otroTipoGroup.style.display = 'none';
+          otroTipoInput.disabled = true;
+          otroTipoInput.required = false;
+          otroTipoInput.value = ''; // Limpiar el valor si se deselecciona
+      }
+  };
+
+  /**
+   * Nuevo handler para mostrar/ocultar el input de texto del Ente Adscrito.
+   */
+  const handleEnteAdscritoChange = (event) => {
+      const otroEnteGroup = document.getElementById("otro-ente-input-group");
+      const otroEnteInput = document.getElementById("otro-ente-adscrito");
+      
+      if (event.target.value === 'OTRO_ENTE') { // Usamos 'OTRO_ENTE' como clave de activación
+          otroEnteGroup.style.display = 'block';
+          otroEnteInput.disabled = false;
+          otroEnteInput.required = true;
+      } else {
+          otroEnteGroup.style.display = 'none';
+          otroEnteInput.disabled = true;
+          otroEnteInput.required = false;
+          otroEnteInput.value = ''; // Limpiar el valor si se deselecciona
+      }
+  };
+
+  /**
+   * Función interna para renderizar los radio buttons de Ente Adscrito.
+   * (Añade la opción "Otro Ente" y el campo de texto condicional)
    */
   const renderEnteAdscrito = () => {
-    const container = document.getElementById("ente-adscrito-container");
-    if (!container) return;
+      const container = document.getElementById("ente-adscrito-container");
+      if (!container) return;
 
-    let html = "";
-    ENTES_ADSCRITOS.forEach((ente) => {
-      const id = `ente-${ente.value.toLowerCase()}`;
+      let html = "";
+      // Asumiendo que ENTES_ADSCRITOS es un array de strings de data.js
+      ENTES_ADSCRITOS.forEach((ente) => { 
+          const id = `ente-${ente.value.toLowerCase().replace(/[^a-z0-9]/g, "")}`;
+          html += `
+              <div class="form-check form-check-inline">
+                  <input class="form-check-input ente-adscrito-radio" type="radio" 
+                        name="ente-adscrito" value="${ente.value}" id="${id}" required>
+                  <label class="form-check-label" for="${id}">${ente.label}</label>
+              </div>
+          `;
+      });
+
+      // 1. Opciones "Otro Ente"
+      const otroEnteValue = 'OTRO_ENTE'; // Valor clave para el radio
+      const otroEnteId = 'ente-otro-ente';
       html += `
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="checkbox" name="ente-adscrito" value="${ente.value}" id="${id}">
-                    <label class="form-check-label" for="${id}">${ente.label}</label>
-                </div>
-            `;
-    });
-    container.innerHTML = html;
+          <div class="form-check form-check-inline">
+              <input class="form-check-input ente-adscrito-radio" type="radio" 
+                    name="ente-adscrito" value="${otroEnteValue}" id="${otroEnteId}" required>
+              <label class="form-check-label" for="${otroEnteId}">Otro Ente (Especifique)</label>
+          </div>
+      `;
+
+      // 2. Campo de texto para "Otro Ente" (inicialmente oculto)
+      html += `
+          <div id="otro-ente-input-group" class="mt-2" style="display: none;">
+              <label for="otro-ente-adscrito" class="form-label visually-hidden">Especifique Otro Ente</label>
+              <input type="text" class="form-control" id="otro-ente-adscrito" 
+                    placeholder="Especifique cuál es el Otro Ente Adscrito" disabled>
+          </div>
+      `;
+
+      container.innerHTML = html;
+      
+      // 3. Añadir Listener al grupo de radio buttons
+      document.querySelectorAll('.ente-adscrito-radio').forEach(radio => {
+          radio.addEventListener('change', handleEnteAdscritoChange);
+      });
   };
 
   /**
@@ -109,10 +193,25 @@ const SectionIModule = (() => {
    * @returns {Object} Un objeto con todos los campos de la Sección I.
    */
   const collect = () => {
-    // Capturar los checkboxes de ENTE ADSCRITO
-    const entesAdscritos = Array.from(
-      document.querySelectorAll('input[name="ente-adscrito"]:checked')
-    ).map((cb) => cb.value);
+    // Recolectar Tipo de Institución
+    const tipoInstitucionRadio = document.querySelector('input[name="tipo-institucion"]:checked');
+    let tipoInstitucionValue = tipoInstitucionRadio ? tipoInstitucionRadio.value : null;
+    // ❗ Lógica para "Otro Tipo" ❗
+    if (tipoInstitucionValue === 'OTRO_TIPO') {
+        const otroTipoInput = document.getElementById("otro-tipo-institucion");
+        // Guardar el valor del campo de texto
+        tipoInstitucionValue = otroTipoInput ? otroTipoInput.value.trim().toUpperCase() : 'OTRO_TIPO'; 
+    }
+
+    // Recolectar Ente Adscrito
+    const enteAdscritoRadio = document.querySelector('input[name="ente-adscrito"]:checked');
+    let enteAdscritoValue = enteAdscritoRadio ? enteAdscritoRadio.value : null;
+    // ❗ Lógica para "Otro Ente" ❗
+    if (enteAdscritoValue === 'OTRO_ENTE') {
+        const otroEnteInput = document.getElementById("otro-ente-adscrito");
+        // Guardar el valor del campo de texto en mayúsculas
+        enteAdscritoValue = otroEnteInput ? otroEnteInput.value.trim().toUpperCase() : 'OTRO_ENTE'; 
+    }
 
     const fotoFachadaInput = document.getElementById("foto-fachada");
     const fotoFachadaFile =
@@ -122,13 +221,8 @@ const SectionIModule = (() => {
       nombre: document.getElementById("nombre-institucion").value.trim(),
       parroquia: document.getElementById("parroquia").value,
       direccion: document.getElementById("direccion").value.trim(),
-      // El radio button se busca por name, lo cual es correcto.
-      tipoInstitucion: document.querySelector(
-        'input[name="tipo-institucion"]:checked'
-      )
-        ? document.querySelector('input[name="tipo-institucion"]:checked').value
-        : "",
-      enteAdscrito: entesAdscritos,
+      tipoInstitucion: tipoInstitucionValue,
+      enteAdscrito: enteAdscritoValue,
 
       // Geo-localización
       longitud: document.getElementById("longitud").value.trim(),
@@ -166,26 +260,61 @@ const SectionIModule = (() => {
     }
 
     // Radio buttons (Tipo Institución)
-    if (data.tipoInstitucion) {
-      const radioTipo = document.querySelector(
-        `input[name="tipo-institucion"][value="${data.tipoInstitucion}"]`
-      );
-      if (radioTipo) radioTipo.checked = true;
+    const tipoGuardado = data.tipoInstitucion || null;
+    const otroTipoInput = document.getElementById("otro-tipo-institucion");
+    const otroTipoGroup = document.getElementById("otro-tipo-input-group");
+    // 1. Resetear el campo "Otro Tipo"
+    if (otroTipoInput && otroTipoGroup) {
+        otroTipoInput.value = '';
+        otroTipoGroup.style.display = 'none';
+        otroTipoInput.disabled = true;
+    }
+    // 2. Buscar el radio button que coincide
+    let radioTipo = document.querySelector(`input[name="tipo-institucion"][value="${tipoGuardado}"]`);
+    // 3. Si el radio no se encuentra (significa que es un valor custom de "Otro Tipo")
+    if (!radioTipo && tipoGuardado) {
+        // Asumimos que es un valor custom de "Otro Tipo"
+        radioTipo = document.querySelector(`input[name="tipo-institucion"][value="OTRO_TIPO"]`);
+        if (radioTipo && otroTipoInput && otroTipoGroup) {
+            // Marcar el radio "Otro Tipo" y mostrar/llenar el campo de texto
+            radioTipo.checked = true;
+            otroTipoInput.value = tipoGuardado; // Cargar el valor custom
+            otroTipoGroup.style.display = 'block';
+            otroTipoInput.disabled = false;
+        }
+    } else if (radioTipo) {
+        // 4. Si el radio se encuentra (es un tipo predefinido)
+        radioTipo.checked = true;
     }
 
-    // Checkboxes (Ente Adscrito)
-    const entesGuardados = data.enteAdscrito || [];
-    // Desmarcar todos primero
-    document.querySelectorAll('input[name="ente-adscrito"]').forEach((cb) => {
-      cb.checked = false;
-    });
-    // Marcar solo los guardados
-    entesGuardados.forEach((ente) => {
-      const checkbox = document.querySelector(
-        `input[name="ente-adscrito"][value="${ente}"]`
-      );
-      if (checkbox) checkbox.checked = true;
-    });
+    // Radio buttons (Ente Adscrito)
+    const enteGuardado = data.enteAdscrito || null;
+    const otroEnteInput = document.getElementById("otro-ente-adscrito");
+    const otroEnteGroup = document.getElementById("otro-ente-input-group");
+    // 1. Resetear el campo "Otro Ente"
+    if (otroEnteInput && otroEnteGroup) {
+        otroEnteInput.value = '';
+        otroEnteGroup.style.display = 'none';
+        otroEnteInput.disabled = true;
+    }
+    // 2. Buscar el radio button que coincide
+    let radioEnte = document.querySelector(`input[name="ente-adscrito"][value="${enteGuardado}"]`);
+    // 3. Si el radio no se encuentra (significa que es un valor custom de "Otro Ente")
+    if (!radioEnte && enteGuardado) {
+        // Asumimos que es un valor custom de "Otro Ente"
+        radioEnte = document.querySelector(`input[name="ente-adscrito"][value="OTRO_ENTE"]`);
+        if (radioEnte && otroEnteInput && otroEnteGroup) {
+            // Marcar el radio "Otro Ente" y mostrar/llenar el campo de texto
+            radioEnte.checked = true;
+            otroEnteInput.value = enteGuardado; // Cargar el valor custom
+            otroEnteGroup.style.display = 'block';
+            otroEnteInput.disabled = false;
+        }
+    } else if (radioEnte) {
+        // 4. Si el radio se encuentra (es un ente predefinido)
+        radioEnte.checked = true;
+    }
+
   };
 
   // Exponer las funciones públicas

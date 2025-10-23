@@ -13,10 +13,8 @@ const REPORT_DEFINITIONS = [
 ];
 
 const ReportsModule = (() => {
-  const loginInterface = document.getElementById("login-interface");
   const reportsContent = document.getElementById("reports-content");
   const welcomeMessage = document.getElementById("welcome-message");
-  const loginForm = document.getElementById("login-form");
   const logoutBtn = document.getElementById("logout-btn");
   const reportSelect = document.getElementById("report-select");
   const parroquiaFilter = document.getElementById("parroquia-filter");
@@ -33,35 +31,16 @@ const ReportsModule = (() => {
     if (user) {
       // Usuario autenticado
       welcomeMessage.textContent = `Bienvenido, ${user}`;
-      loginInterface.classList.add("d-none");
       reportsContent.classList.remove("d-none");
     } else {
       // Usuario no autenticado
-      reportsContent.classList.add("d-none");
-      loginInterface.classList.remove("d-none");
-    }
-  };
-
-  const handleLogin = (e) => {
-    e.preventDefault();
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
-
-    if (Auth.login(username, password)) {
-      // Login exitoso: Recargar la interfaz de reportes
-      initAuthInterface();
-    } else {
-      Storage.showAlert(
-        "Usuario o contraseña incorrectos.",
-        "alert-danger",
-        "login-alert-container"
-      );
+      Auth.requireAuth();
     }
   };
 
   const handleLogout = () => {
     Auth.logout();
-    initAuthInterface(); // Volver a la interfaz de login
+    window.location.href = 'login.html'; // Redirigir al nuevo login
   };
 
   // =============================
@@ -160,7 +139,6 @@ const ReportsModule = (() => {
     renderParroquiaFilter(); // LLAMADA ESENCIAL
 
     // 3. Configurar Listeners
-    if (loginForm) loginForm.addEventListener("submit", handleLogin);
     if (logoutBtn) logoutBtn.addEventListener("click", handleLogout);
     if (generateBtn) generateBtn.addEventListener("click", generateReport);
   };

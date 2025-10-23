@@ -219,7 +219,7 @@ const DashboardModule = (() => {
   const init = () => {
     // 1. Autenticación (Punto 1)
     CURRENT_USER = Auth.getCurrentUser();
-    Auth.requireAuth("reports.html"); // Redirigir al login si no hay sesión
+    Auth.requireAuth(); // Redirigir al login si no hay sesión
 
     welcomeMessage.textContent = `Bienvenido, ${CURRENT_USER}`;
     dashboardContent.classList.remove("d-none");

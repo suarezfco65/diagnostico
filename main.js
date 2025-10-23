@@ -22,8 +22,8 @@ import SectionVIModule from "./section_VI.js";
 
 // --- LÓGICA DE RESTRICCIÓN DE ROL ---
 const checkRoleAccess = () => {
-  // 1. Forzar autenticación: si no hay sesión, redirige a reports.html (login)
-  Auth.requireAuth("reports.html");
+  // 1. Forzar autenticación: si no hay sesión, redirige a login.html (login)
+  Auth.requireAuth();
 
   // 2. Si la sesión existe, verificar el rol
   const currentRole = Auth.getCurrentRole();
@@ -38,7 +38,7 @@ const checkRoleAccess = () => {
     alert(alertMessage);
 
     Auth.logout(); // Limpiar la sesión
-    window.location.href = "reports.html"; // Redirigir de nuevo al login
+    window.location.href = "login.html"; // Redirigir de nuevo al login
 
     return false;
   }

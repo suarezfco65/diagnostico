@@ -70,14 +70,14 @@ const IndicatorModule = (() => {
       designerContent.classList.remove("d-none");
       // No hay formulario de login aquí, se requiere autenticación forzosa al inicio
     } else {
-      // Si el usuario no está logueado, redirigir a reports.html para el login
-      Auth.requireAuth("reports.html");
+      // Si el usuario no está logueado, redirigir a login.html para el login
+      Auth.requireAuth();
     }
   };
 
   const handleLogout = () => {
     Auth.logout();
-    window.location.href = "reports.html"; // Redirigir al login
+    window.location.href = "login.html"; // Redirigir al login
   };
 
   // =============================

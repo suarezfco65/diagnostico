@@ -48,7 +48,7 @@ export const TIPOS_INSTITUCION = [
   { value: "CLINICA CLANDESTINA", label: "Clínica clandestina" },
   { value: "MÓDULO BARRIO ADENTRO", label: "Módulo Barrio Adentro" },
   { value: "VETERINARIA", label: "Veterinaria" },
-  { value: "OTROS TIPOS", label: "Otros tipos" },
+  { value: "OTRO_TIPO", label: "Otro tipo (Especifique)" },
 ];
 
 // Definición de Entes Adscritos (Checkboxes)
@@ -61,7 +61,7 @@ export const ENTES_ADSCRITOS = [
   { value: "GDC", label: "GDC" },
   { value: "ALCALDIA", label: "Alcaldía" },
   { value: "SANIDAD", label: "Sanidad" },
-  { value: "OTROS ENTES", label: "Otros Entes" },
+  { value: "OTRO_ENTE", label: "Otro Ente" },
 ];
 
 /**

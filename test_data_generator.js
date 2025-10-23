@@ -53,6 +53,31 @@ function generateRandomIdNumber() {
 }
 
 /**
+ * Selecciona un Tipo de Institución al azar, excluyendo explícitamente la opción "OTRO_TIPO".
+ * Asume que TIPOS_INSTITUCION es un array de objetos {value, label}.
+ */
+function getRandomSafeTipoInstitucion() {
+    // 1. Filtrar el array para excluir el objeto con value: 'OTRO_TIPO'
+    const safeTipos = TIPOS_INSTITUCION.filter(tipo => tipo.value !== 'OTRO_TIPO');
+
+    // 2. Mapear para obtener solo los valores (strings)
+    const safeValues = safeTipos.map(tipo => tipo.value);
+    
+    // 3. Seleccionar uno al azar
+    return getRandomItem(safeValues);
+}
+
+/**
+ * Selecciona un Ente Adscrito al azar, excluyendo explícitamente el valor 'OTRO_ENTE'.
+ * Asume que ENTES_ADSCRITOS es un array de strings.
+ */
+function getRandomSafeEnteAdscrito() {
+    // Si ENTES_ADSCRITOS contiene 'OTRO_ENTE', lo filtra.
+    const safeEntes = ENTES_ADSCRITOS.filter(ente => ente.value !== 'OTRO_ENTE');
+    return getRandomItem(safeEntes);
+}
+
+/**
  * Genera un objeto de datos de diagnóstico simulado para un centro.
  * La estructura debe coincidir con el esquema JSON de tu aplicación.
  */
@@ -68,8 +93,8 @@ function generateRandomData() {
 
   // 2. Sección I: Datos de la Institución
   const randomParroquia = getRandomItem(PARROQUIAS_CARACAS);
-  const tipoInstitucion = getRandomItem(TIPOS_INSTITUCION).value;
-  const entesAdscritos = [getRandomItem(ENTES_ADSCRITOS).value];
+  const tipoInstitucion = getRandomSafeTipoInstitucion();
+  const enteAdscrito = getRandomSafeEnteAdscrito();
 
   // 3. Sección II: Autoridades (Simulación)
   const randomName = getRandomItem(NOMBRES_PERSONAS);
@@ -108,7 +133,7 @@ function generateRandomData() {
       parroquia: randomParroquia,
       direccion: `Calle Principal N° ${idNumber}`,
       tipoInstitucion: tipoInstitucion,
-      enteAdscrito: entesAdscritos,
+      enteAdscrito: enteAdscrito,
       longitud: (Math.random() * 1.5 - 67).toFixed(6), // Coord. de Caracas
       latitud: (Math.random() * 0.5 + 10).toFixed(6),
       puntoReferencia: `Frente al Banco ${idNumber}`,

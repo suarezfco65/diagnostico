@@ -64,11 +64,12 @@ const AuthModule = (() => {
 
   /**
    * Protege una página, redirigiendo al login si no hay sesión.
+   * NOTA: El valor por defecto ahora es 'login.html'
    */
-  const requireAuth = (loginPageUrl = "reports.html") => {
-    if (!getCurrentUser()) {
-      window.location.href = loginPageUrl;
-    }
+  const requireAuth = (loginPageUrl = "login.html") => { // <-- CAMBIO AQUÍ
+      if (!getCurrentUser()) {
+        window.location.href = loginPageUrl;
+      }
   };
 
   return {
