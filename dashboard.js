@@ -225,7 +225,7 @@ const DashboardModule = (() => {
     dashboardContent.classList.remove("d-none");
 
     // 2. Cargar indicadores disponibles en el Modal
-    IndicatorStorage.renderIndicatorsInModal(
+    IndicatorStorage.renderAndCheckIndicators(
       document.getElementById("available-indicators-list")
     ); // Utilidad necesaria
 
