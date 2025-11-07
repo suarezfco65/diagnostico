@@ -1,128 +1,156 @@
 // section_III.js
 
-import { SERVICIOS_MEDICOS } from "./data.js";
+import { PERSONAL_INSTITUCION } from "./data.js";
 
 const SectionIIIModule = (() => {
   /**
-   * Función interna para generar el HTML de la tabla de servicios médicos (Sección III).
+   * Función interna para crear una fila de personal en la tabla.
+   * @param {Object} personal - Objeto que representa el personal.
+   * @returns {string} HTML de la fila del personal.
    */
-  const renderServiciosMedicosForm = () => {
-    const tableBody = document.getElementById("servicios-medicos-body");
-    if (!tableBody) return;
+  const createPersonalRow = (personal) => {
+    const key = personal.key;
+    let labelHTML = personal.label;
 
-    let html = "";
+    // Si es un personal "Otro", se añade un campo de texto para especificar el nombre
+    if (personal.isOther) {
+      labelHTML = `
+            <div class="input-group input-group-sm">
+                <span class="input-group-text">${personal.label}</span>
+                <input type="text" class="form-control" id="${key}-nombre-otro" placeholder="Especifique el personal" aria-label="${key} name">
+            </div>
+        `;
+    }
 
-    SERVICIOS_MEDICOS.forEach((servicio) => {
-      const key = servicio.key;
-      let labelHTML = servicio.label;
+    return `
+        <tr data-personal-key="${key}">
+            <td>${labelHTML}</td>
+            <td><input type="number" class="form-control form-control-sm" id="${key}-requerido" min="0" placeholder="0"></td>
+            <td><input type="number" class="form-control form-control-sm" id="${key}-disponible" min="0" placeholder="0"></td>
+            <td><input type="text" class="form-control form-control-sm" id="${key}-observacion-personal" placeholder="Observaciones"></td>
+        </tr>
+    `;
+  };
 
-      // Si es un servicio "Otro", se añade un campo de texto para especificar el nombre
-      if (servicio.isOther) {
-        labelHTML = `
-                    <div class="input-group input-group-sm">
-                        <span class="input-group-text">${servicio.label}</span>
-                        <input type="text" class="form-control" id="${key}-nombre-otro" placeholder="Especifique el servicio" aria-label="${key} name">
-                    </div>
-                `;
-      }
+  /**
+   * Función interna para generar el HTML de la tabla de personal de la institución (Sección III).
+   */
+  const renderPersonalInstitucionForm = () => {
+    const container = document.getElementById("personal-institucion-container");
+    if (!container) return;
 
-      html += `
-                <tr data-service-key="${key}">
-                    <td>${labelHTML}</td>
-                    
-                    <td><input class="form-check-input" type="radio" name="${key}-estado" value="ACTIVO" id="${key}-activo"></td>
-                    
-                    <td><input class="form-check-input" type="radio" name="${key}-estado" value="ACTIVO C/PROB" id="${key}-activo-prob"></td>
-                    
-                    <td><input class="form-check-input" type="radio" name="${key}-estado" value="INACTIVO" id="${key}-inactivo"></td>
-                    
-                    <td><input class="form-check-input" type="radio" name="${key}-estado" value="NO EXISTE" id="${key}-no-existe" checked></td>
-                    
-                    <td><input type="text" class="form-control form-control-sm" id="${key}-observacion" placeholder="Día, Horario y Observaciones"></td>
-                </tr>
-            `;
-    });
+    const html = PERSONAL_INSTITUCION.map((area) => {
+      const personalRows = area.items
+        .map((item) => createPersonalRow(item))
+        .join("");
 
-    tableBody.innerHTML = html;
+      return `
+        <h4>${area.label}</h4>
+        <table>
+          <thead class="table-light">
+            <tr>
+              <th style="width: 15%;">PERFIL/ESPECIALIDAD</th>
+              <th style="width: 9%;">PERSONAL REQUERIDO</th>
+              <th style="width: 9%;">PERSONAL DISPONIBLE</th>
+              <th style="width: 29%;">OBSERVACIONES</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${personalRows}
+          </tbody>
+        </table>
+      `;
+    }).join("");
+
+    container.innerHTML = html;
   };
 
   /**
    * 1. Renderiza los elementos dinámicos de la Sección III.
    */
   const render = () => {
-    renderServiciosMedicosForm();
+    renderPersonalInstitucionForm();
   };
 
   /**
-   * 2. Recolecta todos los datos de la Sección III (Servicios Médicos).
-   * @returns {Object} Un objeto con los datos de cada servicio (estado, observación y nombre específico si es "Otro").
+   * 2. Recolecta todos los datos de la Sección III (Personal de la Institución).
+   * @returns {Object} Un objeto con los datos de cada personal (requerido, disponible, estado, observación y nombre específico si es "Otro").
    */
   const collect = () => {
-    let serviciosData = {};
+    let personalData = {};
 
-    SERVICIOS_MEDICOS.forEach((servicio) => {
-      const key = servicio.key;
+    PERSONAL_INSTITUCION.forEach((area) => {
+      personalData[area.key] = {};
+      area.items.forEach((item) => {
+        const key = item.key;
 
-      // 1. Obtener el estado seleccionado (radio button)
-      const estadoElement = document.querySelector(
-        `input[name="${key}-estado"]:checked`
-      );
-      const estado = estadoElement ? estadoElement.value : "NO EXISTE";
+        // 1. Obtener el personal requerido
+        const requerido = parseInt(
+          document.getElementById(`${key}-requerido`).value,
+          10
+        );
+        // 2. Obtener el personal disponible
+        const disponible = parseInt(
+          document.getElementById(`${key}-disponible`).value,
+          10
+        );
 
-      // 2. Obtener la observación individual
-      const observacion = document
-        .getElementById(`${key}-observacion`)
-        .value.trim();
+        // 3. Obtener la observación individual
+        const observacion = document
+          .getElementById(`${key}-observacion-personal`)
+          .value.trim();
 
-      let servicioObj = {
-        estado: estado,
-        observacion: observacion,
-        // Si es un servicio "Otro", el nombre es el que el usuario escribió
-        nombreEspec: servicio.isOther
+        // 4. Obtener el nombre específico si es "Otro"
+        const nombreEspec = item.isOther
           ? document.getElementById(`${key}-nombre-otro`).value.trim()
-          : servicio.label,
-      };
+          : item.label;
 
-      serviciosData[key] = servicioObj;
+        personalData[area.key][key] = {
+          requerido: isNaN(requerido) ? 0 : requerido,
+          disponible: isNaN(disponible) ? 0 : disponible,
+          observacion: observacion,
+          nombreEspec: nombreEspec,
+        };
+      });
     });
 
-    return serviciosData;
+    return personalData;
   };
 
   /**
    * 3. Precarga los datos de la Sección III en los campos del formulario.
-   * @param {Object} data - El sub-objeto de datos de 'serviciosMedicos' del registro JSON.
+   * @param {Object} data - El sub-objeto de datos de 'personalInstitucion' del registro JSON.
    */
   const preload = (data) => {
     if (!data) return;
+    console.log("Precargando datos de Sección III:", data);
 
-    SERVICIOS_MEDICOS.forEach((servicio) => {
-      const key = servicio.key;
-      const servicioData = data[key];
+    PERSONAL_INSTITUCION.forEach((area) => {
+      area.items.forEach((item) => {
+        const key = item.key;
+        const personalData = data[area.key][key];
 
-      if (servicioData) {
-        // 1. Llenar el estado (Radio button)
-        if (servicioData.estado) {
-          const radioElement = document.querySelector(
-            `input[name="${key}-estado"][value="${servicioData.estado}"]`
-          );
-          if (radioElement) {
-            radioElement.checked = true;
+        if (personalData) {
+          // 1. Llenar el personal requerido
+          document.getElementById(`${key}-requerido`).value =
+            personalData.requerido || 0;
+
+          // 2. Llenar el personal disponible
+          document.getElementById(`${key}-disponible`).value =
+            personalData.disponible || 0;
+
+          // 3. Llenar la observación
+          document.getElementById(`${key}-observacion-personal`).value =
+            personalData.observacion || "";
+
+          // 4. Si es un personal "Otro", llenar el nombre especificado
+          if (item.isOther) {
+            document.getElementById(`${key}-nombre-otro`).value =
+              personalData.nombreEspec || ""; // Asegurarse de que se maneje el caso donde no hay nombre
           }
         }
-
-        // 2. Llenar la observación
-        document.getElementById(`${key}-observacion`).value =
-          servicioData.observacion || "";
-
-        // 3. Si es un servicio "Otro", llenar el nombre especificado
-        if (servicio.isOther && servicioData.nombreEspec) {
-          document.getElementById(`${key}-nombre-otro`).value =
-            servicioData.nombreEspec;
-        }
-      }
+      });
     });
-    // Nota: Se eliminó la precarga de observaciones generales de esta sección.
   };
 
   // Exponer las funciones públicas

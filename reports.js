@@ -40,7 +40,7 @@ const ReportsModule = (() => {
 
   const handleLogout = () => {
     Auth.logout();
-    window.location.href = 'login.html'; // Redirigir al nuevo login
+    window.location.href = "login.html"; // Redirigir al nuevo login
   };
 
   // =============================
@@ -79,32 +79,60 @@ const ReportsModule = (() => {
   };
 
   /**
-   * Función principal para generar el reporte seleccionado.
+   * Genera el reporte seleccionado y lo muestra en la interfaz.
    */
   const generateReport = () => {
-    const selectedId = reportSelect.value;
-    if (!selectedId) {
-      reportDataOutput.innerHTML = `<div class="alert alert-warning">Debe seleccionar un tipo de reporte.</div>`;
+    const reportId = reportSelect.value;
+    const selectedParroquia = parroquiaFilter.value; // ❗ Obtener el filtro ❗
+    const reportDefinition = REPORT_DEFINITIONS.find(
+      (def) => def.id === reportId
+    );
+
+    if (!reportId || !reportDefinition) {
+      Storage.showAlert(
+        "Por favor, seleccione un indicador para generar el reporte.",
+        "alert-warning"
+      );
       return;
     }
 
-    const allInstitutions = Object.values(Storage.getStorage());
+    reportDataOutput.innerHTML = "";
+    document.getElementById("report-title-output").textContent =
+      reportDefinition.label;
 
-    // El resto de la implementación de reportes requeriría mucha lógica de procesamiento
-    // La implementación real deberá usar 'allInstitutions' para filtrar y contar.
+    let allInstitutions = Storage.getStorage() || [];
 
-    // Ejemplo de generación simple:
-    const reportTitle = REPORT_DEFINITIONS.find(
-      (r) => r.id === selectedId
-    ).label;
-    document.getElementById("report-title-output").textContent = reportTitle;
+    // =========================================================
+    // ❗ LÓGICA DE FILTRADO POR PARROQUIA (IMPLEMENTADA) ❗
+    // =========================================================
+    if (selectedParroquia !== "TODAS") {
+      allInstitutions = allInstitutions.filter(
+        (data) => data.datosInstitucion.parroquia === selectedParroquia
+      );
+      Storage.showAlert(
+        `Filtro aplicado: **${selectedParroquia}**. Total de centros después de filtrar: ${allInstitutions.length}`,
+        "alert-info"
+      );
+    } else {
+      Storage.showAlert(
+        `Reporte generado para **Todas las Parroquias**. Total de centros: ${allInstitutions.length}`,
+        "alert-info"
+      );
+    }
 
+    // Si no hay datos después del filtro
     if (allInstitutions.length === 0) {
-      reportDataOutput.innerHTML = `<div class="alert alert-info">No hay instituciones registradas para generar el reporte.</div>`;
+      reportDataOutput.innerHTML = `
+        <div class="alert alert-danger" role="alert">
+            No se encontraron centros registrados que cumplan con los criterios de filtro.
+        </div>
+      `;
       return;
     }
 
-    // --- Lógica de Reporte de Ejemplo (Instituciones Totales) ---
+    // -----------------------------------------------------------
+    // Lógica de Reporte de Ejemplo (Instituciones Totales)
+    // -----------------------------------------------------------
     let htmlTable = `
             <p>Total de instituciones registradas: <strong>${allInstitutions.length}</strong></p>
             <table class="table table-striped">
@@ -125,7 +153,6 @@ const ReportsModule = (() => {
     reportDataOutput.innerHTML = htmlTable;
     // -----------------------------------------------------------
   };
-
   // =============================
   // INICIALIZACIÓN
   // =============================

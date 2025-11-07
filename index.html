@@ -38,7 +38,7 @@
         </div>
         
         <div class="input-group mb-3">
-            <input type="text" class="form-control" id="rif-input" placeholder="Ingrese el RIF (J-XXXXXXXXX) o la Cédula (V-XXXXXXXXX)" aria-label="ID" required>
+            <input type="text" class="form-control" id="identificador" placeholder="Ingrese el RIF (J-XXXXXXXXX) o la Cédula (V-XXXXXXXXX)" aria-label="ID" required>
             <button class="btn btn-primary" type="button" id="search-btn">Buscar / Cargar</button>
             <button class="btn btn-secondary" type="button" id="new-record-btn" title="Limpiar campos y preparar nuevo registro">Nuevo Registro</button>
         </div>
@@ -49,10 +49,11 @@
         <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item" role="presentation"><button class="nav-link active" id="datos-tab" data-bs-toggle="tab" data-bs-target="#datos" type="button" role="tab">I. Institución</button></li>
             <li class="nav-item" role="presentation"><button class="nav-link" id="autoridades-tab" data-bs-toggle="tab" data-bs-target="#autoridades" type="button" role="tab">II. Autoridades</button></li>
-            <li class="nav-item" role="presentation"><button class="nav-link" id="servicios-tab" data-bs-toggle="tab" data-bs-target="#servicios" type="button" role="tab">III. Servicios Médicos</button></li>
-            <li class="nav-item" role="presentation"><button class="nav-link" id="otros-servicios-tab" data-bs-toggle="tab" data-bs-target="#otros-servicios" type="button" role="tab">IV. Otros Servicios</button></li>
-            <li class="nav-item" role="presentation"><button class="nav-link" id="infraestructura-tab" data-bs-toggle="tab" data-bs-target="#infraestructura" type="button" role="tab">V. Infraestructura</button></li>
-            <li class="nav-item" role="presentation"><button class="nav-link" id="proyectos-tab" data-bs-toggle="tab" data-bs-target="#proyectos" type="button" role="tab">VI. Proyectos</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="personal-tab" data-bs-toggle="tab" data-bs-target="#personal" type="button" role="tab">III. Personal de la Institución</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="servicios-tab" data-bs-toggle="tab" data-bs-target="#servicios" type="button" role="tab">IV. Servicios Médicos</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="otros-servicios-tab" data-bs-toggle="tab" data-bs-target="#otros-servicios" type="button" role="tab">V. Otros Servicios</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="infraestructura-tab" data-bs-toggle="tab" data-bs-target="#infraestructura" type="button" role="tab">VI. Infraestructura</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="proyectos-tab" data-bs-toggle="tab" data-bs-target="#proyectos" type="button" role="tab">VII. Proyectos</button></li>
         </ul>
 
         <div class="tab-content border border-top-0 p-4" id="myTabContent">
@@ -113,8 +114,14 @@
                 </div>
             </div>
 
+            <div class="tab-pane fade form-section" id="personal" role="tabpanel">
+                <h4>III. Personal de la Institución</h4>
+                <div id="personal-institucion-container"></div>
+            </div>
+
+
             <div class="tab-pane fade form-section" id="servicios" role="tabpanel">
-                <h4>III. Servicios de Especialidades Médicas Prestados</h4>
+                <h4>IV. Servicios de Especialidades Médicas Prestados</h4>
                 <div class="table-responsive mb-4">
                     <table class="table table-sm table-bordered align-middle">
                         <thead class="table-light">
@@ -133,8 +140,9 @@
                 </div>
             </div>
 
+
             <div class="tab-pane fade form-section" id="otros-servicios" role="tabpanel">
-                <h4>IV. Otros Servicios Prestados</h4>
+                <h4>V. Otros Servicios Prestados</h4>
                 <div id="otros-servicios-container"></div>
 
                 <div class="mb-3">
@@ -152,6 +160,7 @@
                         <thead class="table-light">
                             <tr>
                                 <th style="width: 20%;">Área</th>
+                                <th>Cantidad / Operativos</th>
                                 <th>Paredes</th>
                                 <th>Pisos</th>
                                 <th>Techos</th>
@@ -213,6 +222,7 @@
 <script src="section_IV.js" type="module"></script>
 <script src="section_V.js" type="module"></script>
 <script src="section_VI.js" type="module"></script>
+<script src="section_VII.js" type="module"></script>
 <script src="main.js" type="module"></script>
 <script type="module" src="header.js"></script>
 </body>

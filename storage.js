@@ -3,6 +3,7 @@
 const STORAGE_KEY = "siscomres_diagnostico_data";
 
 /**
+ * ❗ FUNCIÓN CORREGIDA ❗
  * Muestra una alerta temporal en la interfaz.
  * @param {string} message - Mensaje a mostrar.
  * @param {string} type - Clase de Bootstrap para el tipo de alerta (ej: 'alert-danger').
@@ -37,39 +38,54 @@ export const showAlert = (
   container.appendChild(alertElement);
 
   // Configurar la alerta para que desaparezca automáticamente después de 4 segundos
-  // NOTA: Requiere que tengas el script de Bootstrap 5.3 cargado.
   setTimeout(() => {
     // Se puede usar la clase 'alert' de Bootstrap para cerrarla con animación
-    if (alertElement.classList.contains("show")) {
+    if (window.bootstrap && alertElement.classList.contains("show")) {
       const bsAlert = new bootstrap.Alert(alertElement);
       bsAlert.close();
+    } else if (alertElement.parentNode) {
+      // Fallback si Bootstrap no está disponible o no se puede cerrar
+      alertElement.parentNode.removeChild(alertElement);
     }
   }, 4000);
 };
 
 /**
  * Obtiene todos los datos del localStorage.
- * @returns {Object} Datos del diagnóstico.
+ * @returns {Array|Object} Datos del diagnóstico.
  */
-export const getStorage = () => {
+export const getStorage = (key = STORAGE_KEY) => {
   try {
-    const storedData = localStorage.getItem(STORAGE_KEY);
-    // Si no hay datos, retorna un objeto vacío
-    return storedData ? JSON.parse(storedData) : {};
+    const storedData = localStorage.getItem(key);
+    // Retorna un Array vacío si no hay datos, o los datos parseados
+    return storedData ? JSON.parse(storedData) : [];
   } catch (e) {
     console.error("Error leyendo localStorage:", e);
-    return {};
+    return [];
   }
 };
 
 /**
  * Guarda todos los datos en el localStorage.
  * @param {Object} data - Objeto JSON con todos los registros.
+ * @param {string} key - La clave de almacenamiento.
  */
-export const saveStorage = (data) => {
+export const saveStorage = (data, key = STORAGE_KEY) => {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    localStorage.setItem(key, JSON.stringify(data));
   } catch (e) {
-    console.error("Error escribiendo localStorage:", e);
+    console.error("Error guardando en localStorage:", e);
+  }
+};
+
+/**
+ * Elimina una clave específica del localStorage.
+ * @param {string} key - La clave a eliminar (ej: 'siscomres_diagnostico_data').
+ */
+export const deleteStorage = (key) => {
+  try {
+    localStorage.removeItem(key);
+  } catch (e) {
+    console.error(`Error eliminando la clave ${key} de localStorage:`, e);
   }
 };

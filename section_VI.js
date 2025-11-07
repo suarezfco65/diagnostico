@@ -1,118 +1,127 @@
 // section_VI.js
 
-import { PROYECTOS_DATA, MAX_PROYECTOS } from "./data.js";
+import { CONDICIONES_INFRAESTRUCTURA, SERVICIOS_PUBLICOS } from "./data.js";
 
 const SectionVIModule = (() => {
+  // Componentes a evaluar en las Condiciones de Infraestructura
+  const COMPONENTES = ["paredes", "pisos", "techos", "aa"];
+  // Opciones fijas para las condiciones
+  const CONDICIONES_OPTIONS = ["BUENAS COND", "REGULAR COND", "MALAS COND"];
+
   /**
    * =================================================================
-   * FUNCIONES INTERNAS DE MANIPULACIÓN DEL DOM
+   * FUNCIONES DE RENDERIZADO INTERNAS (Sección V)
    * =================================================================
    */
 
   /**
-   * Agrega un campo de entrada de proyecto a un contenedor específico.
-   * @param {string} key - Clave de la categoría de proyecto.
-   * @param {string} initialValue - Valor inicial para precarga (opcional).
-   * @param {boolean} isInitial - Indica si es la primera entrada (para forzar al menos una).
+   * Función para generar la tabla de Condiciones de Infraestructura.
    */
-  const _addProyectoInput = (key, initialValue = "", isInitial = false) => {
-    const container = document.getElementById(`${key}-inputs-container`);
-    if (!container) return;
-
-    const currentCount = container.children.length;
-    if (!isInitial && currentCount >= MAX_PROYECTOS) {
-      // Se puede agregar una alerta aquí si se requiere feedback al usuario.
-      return;
-    }
-
-    const index = currentCount + 1;
-    const inputId = `${key}-proyecto-${index}`;
-    const categoria = PROYECTOS_DATA.find((c) => c.key === key);
-    if (!categoria) return;
-
-    const placeholder = categoria.placeholder;
-
-    const newDiv = document.createElement("div");
-    newDiv.className = "input-group input-group-sm mb-2";
-    newDiv.innerHTML = `
-            <span class="input-group-text text-bg-secondary" style="width: 50px;">#${index}</span>
-            <input type="text" class="form-control" id="${inputId}" name="${key}" placeholder="${placeholder}" value="${initialValue}" aria-label="Proyecto ${index}">
-        `;
-
-    container.appendChild(newDiv);
-  };
-
-  /**
-   * Elimina el último campo de entrada de proyecto de un contenedor específico.
-   * @param {string} key - Clave de la categoría de proyecto.
-   */
-  const _removeProyectoInput = (key) => {
-    const container = document.getElementById(`${key}-inputs-container`);
-    if (!container) return;
-
-    // Mantener al menos un campo visible si es el único con contenido o si ya está vacío.
-    if (container.children.length > 1) {
-      container.removeChild(container.lastChild);
-    } else if (
-      container.children.length === 1 &&
-      container.lastChild.querySelector("input").value.trim() !== ""
-    ) {
-      // Si solo queda uno y tiene texto, lo elimina y añade uno nuevo vacío.
-      container.removeChild(container.lastChild);
-      _addProyectoInput(key, "", true);
-    }
-    // Si solo queda un campo vacío, no se hace nada para asegurar la estructura inicial.
-  };
-
-  /**
-   * Función interna para renderizar la sección de Proyectos y configurar listeners.
-   */
-  const renderProyectosForm = () => {
-    const container = document.getElementById("proyectos-container");
-    if (!container) return;
+  const renderCondicionesInfraestructuraForm = () => {
+    const tableBody = document.getElementById(
+      "condiciones-infraestructura-body"
+    );
+    if (!tableBody) return;
 
     let html = "";
 
-    PROYECTOS_DATA.forEach((categoria) => {
-      const key = categoria.key;
+    CONDICIONES_INFRAESTRUCTURA.forEach((area) => {
+      const key = area.key;
+      let labelHTML = area.label;
 
-      html += `
-                <div class="mb-4 p-3 border rounded" data-category-key="${key}">
-                    <h5 class="fw-bold text-primary">${categoria.label} (Máx ${MAX_PROYECTOS})</h5>
-                    
-                    <div id="${key}-inputs-container">
+      if (area.isOther) {
+        // Campo de texto para especificar el nombre del área "Otro"
+        labelHTML = `
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text">${area.label}</span>
+                        <input type="text" class="form-control" id="${key}-nombre-especifico" placeholder="Especifique el área" aria-label="${key} name">
+                    </div>
+                `;
+      }
+
+      // Inicio de la fila para el área
+      html += `<tr data-area-key="${key}"><td>${labelHTML}</td>`;
+      html += `<td><input type="number" min="0" class="form-control form-control-sm mb-2" id="${key}-cantidad" placeholder="Cantidad"><input type="number" min="0" class="form-control form-control-sm" id="${key}-operativos" placeholder="Operativos"></td>`;
+
+      // Campos de radio para cada componente (Paredes, Pisos, Techos, A/A)
+      COMPONENTES.forEach((componente) => {
+        html += "<td>";
+        CONDICIONES_OPTIONS.forEach((condicion) => {
+          const inputId = `${key}-${componente}-${condicion
+            .replace(/\s/g, "")
+            .toLowerCase()}`;
+          const inputName = `${key}-${componente}`;
+
+          html += `
+                        <div class="form-check form-check-inline me-1">
+                            <input class="form-check-input" type="radio" name="${inputName}" id="${inputId}" value="${condicion}">
+                            <label class="form-check-label" for="${inputId}">${
+            condicion.split(" ")[0]
+          }</label>
                         </div>
-                    
-                    <button type="button" class="btn btn-sm btn-outline-success mt-2 add-proyecto-btn" data-key="${key}">
-                        + Agregar Proyecto
-                    </button>
-                    <button type="button" class="btn btn-sm btn-outline-danger mt-2 remove-proyecto-btn" data-key="${key}">
-                        - Eliminar Último
-                    </button>
-                </div>
-            `;
+                    `;
+        });
+        html += "</td>";
+      });
+
+      html += "</tr>";
     });
 
-    container.innerHTML = html;
+    tableBody.innerHTML = html;
+  };
 
-    // Configurar Listeners y generar input inicial
-    PROYECTOS_DATA.forEach((categoria) => {
-      const key = categoria.key;
-      _addProyectoInput(key, "", true); // Genera 1 campo por defecto
+  /**
+   * Función para generar la tabla de Servicios Públicos.
+   */
+  const renderServiciosPublicosForm = () => {
+    const tableBody = document.getElementById("servicios-publicos-body");
+    if (!tableBody) return;
 
-      // 1. Configurar Listeners para el botón AGREGAR
-      document
-        .querySelectorAll(`.add-proyecto-btn[data-key="${key}"]`)
-        .forEach((button) => {
-          button.addEventListener("click", () => _addProyectoInput(key));
-        });
-      // 2. Configurar Listeners para el botón ELIMINAR
-      document
-        .querySelectorAll(`.remove-proyecto-btn[data-key="${key}"]`)
-        .forEach((button) => {
-          button.addEventListener("click", () => _removeProyectoInput(key));
-        });
+    let html = "";
+
+    SERVICIOS_PUBLICOS.forEach((servicio) => {
+      const key = servicio.key;
+      let labelHTML = servicio.label;
+
+      if (servicio.isOther) {
+        // Campo de texto para especificar el nombre del servicio "Otro"
+        labelHTML = `
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text">${servicio.label}</span>
+                        <input type="text" class="form-control" id="${key}-nombre-especifico" placeholder="Especifique el servicio" aria-label="${key} name">
+                    </div>
+                `;
+      }
+
+      html += `<tr data-service-key="${key}"><td>${labelHTML}</td>`;
+
+      // Columna de Disponibilidad (Radio Buttons)
+      html += '<td><div class="d-flex flex-wrap">';
+      servicio.options.forEach((opt) => {
+        const inputId = `${key}-${opt.value.replace(/\s/g, "").toLowerCase()}`;
+        const inputName = `${key}-estado`;
+        // Marcar "SIN SERVICIO" como checked por defecto si existe, excepto para Planta Eléctrica que usa "NO EXISTE"
+        const defaultChecked =
+          opt.value === "SIN SERVICIO" || opt.value === "NO EXISTE"
+            ? "checked"
+            : "";
+
+        html += `
+                    <div class="form-check form-check-inline me-3">
+                        <input class="form-check-input" type="radio" name="${inputName}" id="${inputId}" value="${opt.value}" ${defaultChecked}>
+                        <label class="form-check-label" for="${inputId}">${opt.value}</label>
+                    </div>
+                `;
+      });
+      html += "</div></td>";
+
+      // Columna de Observación
+      html += `<td><input type="text" class="form-control form-control-sm" id="${key}-observacion" placeholder="Observaciones"></td>`;
+
+      html += "</tr>";
     });
+
+    tableBody.innerHTML = html;
   };
 
   /**
@@ -125,68 +134,179 @@ const SectionVIModule = (() => {
    * 1. Renderiza los elementos dinámicos de la Sección VI.
    */
   const render = () => {
-    renderProyectosForm();
+    renderCondicionesInfraestructuraForm();
+    renderServiciosPublicosForm();
   };
 
   /**
-   * 2. Recolecta todos los datos de la Sección VI (Proyectos) y VII (Observaciones).
-   * @returns {Object} Objeto con los arrays de proyectos por categoría y las observaciones generales.
+   * Recolecta datos de Condiciones de Infraestructura (A).
+   */
+  const collectCondicionesInfraestructuraData = () => {
+    let data = {};
+
+    CONDICIONES_INFRAESTRUCTURA.forEach((area) => {
+      const key = area.key;
+      let areaData = {};
+
+      COMPONENTES.forEach((componente) => {
+        const selected = document.querySelector(
+          `input[name="${key}-${componente}"]:checked`
+        );
+        areaData[componente] = selected ? selected.value : null;
+      });
+
+      // Recolectar cantidad y operativos
+      areaData.cantidad = document
+        .getElementById(`${key}-cantidad`)
+        .value.trim();
+      areaData.operativos = document
+        .getElementById(`${key}-operativos`)
+        .value.trim();
+
+      if (area.isOther) {
+        areaData.nombreEspec = document
+          .getElementById(`${key}-nombre-especifico`)
+          .value.trim();
+      }
+      data[key] = areaData;
+    });
+    return data;
+  };
+
+  /**
+   * Recolecta datos de Servicios Públicos (B).
+   */
+  const collectServiciosPublicosData = () => {
+    let data = {};
+
+    SERVICIOS_PUBLICOS.forEach((servicio) => {
+      const key = servicio.key;
+      // Se asume "SIN SERVICIO" o "NO EXISTE" si no se selecciona nada
+      const estadoElement = document.querySelector(
+        `input[name="${key}-estado"]:checked`
+      );
+      const estado = estadoElement
+        ? estadoElement.value
+        : key === "plantaElectrica"
+        ? "NO EXISTE"
+        : "SIN SERVICIO";
+      const observacion = document
+        .getElementById(`${key}-observacion`)
+        .value.trim();
+
+      let servicioData = { estado: estado, observacion: observacion };
+
+      if (servicio.isOther) {
+        servicioData.nombreEspec = document
+          .getElementById(`${key}-nombre-especifico`)
+          .value.trim();
+      }
+      data[key] = servicioData;
+    });
+    return data;
+  };
+
+  /**
+   * 2. Recolecta todos los datos de la Sección V.
+   * @returns {Object} Objeto con condiciones, servicios públicos y observaciones.
    */
   const collect = () => {
-    let proyectosData = {};
-
-    PROYECTOS_DATA.forEach((categoria) => {
-      const key = categoria.key;
-      // Recolectar todos los inputs de la categoría y mapear sus valores, filtrando los vacíos.
-      const inputs = document.querySelectorAll(
-        `#${key}-inputs-container input[name="${key}"]`
-      );
-      const proyectos = Array.from(inputs)
-        .map((input) => input.value.trim())
-        .filter((value) => value.length > 0);
-
-      proyectosData[key] = proyectos;
-    });
-
-    // Incluir la Sección VII: Observaciones Generales
-    proyectosData.observacionesGenerales = document
-      .getElementById("observaciones-generales")
-      .value.trim();
-
-    return proyectosData;
+    return {
+      condiciones: collectCondicionesInfraestructuraData(),
+      serviciosPublicos: collectServiciosPublicosData(),
+      observaciones: document
+        .getElementById("observaciones-infraestructura")
+        .value.trim(),
+    };
   };
 
   /**
-   * 3. Precarga los datos de la Sección VI y VII en los campos del formulario.
-   * @param {Object} data - El sub-objeto de datos de 'proyectos' del registro JSON.
+   * Precarga datos de Condiciones de Infraestructura.
+   */
+  const preloadCondicionesInfraestructuraData = (savedData) => {
+    if (!savedData) return;
+
+    CONDICIONES_INFRAESTRUCTURA.forEach((area) => {
+      const key = area.key;
+      const areaData = savedData[key];
+
+      if (areaData) {
+        COMPONENTES.forEach((componente) => {
+          const savedValue = areaData[componente];
+          if (savedValue) {
+            const inputId = `${key}-${componente}-${savedValue
+              .replace(/\s/g, "")
+              .toLowerCase()}`;
+            const radioElement = document.getElementById(inputId);
+            if (radioElement) {
+              radioElement.checked = true;
+            }
+          }
+        });
+
+        // Precargar cantidad y operativos
+        if (areaData.cantidad !== undefined) {
+          document.getElementById(`${key}-cantidad`).value =
+            areaData.cantidad || "";
+        }
+        if (areaData.operativos !== undefined) {
+          document.getElementById(`${key}-operativos`).value =
+            areaData.operativos || "";
+        }
+
+        if (area.isOther && areaData.nombreEspec) {
+          document.getElementById(`${key}-nombre-especifico`).value =
+            areaData.nombreEspec;
+        }
+      }
+    });
+  };
+
+  /**
+   * Precarga datos de Servicios Públicos.
+   */
+  const preloadServiciosPublicosData = (savedData) => {
+    if (!savedData) return;
+
+    SERVICIOS_PUBLICOS.forEach((servicio) => {
+      const key = servicio.key;
+      const servicioData = savedData[key];
+
+      if (servicioData) {
+        // Llenar el estado (Radio button)
+        if (servicioData.estado) {
+          const inputId = `${key}-${servicioData.estado
+            .replace(/\s/g, "")
+            .toLowerCase()}`;
+          const radioElement = document.getElementById(inputId);
+          if (radioElement) {
+            radioElement.checked = true;
+          }
+        }
+
+        // Llenar la observación
+        document.getElementById(`${key}-observacion`).value =
+          servicioData.observacion || "";
+
+        if (servicio.isOther && servicioData.nombreEspec) {
+          document.getElementById(`${key}-nombre-especifico`).value =
+            servicioData.nombreEspec;
+        }
+      }
+    });
+  };
+
+  /**
+   * 3. Precarga los datos de la Sección V en los campos del formulario.
+   * @param {Object} data - El sub-objeto de datos de 'infraestructura' del registro JSON.
    */
   const preload = (data) => {
     if (!data) return;
 
-    PROYECTOS_DATA.forEach((categoria) => {
-      const key = categoria.key;
-      const proyectosGuardados = data[key] || [];
-      const container = document.getElementById(`${key}-inputs-container`);
-
-      if (container) {
-        // 1. Limpiar todos los inputs existentes
-        container.innerHTML = "";
-
-        // 2. Si hay datos guardados, crear los inputs y llenarlos
-        if (proyectosGuardados.length > 0) {
-          proyectosGuardados.forEach((proyecto) => {
-            _addProyectoInput(key, proyecto);
-          });
-        } else {
-          // 3. Si no hay datos, asegurar que quede 1 campo vacío
-          _addProyectoInput(key, "", true);
-        }
-      }
-    });
-
-    // Precargar la Sección VII: Observaciones Generales
-    document.getElementById("observaciones-generales").value =
-      data.observacionesGenerales || "";
+    preloadCondicionesInfraestructuraData(data.condiciones);
+    preloadServiciosPublicosData(data.serviciosPublicos);
+    document.getElementById("observaciones-infraestructura").value =
+      data.observaciones || "";
   };
 
   // Exponer las funciones públicas

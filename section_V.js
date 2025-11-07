@@ -1,13 +1,8 @@
 // section_V.js
 
-import { CONDICIONES_INFRAESTRUCTURA, SERVICIOS_PUBLICOS } from "./data.js";
+import { OTROS_SERVICIOS_DATA } from "./data.js";
 
 const SectionVModule = (() => {
-  // Componentes a evaluar en las Condiciones de Infraestructura
-  const COMPONENTES = ["paredes", "pisos", "techos", "aa"];
-  // Opciones fijas para las condiciones
-  const CONDICIONES_OPTIONS = ["BUENAS COND", "REGULAR COND", "MALAS COND"];
-
   /**
    * =================================================================
    * FUNCIONES DE RENDERIZADO INTERNAS (Sección V)
@@ -15,112 +10,104 @@ const SectionVModule = (() => {
    */
 
   /**
-   * Función para generar la tabla de Condiciones de Infraestructura.
+   * Genera el HTML para tablas que usan Radio Buttons (Imagenología y Medicinas).
    */
-  const renderCondicionesInfraestructuraForm = () => {
-    const tableBody = document.getElementById(
-      "condiciones-infraestructura-body"
-    );
-    if (!tableBody) return;
+  const createRadioTableHTML = (groupKey, items, title = "") => {
+    let html = title ? `<h5 class="mt-3">${title}</h5>` : "";
+    html += `
+            <div class="table-responsive mb-4">
+                <table class="table table-sm table-bordered align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 25%;">Servicio</th>
+                            <th>Activo</th>
+                            <th>Activo c/Prob</th>
+                            <th>Inactivo</th>
+                            <th>No Existe</th>
+                            <th>Observación</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
 
-    let html = "";
+    items.forEach((item) => {
+      // Clave única para el grupo de radio buttons y elementos del formulario
+      const key = `${groupKey}-${item.key}`;
+      let labelHTML = item.label;
 
-    CONDICIONES_INFRAESTRUCTURA.forEach((area) => {
-      const key = area.key;
-      let labelHTML = area.label;
-
-      if (area.isOther) {
-        // Campo de texto para especificar el nombre del área "Otro"
-        labelHTML = `
-                    <div class="input-group input-group-sm">
-                        <span class="input-group-text">${area.label}</span>
-                        <input type="text" class="form-control" id="${key}-nombre-especifico" placeholder="Especifique el área" aria-label="${key} name">
-                    </div>
-                `;
-      }
-
-      // Inicio de la fila para el área
-      html += `<tr data-area-key="${key}"><td>${labelHTML}</td>`;
-
-      // Campos de radio para cada componente (Paredes, Pisos, Techos, A/A)
-      COMPONENTES.forEach((componente) => {
-        html += "<td>";
-        CONDICIONES_OPTIONS.forEach((condicion) => {
-          const inputId = `${key}-${componente}-${condicion
-            .replace(/\s/g, "")
-            .toLowerCase()}`;
-          const inputName = `${key}-${componente}`;
-
-          html += `
-                        <div class="form-check form-check-inline me-1">
-                            <input class="form-check-input" type="radio" name="${inputName}" id="${inputId}" value="${condicion}">
-                            <label class="form-check-label" for="${inputId}">${
-            condicion.split(" ")[0]
-          }</label>
-                        </div>
-                    `;
-        });
-        html += "</td>";
-      });
-
-      html += "</tr>";
-    });
-
-    tableBody.innerHTML = html;
-  };
-
-  /**
-   * Función para generar la tabla de Servicios Públicos.
-   */
-  const renderServiciosPublicosForm = () => {
-    const tableBody = document.getElementById("servicios-publicos-body");
-    if (!tableBody) return;
-
-    let html = "";
-
-    SERVICIOS_PUBLICOS.forEach((servicio) => {
-      const key = servicio.key;
-      let labelHTML = servicio.label;
-
-      if (servicio.isOther) {
+      if (item.isOther) {
         // Campo de texto para especificar el nombre del servicio "Otro"
         labelHTML = `
                     <div class="input-group input-group-sm">
-                        <span class="input-group-text">${servicio.label}</span>
+                        <span class="input-group-text">${item.label}</span>
                         <input type="text" class="form-control" id="${key}-nombre-especifico" placeholder="Especifique el servicio" aria-label="${key} name">
                     </div>
                 `;
       }
 
-      html += `<tr data-service-key="${key}"><td>${labelHTML}</td>`;
-
-      // Columna de Disponibilidad (Radio Buttons)
-      html += '<td><div class="d-flex flex-wrap">';
-      servicio.options.forEach((opt) => {
-        const inputId = `${key}-${opt.value.replace(/\s/g, "").toLowerCase()}`;
-        const inputName = `${key}-estado`;
-        // Marcar "SIN SERVICIO" como checked por defecto si existe, excepto para Planta Eléctrica que usa "NO EXISTE"
-        const defaultChecked =
-          opt.value === "SIN SERVICIO" || opt.value === "NO EXISTE"
-            ? "checked"
-            : "";
-
-        html += `
-                    <div class="form-check form-check-inline me-3">
-                        <input class="form-check-input" type="radio" name="${inputName}" id="${inputId}" value="${opt.value}" ${defaultChecked}>
-                        <label class="form-check-label" for="${inputId}">${opt.value}</label>
-                    </div>
-                `;
-      });
-      html += "</div></td>";
-
-      // Columna de Observación
-      html += `<td><input type="text" class="form-control form-control-sm" id="${key}-observacion" placeholder="Observaciones"></td>`;
-
-      html += "</tr>";
+      html += `
+                <tr data-service-key="${key}">
+                    <td>${labelHTML}</td>
+                    
+                    <td><input class="form-check-input" type="radio" name="${key}-estado" value="ACTIVO" id="${key}-activo"></td>
+                    <td><input class="form-check-input" type="radio" name="${key}-estado" value="ACTIVO C/PROB" id="${key}-activo-prob"></td>
+                    <td><input class="form-check-input" type="radio" name="${key}-estado" value="INACTIVO" id="${key}-inactivo"></td>
+                    <td><input class="form-check-input" type="radio" name="${key}-estado" value="NO EXISTE" id="${key}-no-existe" checked></td>
+                    
+                    <td><input type="text" class="form-control form-control-sm" id="${key}-observacion" placeholder="Observaciones"></td>
+                </tr>
+            `;
     });
 
-    tableBody.innerHTML = html;
+    html += `
+                    </tbody>
+                </table>
+            </div>
+        `;
+    return html;
+  };
+
+  /**
+   * Genera el HTML para grupos de Checkboxes (Laboratorio).
+   */
+  const createCheckboxGroupHTML = (groupKey, groupLabel, items) => {
+    let html = `
+            <div class="mb-4 p-3 border rounded">
+                <h5 class="fw-bold text-primary">${groupLabel}</h5>
+                <div class="row">
+        `;
+
+    items.forEach((item) => {
+      const key = `${groupKey}-${item.key}`;
+      let labelHTML = item.label;
+
+      if (item.isOther) {
+        // Campo de texto para especificar el nombre del estudio "Otro"
+        labelHTML = `
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text">${item.label}</span>
+                        <input type="text" class="form-control" id="${key}-nombre-especifico" placeholder="Especifique el estudio" aria-label="${key} name">
+                    </div>
+                `;
+      }
+
+      html += `
+                <div class="col-md-4 mb-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="${groupKey}-servicios" value="${item.key}" id="${key}-check">
+                        <label class="form-check-label" for="${key}-check">
+                            ${labelHTML}
+                        </label>
+                    </div>
+                </div>
+            `;
+    });
+
+    html += `
+                </div>
+            </div>
+        `;
+    return html;
   };
 
   /**
@@ -133,160 +120,196 @@ const SectionVModule = (() => {
    * 1. Renderiza los elementos dinámicos de la Sección V.
    */
   const render = () => {
-    renderCondicionesInfraestructuraForm();
-    renderServiciosPublicosForm();
+    const container = document.getElementById("otros-servicios-container");
+    if (!container) return;
+
+    let finalHtml = "<h4>A. IMAGENOLOGÍA</h4>";
+    finalHtml += createRadioTableHTML(
+      "imagenologia",
+      OTROS_SERVICIOS_DATA.imagenologia
+    );
+
+    finalHtml += "<h4>B. LABORATORIO</h4>";
+    OTROS_SERVICIOS_DATA.laboratorio.forEach((group) => {
+      finalHtml += createCheckboxGroupHTML(
+        group.key,
+        group.groupLabel,
+        group.items
+      );
+    });
+
+    finalHtml += "<h4>C. FARMACIA</h4>";
+    OTROS_SERVICIOS_DATA.farmacia.forEach((group) => {
+      finalHtml += createCheckboxGroupHTML(
+        group.key,
+        group.groupLabel,
+        group.items
+      );
+    });
+
+    finalHtml += "<h4>D. COCINA</h4>";
+    finalHtml += createRadioTableHTML("cocina", OTROS_SERVICIOS_DATA.cocina);
+
+    container.innerHTML = finalHtml;
   };
 
   /**
-   * Recolecta datos de Condiciones de Infraestructura (A).
+   * Recolecta datos de tablas con Radio Buttons (Imagenología y Medicinas).
    */
-  const collectCondicionesInfraestructuraData = () => {
+  const collectRadioTableData = (groupKey, items) => {
     let data = {};
+    items.forEach((item) => {
+      const key = `${groupKey}-${item.key}`;
+      const estadoElement = document.querySelector(
+        `input[name="${key}-estado"]:checked`
+      );
+      const estado = estadoElement ? estadoElement.value : "NO EXISTE";
+      const observacion = document
+        .getElementById(`${key}-observacion`)
+        .value.trim();
 
-    CONDICIONES_INFRAESTRUCTURA.forEach((area) => {
-      const key = area.key;
-      let areaData = {};
+      let itemData = { estado: estado, observacion: observacion };
 
-      COMPONENTES.forEach((componente) => {
-        const selected = document.querySelector(
-          `input[name="${key}-${componente}"]:checked`
-        );
-        areaData[componente] = selected ? selected.value : null;
-      });
-
-      if (area.isOther) {
-        areaData.nombreEspec = document
+      if (item.isOther) {
+        itemData.nombreEspec = document
           .getElementById(`${key}-nombre-especifico`)
           .value.trim();
       }
-      data[key] = areaData;
+      data[item.key] = itemData;
     });
     return data;
   };
 
   /**
-   * Recolecta datos de Servicios Públicos (B).
+   * Recolecta Chk data (Checkboxes).
    */
-  const collectServiciosPublicosData = () => {
+  const collectChkData = (groups) => {
     let data = {};
+    groups.forEach((group) => {
+      data[group.key] = {};
 
-    SERVICIOS_PUBLICOS.forEach((servicio) => {
-      const key = servicio.key;
-      // Se asume "SIN SERVICIO" o "NO EXISTE" si no se selecciona nada
-      const estadoElement = document.querySelector(
-        `input[name="${key}-estado"]:checked`
-      );
-      const estado = estadoElement
-        ? estadoElement.value
-        : key === "plantaElectrica"
-        ? "NO EXISTE"
-        : "SIN SERVICIO";
-      const observacion = document
-        .getElementById(`${key}-observacion`)
-        .value.trim();
+      group.items.forEach((item) => {
+        const key = `${group.key}-${item.key}`;
+        const checkbox = document.getElementById(`${key}-check`);
 
-      let servicioData = { estado: estado, observacion: observacion };
+        let itemData = { disponible: checkbox ? checkbox.checked : false };
 
-      if (servicio.isOther) {
-        servicioData.nombreEspec = document
-          .getElementById(`${key}-nombre-especifico`)
-          .value.trim();
-      }
-      data[key] = servicioData;
+        if (item.isOther) {
+          itemData.nombreEspec = document
+            .getElementById(`${key}-nombre-especifico`)
+            .value.trim();
+        }
+        data[group.key][item.key] = itemData;
+      });
     });
     return data;
   };
 
   /**
    * 2. Recolecta todos los datos de la Sección V.
-   * @returns {Object} Objeto con condiciones, servicios públicos y observaciones.
+   * @returns {Object} Objeto con Imagenología, Laboratorio, Medicinas y Observaciones.
    */
   const collect = () => {
     return {
-      condiciones: collectCondicionesInfraestructuraData(),
-      serviciosPublicos: collectServiciosPublicosData(),
+      // IMAGENOLOGÍA
+      imagenologia: collectRadioTableData(
+        "imagenologia",
+        OTROS_SERVICIOS_DATA.imagenologia
+      ),
+
+      // LABORATORIO
+      laboratorio: collectChkData(OTROS_SERVICIOS_DATA.laboratorio),
+
+      // FARMACIA
+      farmacia: collectChkData(OTROS_SERVICIOS_DATA.farmacia),
+
+      // COCINA
+      cocina: collectRadioTableData("cocina", OTROS_SERVICIOS_DATA.cocina),
+
       observaciones: document
-        .getElementById("observaciones-infraestructura")
+        .getElementById("observaciones-otros-servicios")
         .value.trim(),
     };
   };
 
   /**
-   * Precarga datos de Condiciones de Infraestructura.
+   * Precarga datos de tablas con Radio Buttons (Imagenología y Medicinas).
    */
-  const preloadCondicionesInfraestructuraData = (savedData) => {
+  const preloadRadioTableData = (groupKey, items, savedData) => {
     if (!savedData) return;
 
-    CONDICIONES_INFRAESTRUCTURA.forEach((area) => {
-      const key = area.key;
-      const areaData = savedData[key];
+    items.forEach((item) => {
+      const key = `${groupKey}-${item.key}`;
+      const itemData = savedData[item.key];
 
-      if (areaData) {
-        COMPONENTES.forEach((componente) => {
-          const savedValue = areaData[componente];
-          if (savedValue) {
-            const inputId = `${key}-${componente}-${savedValue
-              .replace(/\s/g, "")
-              .toLowerCase()}`;
-            const radioElement = document.getElementById(inputId);
-            if (radioElement) {
-              radioElement.checked = true;
-            }
+      if (itemData) {
+        // Llenar el estado (Radio button)
+        if (itemData.estado) {
+          const radioElement = document.querySelector(
+            `input[name="${key}-estado"][value="${itemData.estado}"]`
+          );
+          if (radioElement) {
+            radioElement.checked = true;
           }
-        });
+        }
 
-        if (area.isOther && areaData.nombreEspec) {
+        document.getElementById(`${key}-observacion`).value =
+          itemData.observacion || "";
+
+        if (item.isOther && itemData.nombreEspec) {
           document.getElementById(`${key}-nombre-especifico`).value =
-            areaData.nombreEspec;
+            itemData.nombreEspec;
         }
       }
     });
   };
 
   /**
-   * Precarga datos de Servicios Públicos.
+   * Precarga datos  (Checkboxes).
    */
-  const preloadServiciosPublicosData = (savedData) => {
+  const preloadChkData = (area, savedData) => {
     if (!savedData) return;
 
-    SERVICIOS_PUBLICOS.forEach((servicio) => {
-      const key = servicio.key;
-      const servicioData = savedData[key];
+    OTROS_SERVICIOS_DATA[area].forEach((group) => {
+      const groupData = savedData[group.key];
+      if (groupData) {
+        group.items.forEach((item) => {
+          const key = `${group.key}-${item.key}`;
+          const itemData = groupData[item.key];
 
-      if (servicioData) {
-        // Llenar el estado (Radio button)
-        if (servicioData.estado) {
-          const inputId = `${key}-${servicioData.estado
-            .replace(/\s/g, "")
-            .toLowerCase()}`;
-          const radioElement = document.getElementById(inputId);
-          if (radioElement) {
-            radioElement.checked = true;
+          if (itemData) {
+            const checkbox = document.getElementById(`${key}-check`);
+            if (checkbox && itemData.disponible) {
+              checkbox.checked = true;
+            }
+
+            if (item.isOther && itemData.nombreEspec) {
+              document.getElementById(`${key}-nombre-especifico`).value =
+                itemData.nombreEspec;
+            }
           }
-        }
-
-        // Llenar la observación
-        document.getElementById(`${key}-observacion`).value =
-          servicioData.observacion || "";
-
-        if (servicio.isOther && servicioData.nombreEspec) {
-          document.getElementById(`${key}-nombre-especifico`).value =
-            servicioData.nombreEspec;
-        }
+        });
       }
     });
   };
 
   /**
    * 3. Precarga los datos de la Sección V en los campos del formulario.
-   * @param {Object} data - El sub-objeto de datos de 'infraestructura' del registro JSON.
+   * @param {Object} data - El sub-objeto de datos de 'otrosServicios' del registro JSON.
    */
   const preload = (data) => {
     if (!data) return;
 
-    preloadCondicionesInfraestructuraData(data.condiciones);
-    preloadServiciosPublicosData(data.serviciosPublicos);
-    document.getElementById("observaciones-infraestructura").value =
+    preloadRadioTableData(
+      "imagenologia",
+      OTROS_SERVICIOS_DATA.imagenologia,
+      data.imagenologia
+    );
+    preloadChkData("laboratorio", data.laboratorio);
+    preloadChkData("farmacia", data.farmacia);
+    preloadRadioTableData("cocina", OTROS_SERVICIOS_DATA.cocina, data.cocina);
+
+    document.getElementById("observaciones-otros-servicios").value =
       data.observaciones || "";
   };
 

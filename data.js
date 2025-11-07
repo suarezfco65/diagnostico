@@ -81,12 +81,104 @@ export const CARGOS_AUTORIDADES = [
 
 /**
  * =================================================================
- * III. SERVICIOS DE ESPECIALIDADES MÉDICAS
+ * III. PERSONAL DE LA INSTITUCIÓN
+ * =================================================================
+ */
+
+// Array con la lista de personal de la institución (Sección III)
+export const PERSONAL_INSTITUCION = [
+  {
+    label: "SERVICIOS MEDICOS",
+    key: "servicios-medicos",
+    items: [
+      { label: "MEDICINA GENERAL", key: "medicina-general" },
+      { label: "MEDICINA FAMILIAR", key: "medicina-familiar" },
+      { label: "MEDICINA INTERNA", key: "medicina-interna" },
+      { label: "MEDICINA PREVENTIVA", key: "medicina-preventiva" },
+      { label: "MEDICINA OCUPACIONAL", key: "medicina-ocupacional" },
+      { label: "CARDIOLOGIA", key: "cardiologia" },
+      { label: "TRAUMATOLOGIA", key: "traumatologia" },
+      { label: "NEUMOLOGIA", key: "neumologia" },
+      { label: "GASTROENTEROLOGIA", key: "gastroenterologia" },
+      { label: "PEDIATRIA", key: "pediatria" },
+      { label: "GINECOLOGIA", key: "ginecologia" },
+      { label: "OBSTETRICIA", key: "obstetricia" },
+      { label: "GINECO-OBSTETRICIA", key: "gineco-obstetricia" },
+      { label: "ONCOLOGIA", key: "oncologia" },
+      { label: "NEFROLOGIA", key: "nefrologia" },
+      { label: "ODONTOLOGIA", key: "odontologia" },
+      { label: "OFTALMOLOGIA", key: "oftalmologia" },
+      { label: "PSICOLOGIA", key: "psicologia" },
+      { label: "PSIQUIATRIA", key: "psiquiatria" },
+      { label: "DERMATOLOGIA", key: "dermatologia" },
+      { label: "INFECTOLOGIA", key: "infectologia" },
+      { label: "VACUNACION", key: "vacunacion" },
+      { label: "INMUNIZACION", key: "inmunizacion" },
+      { label: "GERIATRIA", key: "geriatria" },
+      { label: "PODOLOGIA", key: "podologia" },
+      { label: "FISIATRIA", key: "fisiatria" },
+      { label: "CIRUGIA", key: "cirugia" },
+      { label: "UCI", key: "uci" },
+      { label: "RMN", key: "rmn" },
+      { label: "OTRO", key: "otroSM1", isOther: true },
+      { label: "OTRO", key: "otroSM2", isOther: true },
+      { label: "OTRO", key: "otroSM3", isOther: true },
+    ],
+  },
+  {
+    label: "PARAMEDICOS Y AFINES",
+    key: "paramedicos-y-afines",
+    items: [
+      { label: "ENFERMERAS/ENFERMEROS", key: "enfermeras-enfermeros" },
+      { label: "CAMAREROS/CAMARERAS", key: "camareros-camareras" },
+      { label: "RADIOLOGOS/RADIOLOGAS", key: "radiologos-radiologas" },
+      { label: "BIOANALISTAS", key: "bioanalistas" },
+      { label: "OTRO", key: "otroPA1", isOther: true },
+    ],
+  },
+  {
+    label: "ADMINISTRATIVO",
+    key: "administrativo",
+    items: [
+      { label: "PROFESIONALES", key: "profesionales" },
+      { label: "TSU", key: "tsu" },
+      { label: "BACHILLERES", key: "bachilleres" },
+      { label: "OTRO", key: "otroA1", isOther: true },
+    ],
+  },
+  {
+    label: "OBRERO",
+    key: "obrero",
+    items: [
+      { label: "SERVICIOS GENERALES", key: "servicios-generales" },
+      { label: "SEGURIDAD", key: "seguridad" },
+      { label: "OTRO", key: "otroOb1", isOther: true },
+    ],
+  },
+  {
+    label: "OTRO",
+    key: "otroO",
+    items: [
+      { label: "OTRO", key: "otroO1", isOther: true },
+      { label: "OTRO", key: "otroO2", isOther: true },
+      { label: "OTRO", key: "otroO3", isOther: true },
+    ],
+  },
+];
+
+/**
+ * =================================================================
+ * IV. SERVICIOS DE ESPECIALIDADES MÉDICAS
  * =================================================================
  */
 
 // Array con la lista de servicios médicos (Sección III)
 export const SERVICIOS_MEDICOS = [
+  { label: "MEDICINA GENERAL", key: "medicina-general" },
+  { label: "MEDICINA FAMILIAR", key: "medicina-familiar" },
+  { label: "MEDICINA INTERNA", key: "medicina-interna" },
+  { label: "MEDICINA PREVENTIVA", key: "medicina-preventiva" },
+  { label: "MEDICINA OCUPACIONAL", key: "medicina-ocupacional" },
   { label: "CARDIOLOGÍA", key: "cardiologia" },
   { label: "ENDOCRINOLOGÍA", key: "endocrinologia" },
   { label: "TRAUMATOLOGÍA", key: "traumatologia" },
@@ -106,6 +198,8 @@ export const SERVICIOS_MEDICOS = [
   { label: "REHABILITACIÓN / FISIATRÍA", key: "rehabilitacionFisiatria" },
   { label: "GERIATRÍA", key: "geriatria" },
   { label: "CIRUGÍA", key: "cirugia" },
+  { label: "HOSPITALIZACIÓN", key: "hospitalizacion" },
+  { label: "OXIGENO TERAPIA", key: "oxigenoTerapia" },
   // 6 Servicios "Otros" donde el usuario especifica el nombre
   { label: "OTRO SERVICIO", key: "otro1", isOther: true },
   { label: "OTRO SERVICIO", key: "otro2", isOther: true },
@@ -117,11 +211,11 @@ export const SERVICIOS_MEDICOS = [
 
 /**
  * =================================================================
- * IV. OTROS SERVICIOS PRESTADOS
+ * V. OTROS SERVICIOS PRESTADOS
  * =================================================================
  */
 
-// Definición de la estructura para la Sección IV: Otros Servicios
+// Definición de la estructura para la Sección V: Otros Servicios
 export const OTROS_SERVICIOS_DATA = {
   // Servicios con estado (Radio Buttons)
   imagenologia: [
@@ -129,22 +223,13 @@ export const OTROS_SERVICIOS_DATA = {
     { label: "MAMOGRAFÍA", key: "mamografia" },
     { label: "ULTRASONIDO", key: "ultrasonido" },
     { label: "TOMOGRAFÍA", key: "tomografia" },
-    { label: "ECOGRAFÍA M-EA", key: "ecografiaM-EA" },
+    { label: "DENSIOMETRÍA ÓSEA", key: "densiometriaOsea" },
+    { label: "ECOGRAFÍA M-E-A", key: "ecografiaMEA" },
+    { label: "ECOGRAFÍA DOPPLER A-V", key: "ecografiaDopplerAV" },
     { label: "OTROS", key: "otrosImagenologia", isOther: true },
   ],
   // Servicios de Laboratorio (Checkboxes)
   laboratorio: [
-    {
-      groupLabel: "HEMATOLOGÍA",
-      key: "hematologia",
-      items: [
-        { label: "Hematología Completa", key: "hematologiaCompleta" },
-        { label: "Grupo Sang./Rh", key: "grupoSangRh" },
-        { label: "Leucocitos Fórmula", key: "leucocitosFormula" },
-        { label: "Plaquetas", key: "plaquetas" },
-        { label: "OTROS", key: "otrosHematologia", isOther: true },
-      ],
-    },
     {
       groupLabel: "QUÍMICA SANGUÍNEA",
       key: "quimicaSanguinea",
@@ -161,14 +246,25 @@ export const OTROS_SERVICIOS_DATA = {
       ],
     },
     {
-      groupLabel: "SEROLOGÍA",
-      key: "serologia",
+      groupLabel: "HECES",
+      key: "heces",
       items: [
-        { label: "HIV", key: "hiv" },
-        { label: "VDRL/RPR", key: "vdrlRpr" },
-        { label: "PCR Sanguínea", key: "pcrSanguinea" },
-        { label: "COVID-19", key: "covid19" },
-        { label: "OTROS", key: "otrosSerologia", isOther: true },
+        { label: "Coproanálisis", key: "coproanalisis" },
+        { label: "Coprocultivo", key: "coprocultivo" },
+        { label: "Seriado", key: "seriado" },
+        { label: "Adeno/Rotavirus", key: "adenoRotavirus" },
+        { label: "Sangre Oculta", key: "sangreOculta" },
+        { label: "OTROS", key: "otrosHeces", isOther: true },
+      ],
+    },
+    {
+      groupLabel: "ORINA",
+      key: "orina",
+      items: [
+        { label: "Uroanálisis", key: "uroanalisis" },
+        { label: "Urocultivo", key: "urocultivo" },
+        { label: "Orina 24 horas", key: "orina24Horas" },
+        { label: "OTROS", key: "otrosOrina", isOther: true },
       ],
     },
     {
@@ -181,19 +277,76 @@ export const OTROS_SERVICIOS_DATA = {
       ],
     },
     {
+      groupLabel: "SEROLOGÍA",
+      key: "serologia",
+      items: [
+        { label: "HIV", key: "hiv" },
+        { label: "VDRL/RPR", key: "vdrlRpr" },
+        { label: "PCR Sanguínea", key: "pcrSanguinea" },
+        { label: "COVID-19", key: "covid19" },
+        { label: "OTROS", key: "otrosSerologia", isOther: true },
+      ],
+    },
+    {
+      groupLabel: "HEMATOLOGÍA",
+      key: "hematologia",
+      items: [
+        { label: "Hematología Completa", key: "hematologiaCompleta" },
+        { label: "Grupo Sang./Rh", key: "grupoSangRh" },
+        { label: "Leucocitos Fórmula", key: "leucocitosFormula" },
+        { label: "Plaquetas", key: "plaquetas" },
+        { label: "OTROS", key: "otrosHematologia", isOther: true },
+      ],
+    },
+    {
+      groupLabel: "PERFILES",
+      key: "perfiles",
+      items: [
+        { label: "Perfil 20", key: "perfil20" },
+        { label: "Cardiaco", key: "cardiaco" },
+        { label: "Hepático", key: "hepatico" },
+        { label: "Lipídico", key: "lipidico" },
+        { label: "Isquémico", key: "isquemico" },
+        { label: "Pre-operatorio", key: "preOperatorio" },
+        { label: "Reumatoideo", key: "reumatoideo" },
+        { label: "Tiroideo", key: "tiroideo" },
+        { label: "Obstétrico", key: "obstetrico" },
+        { label: "Otros", key: "otrosPerfiles", isOther: true },
+      ],
+    },
+    {
+      groupLabel: "CARDIOLOGÍA",
+      key: "cardiologia",
+      items: [
+        { label: "EKG", key: "ekg" },
+        { label: "EEG", key: "eeg" },
+        { label: "OTROS", key: "otrosCardiologia", isOther: true },
+      ],
+    },
+    {
+      groupLabel: "GINECOLOGÍA",
+      key: "ginecologia",
+      items: [
+        { label: "CITOLOGÍA", key: "citologia" },
+        { label: "MAMOGRAFÍA", key: "mamografia" },
+        { label: "DENSIOMETRÍA ÓSEA", key: "densitometriaOsea" },
+        { label: "OTROS", key: "otrosGinecologia", isOther: true },
+      ],
+    },
+    {
       groupLabel: "OTROS",
       key: "laboratorioOtros",
       items: [
-        { label: "Orina (Rutina)", key: "orinaRutina" },
-        { label: "Heces (Coproanálisis)", key: "hecesCoproanalisis" },
-        { label: "Urocultivo", key: "urocultivo" },
-        { label: "Adeno/Rotavirus", key: "adenoRotavirus" },
-        { label: "OTROS", key: "otrosLabGral", isOther: true },
+        { label: "OTROS", key: "otrosLaboratorio1", isOther: true },
+        { label: "OTROS", key: "otrosLaboratorio2", isOther: true },
+        { label: "OTROS", key: "otrosLaboratorio3", isOther: true },
+        { label: "OTROS", key: "otrosLaboratorio4", isOther: true },
+        { label: "OTROS", key: "otrosLaboratorio5", isOther: true },
       ],
     },
   ],
-  // Medicinas e Insumos (Tratamientos con estado - Radio Buttons)
-  medicinas: [
+  // Farmacia - Medicinas e Insumos (Tratamientos con estado - Radio Buttons)
+  farmacia: [
     {
       groupLabel: "TRATAMIENTOS BÁSICOS",
       key: "basicos",
@@ -224,23 +377,46 @@ export const OTROS_SERVICIOS_DATA = {
         { label: "OTRO TRATAMIENTO", key: "otroAltoCosto", isOther: true },
       ],
     },
+    {
+      groupLabel: "OTRAS MEDICINAS E INSUMOS",
+      key: "otrasMedicinas",
+      items: [
+        { label: "TRATAMIENTO N° 1", key: "tratamiento1" },
+        { label: "TRATAMIENTO N° 2", key: "tratamiento2", isOther: true },
+        { label: "TRATAMIENTO N° 3", key: "tratamiento3", isOther: true },
+        { label: "OTRO TRATAMIENTO", key: "otroTratamiento", isOther: true },
+      ],
+    },
+  ],
+  // Cocina (Radio Buttons)
+  cocina: [
+    { label: "SERVICIO ALIMENTACIÓN", key: "servicioAlimentacion" },
+    { label: "SERVICIO NUTRICIONISTA", key: "servicioNutricionista" },
+    { label: "SUMINISTRO ALIMENTOS", key: "suministroAlimentos" },
+    { label: "EQUIPO REFRIGERACIÓN", key: "equipoRefrigeracion" },
+    { label: "EQUIPO COCINA", key: "equipoCocina" },
+    {
+      label: "INFRAESTRUCTURA ALMACENAMIENTO",
+      key: "infraestructuraAlmacenamiento",
+    },
+    { label: "OTROS", key: "otrosComida", isOther: true },
   ],
 };
 
 /**
  * =================================================================
- * V. INFRAESTRUCTURA Y SERVICIOS PÚBLICOS
+ * VI. INFRAESTRUCTURA Y SERVICIOS PÚBLICOS
  * =================================================================
  */
 
 // A. Condiciones de Infraestructura (Sección V)
 export const CONDICIONES_INFRAESTRUCTURA = [
   { label: "CONSULTORIOS", key: "consultorios" },
-  { label: "HOSPITALIZACIÓN", key: "hospitalizacion" },
+  { label: "QUIROFANOS", key: "quirofanos" },
+  { label: "HOSPITALIZACIÓN (CAMAS)", key: "hospitalizacion" },
   { label: "LABORATORIO", key: "laboratorio" },
   { label: "FARMACIA", key: "farmacia" },
-  { label: "SERVICIOS GENERALES", key: "serviciosGenerales" },
-  { label: "OTROS", key: "otrosInfraestructura", isOther: true },
+  { label: "COCINA", key: "cocina" },
 ];
 
 // B. Servicios Públicos (Sección V)
@@ -266,19 +442,28 @@ export const SERVICIOS_PUBLICOS = [
     ],
   },
   {
-    label: "PLANTA ELÉCTRICA",
-    key: "plantaElectrica",
+    label: "GAS",
+    key: "gas",
     type: "radio",
     options: [
       { value: "DISPONIBLE" },
       { value: "DISP C/PROB" },
       { value: "SIN SERVICIO" },
-      { value: "NO EXISTE" },
     ],
   },
   {
     label: "INTERNET",
     key: "internet",
+    type: "radio",
+    options: [
+      { value: "DISPONIBLE" },
+      { value: "DISP C/PROB" },
+      { value: "SIN SERVICIO" },
+    ],
+  },
+  {
+    label: "A/A",
+    key: "aa",
     type: "radio",
     options: [
       { value: "DISPONIBLE" },
@@ -307,8 +492,8 @@ export const SERVICIOS_PUBLICOS = [
     ],
   },
   {
-    label: "OTROS SERVICIOS PÚBLICOS",
-    key: "otrosServiciosPublicos",
+    label: "COMBUSTIBLE",
+    key: "combustible",
     isOther: true,
     type: "radio",
     options: [
@@ -321,7 +506,7 @@ export const SERVICIOS_PUBLICOS = [
 
 /**
  * =================================================================
- * VI. PROYECTOS DE MEJORAS
+ * VII. PROYECTOS DE MEJORAS
  * =================================================================
  */
 
