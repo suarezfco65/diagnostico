@@ -25,6 +25,23 @@ const totalPersonal = (
   return total;
 };
 
+const obtenerServiciosMedicos = (data, estado) => {
+  const serviciosMedicos = data.serviciosMedicos;
+  const serviciosFiltrados = [];
+  const obtenerLabelPorKey = (key) => {
+    const encontrado = Data.SERVICIOS_MEDICOS.find((item) => item.key === key);
+    return encontrado ? encontrado.label : null; // Devuelve el label o null si no se encuentra
+  };
+
+  for (const servicio in serviciosMedicos) {
+    if (serviciosMedicos[servicio].estado === estado) {
+      serviciosFiltrados.push(obtenerLabelPorKey(servicio));
+    }
+  }
+
+  return serviciosFiltrados.join(", ");
+};
+
 // Mantener las definiciones de reportes
 const REPORT_DEFINITIONS_BY_SECTION = {
   // Reportes de la Sección I: Datos de la Institución
@@ -144,7 +161,23 @@ const REPORT_DEFINITIONS_BY_SECTION = {
   ],
   // Reportes de la Sección IV: Servicios Médicos
   IV: [
-    { id: "serv_activos", label: "Servicios Médicos Activos" },
+    {
+      id: "serv_activos",
+      label: "Servicios Médicos Activos",
+      fields: [
+        { key: "datosInstitucion.nombre", label: "Institución" },
+        { key: "datosInstitucion.parroquia", label: "Parroquia" },
+        {
+          key: (data) => obtenerServiciosMedicos(data, "ACTIVO"),
+          label: "Servicios Activos",
+        },
+      ],
+      searchFields: [
+        "datosInstitucion.nombre",
+        "datosInstitucion.parroquia",
+        (data) => obtenerServiciosMedicos(data, "ACTIVO"),
+      ],
+    },
     { id: "serv_inactivos", label: "Servicios Médicos Inactivos" },
     { id: "serv_prob", label: "Servicios Activos con Problemas" },
   ],
@@ -247,4 +280,4 @@ const ReportDefinitions = (() => {
 })();
 
 // Exportar como objeto nombrado en lugar de default
-export { totalPersonal, ReportDefinitions, REPORT_DEFINITIONS_BY_SECTION };
+export { ReportDefinitions, REPORT_DEFINITIONS_BY_SECTION };
