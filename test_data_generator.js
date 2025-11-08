@@ -196,7 +196,7 @@ function createSectionIVData() {
   SERVICIOS_MEDICOS.forEach((servicio) => {
     const key = servicio.key;
     // Usamos ACTIVO/INACTIVO, etc. de ESTADOS_SERVICIO
-    const estado = getRandomItem(ESTADOS_SERVICIO.slice(0, 3));
+    const estado = getRandomItem(ESTADOS_SERVICIO.slice(0, 4));
     let observacion = "";
     let nombreEspec = "";
 
@@ -207,9 +207,9 @@ function createSectionIVData() {
       observacion = "Inactivo: " + getInactiveReason();
     }
 
-    // Simular el campo 'Otro' (30% de probabilidad)
-    if (servicio.isOther && Math.random() < 0.3) {
-      nombreEspec = "Oftalmología";
+    // Simular el campo 'Otro'
+    if (servicio.isOther) {
+      nombreEspec = "OFTALMOLOGÍA";
     }
 
     data[key] = {

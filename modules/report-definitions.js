@@ -26,20 +26,21 @@ const totalPersonal = (
 };
 
 const obtenerServiciosMedicos = (data, estado) => {
-  const serviciosMedicos = data.serviciosMedicos;
-  const serviciosFiltrados = [];
+  const { serviciosMedicos } = data;
+
   const obtenerLabelPorKey = (key) => {
-    const encontrado = Data.SERVICIOS_MEDICOS.find((item) => item.key === key);
+    const encontrado = Data.SERVICIOS_MEDICOS.find(item => item.key === key);
     return encontrado ? encontrado.label : null; // Devuelve el label o null si no se encuentra
   };
 
-  for (const servicio in serviciosMedicos) {
-    if (serviciosMedicos[servicio].estado === estado) {
-      serviciosFiltrados.push(obtenerLabelPorKey(servicio));
-    }
-  }
+  const serviciosFiltrados = Object.entries(serviciosMedicos)
+    .filter(([, servicio]) => servicio.estado === estado)
+    .map(([key, servicio]) => servicio.nombreEspec || obtenerLabelPorKey(key));
 
-  return serviciosFiltrados.join(", ");
+  // Usar un Set para eliminar duplicados
+  const serviciosUnicos = [...new Set(serviciosFiltrados)];
+
+  return serviciosUnicos.join(", ");
 };
 
 // Mantener las definiciones de reportes
@@ -178,8 +179,57 @@ const REPORT_DEFINITIONS_BY_SECTION = {
         (data) => obtenerServiciosMedicos(data, "ACTIVO"),
       ],
     },
-    { id: "serv_inactivos", label: "Servicios Médicos Inactivos" },
-    { id: "serv_prob", label: "Servicios Activos con Problemas" },
+    {
+      id: "serv_activosProblemas",
+      label: "Servicios Médicos Activos con Problemas",
+      fields: [
+        { key: "datosInstitucion.nombre", label: "Institución" },
+        { key: "datosInstitucion.parroquia", label: "Parroquia" },
+        {
+          key: (data) => obtenerServiciosMedicos(data, "ACTIVO C/PROB"),
+          label: "Servicios Activos con Problemas",
+        },
+      ],
+      searchFields: [
+        "datosInstitucion.nombre",
+        "datosInstitucion.parroquia",
+        (data) => obtenerServiciosMedicos(data, "ACTIVO C/PROB"),
+      ],
+    },
+    {
+      id: "serv_inactivos",
+      label: "Servicios Médicos Inactivos",
+      fields: [
+        { key: "datosInstitucion.nombre", label: "Institución" },
+        { key: "datosInstitucion.parroquia", label: "Parroquia" },
+        {
+          key: (data) => obtenerServiciosMedicos(data, "INACTIVO"),
+          label: "Servicios Inactivos",
+        },
+      ],
+      searchFields: [
+        "datosInstitucion.nombre",
+        "datosInstitucion.parroquia",
+        (data) => obtenerServiciosMedicos(data, "INACTIVO"),
+      ],
+    },
+    {
+      id: "serv_innexistentes",
+      label: "Servicios Médicos Inexistentes",
+      fields: [
+        { key: "datosInstitucion.nombre", label: "Institución" },
+        { key: "datosInstitucion.parroquia", label: "Parroquia" },
+        {
+          key: (data) => obtenerServiciosMedicos(data, "NO EXISTE"),
+          label: "Servicios Inexistentes",
+        },
+      ],
+      searchFields: [
+        "datosInstitucion.nombre",
+        "datosInstitucion.parroquia",
+        (data) => obtenerServiciosMedicos(data, "NO EXISTE"),
+      ],
+    },
   ],
   // Reportes de la Sección V: Otros Servicios
   V: [
