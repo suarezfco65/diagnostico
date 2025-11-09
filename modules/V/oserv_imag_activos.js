@@ -1,22 +1,23 @@
 import { PARROQUIAS_CARACAS } from "../../data.js";
 import FUNCTIONS_DEFINITIONS_BY_SECTION from "../functions-definitions.js";
-const obtenerServiciosMedicos =
-  FUNCTIONS_DEFINITIONS_BY_SECTION.IV.obtenerServiciosMedicos;
-const serv_activos = {
-  id: "serv_activos",
-  label: "Servicios Médicos Activos",
+const obtenerOtrosServiciosEstado =
+  FUNCTIONS_DEFINITIONS_BY_SECTION.V.obtenerOtrosServiciosEstado;
+const oserv_imag_activos = {
+  id: "oserv_activos",
+  label: "Servicios de Imagenologias Activos",
   fields: [
     { key: "datosInstitucion.nombre", label: "Institución" },
     { key: "datosInstitucion.parroquia", label: "Parroquia" },
     {
-      key: (data) => obtenerServiciosMedicos(data, "ACTIVO"),
+      key: (data) =>
+        obtenerOtrosServiciosEstado(data, "imagenologia", "ACTIVO"),
       label: "Servicios Activos",
     },
   ],
   searchFields: [
     "datosInstitucion.nombre",
     "datosInstitucion.parroquia",
-    (data) => obtenerServiciosMedicos(data, "ACTIVO"),
+    (data) => obtenerOtrosServiciosEstado(data, "imagenologia", "ACTIVO"),
   ],
   compoundFilters: [
     {
@@ -27,4 +28,4 @@ const serv_activos = {
     },
   ],
 };
-export default serv_activos;
+export default oserv_imag_activos;

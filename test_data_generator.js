@@ -270,108 +270,7 @@ function getInactiveReason() {
   ];
   return getRandomItem(reasons);
 }
-
-/**
- * Genera datos de simulación para la Sección V (otrosServicios).
- */
-/*
-function createSectionVData() {
-  const data = {
-    observaciones: getRandomItem([
-      "",
-      "Todos los servicios requieren insumos",
-      "Laboratorio inactivo",
-    ]),
-  };
-
-  // Grupos con Radio Buttons (Imagenologia y Cocina)
-  const radioGroups = ["imagenologia", "cocina"];
-  radioGroups.forEach((groupName) => {
-    data[groupName] = {};
-
-    // ❗ CORRECCIÓN: Usar Array.isArray para evitar TypeError ❗
-    const groupsToIterate = OTROS_SERVICIOS_DATA[groupName];
-
-    if (Array.isArray(groupsToIterate)) {
-      groupsToIterate.forEach((group) => {
-        data[groupName][group.key] = {};
-
-        // ❗ VERIFICACIÓN DE ESTRUCTURA INTERNA ❗
-        if (Array.isArray(group.items)) {
-          group.items.forEach((item) => {
-            const estado = getRandomItem(ESTADOS_SERVICIO.slice(0, 3));
-            let nombreEspec = "";
-
-            if (item.isOther && Math.random() < 0.3) {
-              nombreEspec =
-                groupName === "imagenologia"
-                  ? "Tomografía Avanzada"
-                  : "Panadería";
-            }
-
-            data[groupName][group.key][item.key] = {
-              estado: estado,
-              observacion: getRandomItem([
-                "OK",
-                "Requiere mantenimiento",
-                "Fuera de servicio",
-                "",
-              ]),
-              nombreEspec: nombreEspec,
-            };
-          });
-        }
-      });
-    } else {
-      console.warn(
-        `[Data Test Generator] OTROS_SERVICIOS_DATA.${groupName} no está definido o no es un array.`
-      );
-    }
-  });
-
-  // Grupos con Checkboxes (Laboratorio y Farmacia)
-  const checkGroups = ["laboratorio", "farmacia"];
-  checkGroups.forEach((groupName) => {
-    data[groupName] = {};
-
-    // ❗ CORRECCIÓN: Usar Array.isArray para evitar TypeError ❗
-    const groupsToIterate = OTROS_SERVICIOS_DATA[groupName];
-
-    if (Array.isArray(groupsToIterate)) {
-      groupsToIterate.forEach((group) => {
-        // ❗ VERIFICACIÓN DE ESTRUCTURA INTERNA ❗
-        if (Array.isArray(group.items)) {
-          group.items.forEach((item) => {
-            const disponible = Math.random() > 0.5;
-            let nombreEspec = "";
-
-            if (item.isOther && Math.random() < 0.3) {
-              nombreEspec =
-                groupName === "laboratorio"
-                  ? "Hematología Especial"
-                  : "Medicamentos Controlados";
-            }
-
-            data[groupName][item.key] = {
-              disponible: disponible,
-              nombreEspec: nombreEspec,
-            };
-          });
-        }
-      });
-    } else {
-      console.warn(
-        `[Data Test Generator] OTROS_SERVICIOS_DATA.${groupName} no está definido o no es un array.`
-      );
-    }
-  });
-
-  return data;
-}
-*/
-
-
-
+let firstTime = true;
 /**
  * Genera datos de simulación para la Sección V (otrosServicios).
  */
@@ -384,28 +283,26 @@ function createSectionVData() {
     ]),
   };
 
-  // Grupos con Radio Buttons (Imagenologia y Cocina)
+  // 1. Grupos con Radio Buttons (Imagenologia y Cocina)
   const radioGroups = ["imagenologia", "cocina"];
   radioGroups.forEach((groupName) => {
     data[groupName] = {};
 
-    // ❗ CORRECCIÓN INICIADA AQUÍ ❗
-    const itemsToIterate = OTROS_SERVICIOS_DATA[groupName]; // Asume que esto es un array de items (ej: radiografia, mamografia)
+    const groupsToIterate = OTROS_SERVICIOS_DATA[groupName]; // Array plano de items
 
-    if (Array.isArray(itemsToIterate)) {
-      itemsToIterate.forEach((item) => { // Iterar directamente sobre los ítems
+    if (Array.isArray(groupsToIterate)) {
+      // ✅ CORRECCIÓN: Iterar sobre los items directamente y asignarlos de forma plana
+      groupsToIterate.forEach((item) => {
         const estado = getRandomItem(ESTADOS_SERVICIO.slice(0, 3));
         let nombreEspec = "";
 
         if (item.isOther && Math.random() < 0.3) {
           nombreEspec =
-            groupName === "imagenologia"
-              ? "Tomografía Avanzada"
-              : "Panadería";
+            groupName === "imagenologia" ? "Tomografía Avanzada" : "Panadería";
         }
 
-        // Asignar directamente al objeto del grupo usando la clave del ítem
-        data[groupName][item.key] = { // 👈 CORRECCIÓN: Usar item.key directamente. Se elimina group.key
+        data[groupName][item.key] = {
+          // Estructura plana: data.imagenologia.radiografia = {estado, observacion}
           estado: estado,
           observacion: getRandomItem([
             "OK",
@@ -421,19 +318,20 @@ function createSectionVData() {
         `[Data Test Generator] OTROS_SERVICIOS_DATA.${groupName} no está definido o no es un array.`
       );
     }
-    // ❗ CORRECCIÓN FINALIZADA AQUÍ ❗
   });
 
-  // Grupos con Checkboxes (Laboratorio y Farmacia) - Esta sección parece estar bien estructurada para la salida
+  // 2. Grupos con Checkboxes (Laboratorio y Farmacia)
   const checkGroups = ["laboratorio", "farmacia"];
   checkGroups.forEach((groupName) => {
     data[groupName] = {};
 
-    // ❗ CORRECCIÓN: Usar Array.isArray para evitar TypeError ❗
-    const groupsToIterate = OTROS_SERVICIOS_DATA[groupName];
+    const groupsToIterate = OTROS_SERVICIOS_DATA[groupName]; // Array anidado de grupos
 
     if (Array.isArray(groupsToIterate)) {
       groupsToIterate.forEach((group) => {
+        // 🚨 CORRECCIÓN CRUCIAL: Inicializar el objeto anidado con la clave del grupo
+        data[groupName][group.key] = {}; // Crea data.laboratorio["quimicaSanguinea"] = {}
+
         // ❗ VERIFICACIÓN DE ESTRUCTURA INTERNA ❗
         if (Array.isArray(group.items)) {
           group.items.forEach((item) => {
@@ -447,7 +345,8 @@ function createSectionVData() {
                   : "Medicamentos Controlados";
             }
 
-            data[groupName][item.key] = {
+            // ✅ ASIGNACIÓN CORREGIDA: Utiliza la anidación [group.key]
+            data[groupName][group.key][item.key] = {
               disponible: disponible,
               nombreEspec: nombreEspec,
             };
@@ -460,11 +359,12 @@ function createSectionVData() {
       );
     }
   });
-
+  if (firstTime) {
+    console.log("SECCIÓN V - DATOS GENERADOS:", data);
+    firstTime = false;
+  }
   return data;
 }
-
-
 
 /**
  * Genera datos de simulación para la Sección VI (infraestructura).

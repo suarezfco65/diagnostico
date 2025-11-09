@@ -68,7 +68,7 @@ const SectionVModule = (() => {
   };
 
   /**
-   * Genera el HTML para grupos de Checkboxes (Laboratorio).
+   * Genera el HTML para grupos de Checkboxes (Laboratorio y Farmacia).
    */
   const createCheckboxGroupHTML = (groupKey, groupLabel, items) => {
     let html = `
@@ -182,10 +182,12 @@ const SectionVModule = (() => {
 
   /**
    * Recolecta Chk data (Checkboxes).
+   * CONSIDERACIÓN: Procesa el array de grupos, creando la estructura anidada: groupKey -> itemKey.
    */
   const collectChkData = (groups) => {
     let data = {};
     groups.forEach((group) => {
+      // ✅ ANIDAMIENTO: Inicializa el objeto para la clave del grupo (e.g., 'hematologia')
       data[group.key] = {};
 
       group.items.forEach((item) => {
@@ -199,6 +201,7 @@ const SectionVModule = (() => {
             .getElementById(`${key}-nombre-especifico`)
             .value.trim();
         }
+        // ✅ ANIDAMIENTO: Asigna el item bajo la clave del grupo
         data[group.key][item.key] = itemData;
       });
     });
@@ -218,9 +221,11 @@ const SectionVModule = (() => {
       ),
 
       // LABORATORIO
+      // Pasa el array de grupos para que collectChkData anide por 'group.key'
       laboratorio: collectChkData(OTROS_SERVICIOS_DATA.laboratorio),
 
       // FARMACIA
+      // Pasa el array de grupos para que collectChkData anide por 'group.key'
       farmacia: collectChkData(OTROS_SERVICIOS_DATA.farmacia),
 
       // COCINA
@@ -271,11 +276,13 @@ const SectionVModule = (() => {
     if (!savedData) return;
 
     OTROS_SERVICIOS_DATA[area].forEach((group) => {
+      // ✅ ANIDAMIENTO: Busca los datos usando la clave del grupo (e.g., data.laboratorio.hematologia)
       const groupData = savedData[group.key];
+
       if (groupData) {
         group.items.forEach((item) => {
           const key = `${group.key}-${item.key}`;
-          const itemData = groupData[item.key];
+          const itemData = groupData[item.key]; // Accede al item dentro del grupo
 
           if (itemData) {
             const checkbox = document.getElementById(`${key}-check`);
