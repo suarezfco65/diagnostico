@@ -1,236 +1,45 @@
 // modules/report-definitions.js - Definiciones y utilidades de reportes
-import * as Data from "../data.js";
 import * as Storage from "../storage.js";
 
-// Función de utilidad para totalizar personal
-const totalPersonal = (
-  data,
-  section = "",
-  role = "",
-  valueType = "disponible"
-) => {
-  const personal = data.personalInstitucion;
-  if (!personal) return 0;
-
-  let total = 0;
-  for (const sec in personal) {
-    if (section && sec !== section) continue;
-    for (const r in personal[sec]) {
-      if (role && r !== role) continue;
-      if (personal[sec][r] && typeof personal[sec][r][valueType] === "number") {
-        total += personal[sec][r][valueType];
-      }
+/**
+ * Importa módulos JavaScript dinámicamente usando una lista de nombres de archivo
+ * y los añade a un array.
+ *
+ * @param {string[]} fileNames - Array con los nombres de los archivos JS (ej: ['inst_general.js']).
+ * @param {Array<any>} targetArray - El array donde se almacenarán los valores exportados.
+ * @param {string} folderPath - La ruta de la carpeta (URL relativa) donde se encuentran los archivos.
+ * @returns {Promise<void>}
+ */
+async function importarModulosDesdeNavegador(fileNames, targetArray, folderPath) {
+    const folder = folderPath.endsWith('/') ? folderPath : folderPath + '/';
+    for (const fileName of fileNames) {
+        const fileNameWithoutExt = fileName.replace(/\.js$/i, '');
+        const modulePath = folder + fileName; // Ej: './modulos/inst_general.js'
+        try {
+            // Importación dinámica. El navegador usa la ruta URL.
+            const module = await import(modulePath);
+            // Se accede a la exportación por defecto (default) que es el objeto 'inst_general'
+            const importedValue = module.default; 
+            // Ejecutar <variable>.push(<la variable importada>)
+            if (importedValue) {
+                targetArray.push(importedValue);
+                console.log(`✅ Éxito: Objeto '${importedValue.id}' agregado al array.`);
+            } else {
+                 console.warn(`⚠️ Advertencia: El módulo '${fileName}' no tenía una exportación por defecto.`);
+            }
+        } catch (importError) {
+            console.error(`❌ Error al importar ${fileName}:`, importError);
+        }
     }
-  }
-  return total;
-};
+}
 
-const obtenerServiciosMedicos = (data, estado) => {
-  const { serviciosMedicos } = data;
-
-  const obtenerLabelPorKey = (key) => {
-    const encontrado = Data.SERVICIOS_MEDICOS.find(item => item.key === key);
-    return encontrado ? encontrado.label : null; // Devuelve el label o null si no se encuentra
-  };
-
-  const serviciosFiltrados = Object.entries(serviciosMedicos)
-    .filter(([, servicio]) => servicio.estado === estado)
-    .map(([key, servicio]) => servicio.nombreEspec || obtenerLabelPorKey(key));
-
-  // Usar un Set para eliminar duplicados
-  const serviciosUnicos = [...new Set(serviciosFiltrados)];
-
-  return serviciosUnicos.join(", ");
-};
 
 // Mantener las definiciones de reportes
 const REPORT_DEFINITIONS_BY_SECTION = {
-  // Reportes de la Sección I: Datos de la Institución
-  I: [
-    {
-      id: "inst_general",
-      label: "Datos Generales de la Institución",
-      fields: [
-        // ❗ NUEVOS CAMPOS A MOSTRAR ❗
-        { key: "identificador", label: "ID / RIF" },
-        { key: "datosInstitucion.nombre", label: "Nombre Institución" },
-        { key: "datosInstitucion.tipoInstitucion", label: "Tipo" },
-        { key: "datosInstitucion.parroquia", label: "Parroquia" },
-      ],
-      searchFields: [
-        "identificador",
-        "datosInstitucion.nombre",
-        "datosInstitucion.parroquia",
-        "datosInstitucion.tipoInstitucion",
-      ],
-      compoundFilters: [
-        {
-          key: "datosInstitucion.parroquia",
-          label: "Filtrar por Parroquia",
-          type: "string",
-          options: Data.PARROQUIAS_CARACAS.sort(), // Usar las parroquias como opciones
-        },
-        {
-          key: "datosInstitucion.tipoInstitucion",
-          label: "Tipo de Institución",
-          type: "string",
-          options: Data.TIPOS_INSTITUCION.map((tipo) => tipo.value).sort(),
-        },
-      ],
-    },
-    {
-      id: "inst_ente",
-      label: "Instituciones por Ente Adscrito",
-      fields: [
-        { key: "identificador", label: "ID / RIF" },
-        { key: "datosInstitucion.nombre", label: "Nombre" },
-        { key: "datosInstitucion.enteAdscrito", label: "Ente Adscrito" },
-        { key: "datosInstitucion.parroquia", label: "Parroquia" },
-      ],
-      searchFields: [
-        "identificador",
-        "datosInstitucion.nombre",
-        "datosInstitucion.enteAdscrito",
-        "datosInstitucion.parroquia",
-      ],
-    },
-  ],
-  // Reportes de la Sección II: Autoridades
-  II: [
-    {
-      id: "aut_contacto_director",
-      label: "Contacto Director/a",
-      fields: [
-        { key: "identificador", label: "ID / RIF" },
-        { key: "datosInstitucion.nombre", label: "Institución" },
-        { key: "autoridades.director.nombre", label: "Director/a" },
-        { key: "autoridades.director.celular", label: "Celular" },
-        { key: "autoridades.director.correo", label: "Correo" },
-      ],
-      searchFields: [
-        "identificador",
-        "datosInstitucion.nombre",
-        "autoridades.director.nombre",
-        "autoridades.director.celular",
-        "autoridades.director.correo",
-      ],
-    },
-  ],
-  // Reportes de la Sección III: Personal
-  III: [
-    {
-      id: "pers_total_disp",
-      label: "Total de Personal por Centro",
-      fields: [
-        { key: "datosInstitucion.nombre", label: "Institución" },
-        { key: "datosInstitucion.parroquia", label: "Parroquia" },
-        {
-          key: (data) => totalPersonal(data, "", "", "disponible"),
-          label: "Centro (D)",
-        },
-        {
-          key: (data) => totalPersonal(data, "", "", "requerido"),
-          label: "Centro (R)",
-        },
-        {
-          key: (data) =>
-            totalPersonal(data, "servicios-medicos", "", "disponible"),
-          label: "Servicios Médicos (D)",
-        },
-        {
-          key: (data) =>
-            totalPersonal(data, "servicios-medicos", "", "requerido"),
-          label: "Servicios Médicos (R)",
-        },
-      ],
-      searchFields: ["datosInstitucion.nombre", "datosInstitucion.parroquia"],
-      compoundFilters: [
-        {
-          key: "personalInstitucion.medico.medicoGral.disponible",
-          label: "Médicos Generales Disponibles",
-          type: "numeric",
-        },
-        {
-          key: "personalInstitucion.medico.medicoGral.requerido",
-          label: "Médicos Generales Requeridos",
-          type: "numeric",
-        },
-      ],
-    },
-    { id: "pers_deficit", label: "Personal con Déficit (>20%)" },
-    { id: "pers_completo", label: "Centros con Personal Completo" },
-  ],
-  // Reportes de la Sección IV: Servicios Médicos
-  IV: [
-    {
-      id: "serv_activos",
-      label: "Servicios Médicos Activos",
-      fields: [
-        { key: "datosInstitucion.nombre", label: "Institución" },
-        { key: "datosInstitucion.parroquia", label: "Parroquia" },
-        {
-          key: (data) => obtenerServiciosMedicos(data, "ACTIVO"),
-          label: "Servicios Activos",
-        },
-      ],
-      searchFields: [
-        "datosInstitucion.nombre",
-        "datosInstitucion.parroquia",
-        (data) => obtenerServiciosMedicos(data, "ACTIVO"),
-      ],
-    },
-    {
-      id: "serv_activosProblemas",
-      label: "Servicios Médicos Activos con Problemas",
-      fields: [
-        { key: "datosInstitucion.nombre", label: "Institución" },
-        { key: "datosInstitucion.parroquia", label: "Parroquia" },
-        {
-          key: (data) => obtenerServiciosMedicos(data, "ACTIVO C/PROB"),
-          label: "Servicios Activos con Problemas",
-        },
-      ],
-      searchFields: [
-        "datosInstitucion.nombre",
-        "datosInstitucion.parroquia",
-        (data) => obtenerServiciosMedicos(data, "ACTIVO C/PROB"),
-      ],
-    },
-    {
-      id: "serv_inactivos",
-      label: "Servicios Médicos Inactivos",
-      fields: [
-        { key: "datosInstitucion.nombre", label: "Institución" },
-        { key: "datosInstitucion.parroquia", label: "Parroquia" },
-        {
-          key: (data) => obtenerServiciosMedicos(data, "INACTIVO"),
-          label: "Servicios Inactivos",
-        },
-      ],
-      searchFields: [
-        "datosInstitucion.nombre",
-        "datosInstitucion.parroquia",
-        (data) => obtenerServiciosMedicos(data, "INACTIVO"),
-      ],
-    },
-    {
-      id: "serv_innexistentes",
-      label: "Servicios Médicos Inexistentes",
-      fields: [
-        { key: "datosInstitucion.nombre", label: "Institución" },
-        { key: "datosInstitucion.parroquia", label: "Parroquia" },
-        {
-          key: (data) => obtenerServiciosMedicos(data, "NO EXISTE"),
-          label: "Servicios Inexistentes",
-        },
-      ],
-      searchFields: [
-        "datosInstitucion.nombre",
-        "datosInstitucion.parroquia",
-        (data) => obtenerServiciosMedicos(data, "NO EXISTE"),
-      ],
-    },
-  ],
+  I: [], // Reportes de la Sección I: Datos de la Institución
+  II: [], // Reportes de la Sección II: Autoridades],
+  III: [], // Reportes de la Sección III: Personal
+  IV: [], // Reportes de la Sección IV: Servicios Médicos
   // Reportes de la Sección V: Otros Servicios
   V: [
     { id: "otros_img_disp", label: "Disponibilidad de Imagenología" },
@@ -262,7 +71,18 @@ const REPORT_DEFINITIONS_BY_SECTION = {
 const ReportDefinitions = (() => {
   let allInstitutions = [];
 
-  const init = () => {
+  const init = async () => {
+    const importPromises = [
+      importarModulosDesdeNavegador(['inst_general.js', 'inst_ente.js'], REPORT_DEFINITIONS_BY_SECTION.I,'./I'),
+      importarModulosDesdeNavegador(['aut_director.js', 'aut_subDirector.js', 'aut_enlace.js', 'aut_jefeServiciosMedicos.js', 'aut_jefeMantenimiento.js'], REPORT_DEFINITIONS_BY_SECTION.II,'./II'),
+      importarModulosDesdeNavegador(['pers_todos.js','pers_servicios_medicos.js', 'pers_paramedicos_y_afines.js', 'pers_administrativo.js', 'pers_obrero.js'], REPORT_DEFINITIONS_BY_SECTION.III,'./III'),
+      importarModulosDesdeNavegador(['serv_activos.js', 'serv_activosProblemas.js', 'serv_inactivos.js', 'serv_inexistentes.js'], REPORT_DEFINITIONS_BY_SECTION.IV,'./IV'),
+      importarModulosDesdeNavegador([], REPORT_DEFINITIONS_BY_SECTION.V,'./V'),
+      importarModulosDesdeNavegador([], REPORT_DEFINITIONS_BY_SECTION.VI,'./VI'),
+      importarModulosDesdeNavegador([], REPORT_DEFINITIONS_BY_SECTION.VII,'./VII'),
+    ];
+    // Esperar a que TODAS las importaciones finalicen.
+    await Promise.all(importPromises);
     loadInstitutions();
   };
 

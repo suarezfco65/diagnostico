@@ -5,6 +5,15 @@ export const FilterManager = (() => {
   let activeCompoundFilters = {};
   let currentSection = null;
 
+  // 1. FUNCIÓN DE UTILIDAD: Crea una clave string estable a partir de la etiqueta.
+  //    (Esta lógica debe ser la misma usada al renderizar el modal para el atributo data-filter-key)
+  const createStableFilterId = (label) => {
+    if (!label) return '';
+    return label.toLowerCase()
+      .replace(/\s/g, '-')     // Reemplaza espacios por guiones
+      .replace(/[^a-z0-9\-]/g, ''); // Elimina caracteres no alfanuméricos ni guiones
+  };
+
   const applyAllFilters = (institutions, reportDefinition, searchString) => {
     let filtered = [...institutions];
 
@@ -47,14 +56,35 @@ export const FilterManager = (() => {
 
   const passesCompoundFilters = (data, filterDefinitions) => {
     return Object.entries(activeCompoundFilters).every(([key, filterValue]) => {
-      const filterDef = filterDefinitions.find((f) => f.key === key);
+      
+      // 1. Búsqueda de la definición (CORRECCIÓN CRÍTICA 1)
+      const filterDef = filterDefinitions.find((f) => {
+        // a) Comparación para claves de string (la mayoría de los filtros)
+        if (typeof f.key === 'string') {
+          return f.key === key;
+        }
+
+        // b) Comparación para claves de función: Se usa el ID estable (el que está en 'key')
+        if (typeof f.key === 'function') {
+          const stableId = createStableFilterId(f.label);
+          return stableId === key;
+        }
+
+        return false;
+      });
+
       if (!filterDef || !filterValue) return true;
 
-      const dataValue = ReportDefinitions.getReportValue(data, key);
+      // 2. Obtención del valor del dato (CORRECCIÓN CRÍTICA 2)
+      // Siempre se usa filterDef.key (la función original o la cadena de ruta)
+      // ReportDefinitions.getReportValue sabrá qué hacer si es una función.
+      const dataValue = ReportDefinitions.getReportValue(data, filterDef.key); 
+      
+      // 3. Evaluación de la condición
       return evaluateFilterCondition(dataValue, filterValue, filterDef.type);
     });
   };
-
+  
   const evaluateFilterCondition = (dataValue, filterValue, filterType) => {
     switch (filterType) {
       case "string":
@@ -92,6 +122,19 @@ export const FilterManager = (() => {
     renderCompoundFilterInputs(reportDefinition.compoundFilters);
   };
 
+  /**
+   * UTILIDAD: Crea una clave segura para el DOM a partir de una etiqueta.
+   * @param {string} label - La etiqueta del filtro.
+   * @returns {string} Clave segura para ID de DOM.
+   */
+  const createDomKeyFromLabel = (label) => {
+    if (!label) return 'filter-id';
+    return label.toLowerCase()
+      .replace(/\s/g, '-')     // Reemplaza espacios por guiones
+      .replace(/[^a-z0-9\-]/g, ''); // Elimina caracteres no alfanuméricos ni guiones
+  };
+
+
   const renderCompoundFilterInputs = (filters) => {
     if (!filters || filters.length === 0) {
       document.getElementById("compound-filter-inputs-container").innerHTML =
@@ -101,8 +144,19 @@ export const FilterManager = (() => {
 
     let html = "";
     filters.forEach((filter, index) => {
-      const filterId = `comp-filter-${filter.key.replace(/\./g, "-")}`;
-      const currentValue = activeCompoundFilters[filter.key];
+      
+      // ❗ LÓGICA DE DETECCIÓN Y GENERACIÓN DE CLAVE DE DOM ❗
+      let filterDomKey;
+      // 1. Si filter.key es una función, usamos el label para crear una clave de DOM segura.
+      if (typeof filter.key === 'function') {
+        filterDomKey = createStableFilterId(filter.label);
+      } else {
+        // 2. Si es una cadena (el caso original), reemplazamos puntos por guiones.
+        filterDomKey = filter.key.replace(/\./g, "-");
+      }
+      
+      const filterId = `comp-filter-${filterDomKey}`;
+      const currentValue = activeCompoundFilters[filter.key]; // activeCompoundFilters sigue usando filter.key original (cadena o función)
 
       html += `
                 <div class="mb-3 p-3 border rounded">

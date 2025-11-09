@@ -9,17 +9,26 @@ const ReportsModule = (() => {
   let currentSection = null;
   let currentReportId = null;
 
-  const init = () => {
-    // Inicializar todos los módulos
-    AuthManager.init();
-    ReportDefinitions.init();
-    UIManager.init();
+  const init = async () => {
+    try {
+      // 1. Esperar la carga de todas las definiciones de reportes dinámicas
+      //    ReportDefinitions.init() ahora debe esperar a todas las llamadas
+      //    a importarModulosDesdeNavegador.
+      await ReportDefinitions.init();
+      console.log("✅ Inicialización de ReportDefinitions completada.");
 
-    // ❗ NUEVA LÍNEA: Configurar el listener de exportación ❗
-    TableGenerator.setupExportListener();
-
-    // Configurar event listeners
-    setupEventListeners();
+      // 2. Inicializar el resto de módulos (solo después de que los reportes estén cargados)
+      AuthManager.init();
+      UIManager.init();
+      TableGenerator.setupExportListener();
+      setupEventListeners();
+    } catch (error) {
+      console.error(
+        "❌ Error crítico durante la inicialización de módulos:",
+        error
+      );
+      // Aquí puedes mostrar una alerta de error al usuario
+    }
   };
 
   const setupEventListeners = () => {
