@@ -1,132 +1,89 @@
 // modules/report-definitions.js - Definiciones y utilidades de reportes
 import * as Storage from "../storage.js";
 
-/**
- * Importa módulos JavaScript dinámicamente usando una lista de nombres de archivo
- * y los añade a un array.
- *
- * @param {string[]} fileNames - Array con los nombres de los archivos JS (ej: ['inst_general.js']).
- * @param {Array<any>} targetArray - El array donde se almacenarán los valores exportados.
- * @param {string} folderPath - La ruta de la carpeta (URL relativa) donde se encuentran los archivos.
- * @returns {Promise<void>}
- */
-async function importarModulosDesdeNavegador(
-  fileNames,
-  targetArray,
-  folderPath
-) {
-  const folder = folderPath.endsWith("/") ? folderPath : folderPath + "/";
-  for (const fileName of fileNames) {
-    const fileNameWithoutExt = fileName.replace(/\.js$/i, "");
-    const modulePath = folder + fileName; // Ej: './modulos/inst_general.js'
-    try {
-      // Importación dinámica. El navegador usa la ruta URL.
-      const module = await import(modulePath);
-      // Se accede a la exportación por defecto (default) que es el objeto 'inst_general'
-      const importedValue = module.default;
-      // Ejecutar <variable>.push(<la variable importada>)
-      if (importedValue) {
-        targetArray.push(importedValue);
-        console.log(
-          `✅ Éxito: Objeto '${importedValue.id}' agregado al array.`
-        );
-      } else {
-        console.warn(
-          `⚠️ Advertencia: El módulo '${fileName}' no tenía una exportación por defecto.`
-        );
-      }
-    } catch (importError) {
-      console.error(`❌ Error al importar ${fileName}:`, importError);
-    }
-  }
+// Importaciones estáticas
+import inst_general from './I/inst_general.js';
+import inst_ente from './I/inst_ente.js';
+
+import aut_director from './II/aut_director.js';
+import aut_subDirector from './II/aut_subDirector.js';
+import aut_enlace from './II/aut_enlace.js';
+import aut_jefeServiciosMedicos from './II/aut_jefeServiciosMedicos.js';
+import aut_jefeMantenimiento from './II/aut_jefeMantenimiento.js';
+
+import pers_todos from './III/pers_todos.js';
+import pers_servicios_medicos from './III/pers_servicios_medicos.js';
+import pers_paramedicos_y_afines from './III/pers_paramedicos_y_afines.js';
+import pers_administrativo from './III/pers_administrativo.js';
+import pers_obrero from './III/pers_obrero.js';
+
+import serv_activos from './IV/serv_activos.js';
+import serv_activosProblemas from './IV/serv_activosProblemas.js';
+import serv_inactivos from './IV/serv_inactivos.js';
+import serv_inexistentes from './IV/serv_inexistentes.js';
+
+import oserv_imag_activos from './V/oserv_imag_activos.js';
+import oserv_imag_activosProblemas from './V/oserv_imag_activosProblemas.js';
+import oserv_imag_inactivos from './V/oserv_imag_inactivos.js';
+import oserv_imag_inexistentes from './V/oserv_imag_inexistentes.js';
+import oserv_farm_basicos from './V/oserv_farm_basicos.js';
+import oserv_farm_especializados from './V/oserv_farm_especializados.js';
+import oserv_farm_altoCosto from './V/oserv_farm_altoCosto.js';
+import oserv_lab_disponibilidad_1 from './V/oserv_lab_disponibilidad_1.js';
+import oserv_lab_disponibilidad_2 from './V/oserv_lab_disponibilidad_2.js';
+import oserv_lab_disponibilidad_3 from './V/oserv_lab_disponibilidad_3.js';
+import oserv_coc_activos from './V/oserv_coc_activos.js';
+import oserv_coc_activosProblemas from './V/oserv_coc_activosProblemas.js';
+import oserv_coc_inactivos from './V/oserv_coc_inactivos.js';
+import oserv_coc_inexistentes from './V/oserv_coc_inexistentes.js';
+
+import infr_cond_cocina from './VI/infr_cond_cocina.js';
+import infr_cond_consultorios from './VI/infr_cond_consultorios.js';
+import infr_cond_farmacia from './VI/infr_cond_farmacia.js';
+import infr_cond_hospitalizacion from './VI/infr_cond_hospitalizacion.js';
+import infr_cond_laboratorio from './VI/infr_cond_laboratorio.js';
+import infr_cond_quirofanos from './VI/infr_cond_quirofanos.js';
+import infr_servPub_1 from './VI/infr_servPub_1.js';
+import infr_servPub_2 from './VI/infr_servPub_2.js';
+
+import proy_actuales from './VII/proy_actuales.js';
+// Funciones de log para mejorar la legibilidad
+function logSuccess(id) {
+  console.log(`✅ Éxito: Objeto '${id}' agregado al array.`);
+}
+
+function logWarning(message) {
+  console.warn(`⚠️ Advertencia: ${message}`);
+}
+
+function logError(fileName, modulePath, error) {
+  console.error(`❌ Error al importar ${fileName} desde ${modulePath}:`, error);
 }
 
 // Mantener las definiciones de reportes
 const REPORT_DEFINITIONS_BY_SECTION = {
-  I: [], // Reportes de la Sección I: Datos de la Institución
-  II: [], // Reportes de la Sección II: Autoridades],
-  III: [], // Reportes de la Sección III: Personal
-  IV: [], // Reportes de la Sección IV: Servicios Médicos
-  V: [], // Reportes de la Sección V: Otros Servicios
-  VI: [], // Reportes de la Sección VI: Infraestructura
-  VII: [], // Reportes de la Sección VII: Proyectos
+  I: [inst_general, inst_ente],
+  II: [aut_director, aut_subDirector, aut_enlace, aut_jefeServiciosMedicos, aut_jefeMantenimiento],
+  III: [pers_todos, pers_servicios_medicos, pers_paramedicos_y_afines, pers_administrativo, pers_obrero],
+  IV: [serv_activos, serv_activosProblemas, serv_inactivos, serv_inexistentes],
+  V: [
+    oserv_imag_activos, oserv_imag_activosProblemas, oserv_imag_inactivos, oserv_imag_inexistentes,
+    oserv_farm_basicos, oserv_farm_especializados, oserv_farm_altoCosto,
+    oserv_lab_disponibilidad_1, oserv_lab_disponibilidad_2, oserv_lab_disponibilidad_3,
+    oserv_coc_activos, oserv_coc_activosProblemas, oserv_coc_inactivos, oserv_coc_inexistentes
+  ],
+  VI: [
+    infr_cond_cocina, infr_cond_consultorios, infr_cond_farmacia, infr_cond_hospitalizacion,
+    infr_cond_laboratorio, infr_cond_quirofanos, infr_servPub_1, infr_servPub_2
+  ],
+  VII: [proy_actuales]
 };
+
 
 const ReportDefinitions = (() => {
   let allInstitutions = [];
 
-  const init = async () => {
-    // Importar todos los módulos necesarios de forma dinámica
-    await importarModulosDesdeNavegador(
-        ["inst_general.js", "inst_ente.js"],
-        REPORT_DEFINITIONS_BY_SECTION.I,
-        "./I"
-      );
-    await importarModulosDesdeNavegador(
-        [
-          "aut_director.js",
-          "aut_subDirector.js",
-          "aut_enlace.js",
-          "aut_jefeServiciosMedicos.js",
-          "aut_jefeMantenimiento.js",
-        ],
-        REPORT_DEFINITIONS_BY_SECTION.II,
-        "./II"
-      );
-    await importarModulosDesdeNavegador(
-        [
-          "pers_todos.js",
-          "pers_servicios_medicos.js",
-          "pers_paramedicos_y_afines.js",
-          "pers_administrativo.js",
-          "pers_obrero.js",
-        ],
-        REPORT_DEFINITIONS_BY_SECTION.III,
-        "./III"
-      );
-    await importarModulosDesdeNavegador(
-        [
-          "serv_activos.js",
-          "serv_activosProblemas.js",
-          "serv_inactivos.js",
-          "serv_inexistentes.js",
-        ],
-        REPORT_DEFINITIONS_BY_SECTION.IV,
-        "./IV"
-      );
-    await importarModulosDesdeNavegador(
-        [
-          "oserv_imag_activos.js",
-          "oserv_imag_activosProblemas.js",
-          "oserv_imag_inactivos.js",
-          "oserv_imag_inexistentes.js",
-          "oserv_farm_basicos.js",
-          "oserv_farm_especializados.js",
-          "oserv_farm_altoCosto.js",
-          "oserv_lab_disponibilidad_1.js",
-          "oserv_lab_disponibilidad_2.js",
-          "oserv_lab_disponibilidad_3.js",
-          "oserv_coc_activos.js",
-          "oserv_coc_activosProblemas.js",
-          "oserv_coc_inactivos.js",
-          "oserv_coc_inexistentes.js",
-        ],
-        REPORT_DEFINITIONS_BY_SECTION.V,
-        "./V"
-      );
-    await importarModulosDesdeNavegador(
-        ["infr_cond_cocina.js","infr_cond_consultorios.js","infr_cond_farmacia.js","infr_cond_hospitalizacion.js","infr_cond_laboratorio.js","infr_cond_quirofanos.js",
-          "infr_servPub_1.js","infr_servPub_2.js",
-        ],
-        REPORT_DEFINITIONS_BY_SECTION.VI,
-        "./VI"
-      );
-    await importarModulosDesdeNavegador(
-        ["proy_actuales.js"],
-        REPORT_DEFINITIONS_BY_SECTION.VII,
-        "./VII"
-      ),
-
+  const init = () => {
     loadInstitutions();
   };
 
