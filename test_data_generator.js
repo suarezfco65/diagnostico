@@ -298,7 +298,7 @@ function createSectionVData() {
 
         if (item.isOther && Math.random() < 0.3) {
           nombreEspec =
-            groupName === "imagenologia" ? "Tomografía Avanzada" : "Panadería";
+            groupName === "imagenologia" ? "TOMOGRAFÍA AVANZADA" : "PANADERÍA";
         }
 
         data[groupName][item.key] = {
@@ -342,7 +342,7 @@ function createSectionVData() {
               nombreEspec =
                 groupName === "laboratorio"
                   ? "Hematología Especial"
-                  : "Medicamentos Controlados";
+                  : "MEDICAMENTOS CONTROLADOS";
             }
 
             // ✅ ASIGNACIÓN CORREGIDA: Utiliza la anidación [group.key]

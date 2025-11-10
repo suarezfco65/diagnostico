@@ -2,23 +2,33 @@ import { PARROQUIAS_CARACAS } from "../../data.js";
 import FUNCTIONS_DEFINITIONS_BY_SECTION from "../functions-definitions.js";
 const obtenerOtrosServiciosDisponibles =
   FUNCTIONS_DEFINITIONS_BY_SECTION.V.obtenerOtrosServiciosDisponibles;
-const oserv_farm_basicos = {
-  id: "oserv_farm_basicos",
-  label: "Medicamentos Basicos Disponibles en Farmacia",
+const oserv_farm_especializados = {
+  id: "oserv_farm_especializados",
+  label: "Medicamentos Especializados Disponibles en Farmacia",
   fields: [
     { key: "datosInstitucion.nombre", label: "Institución" },
     { key: "datosInstitucion.parroquia", label: "Parroquia" },
     {
       key: (data) =>
-        obtenerOtrosServiciosDisponibles(data, "farmacia", "basicos", true),
-      label: "Medicamentos Basicos disponibles",
+        obtenerOtrosServiciosDisponibles(
+          data,
+          "farmacia",
+          "especializados",
+          true
+        ),
+      label: "Medicamentos Especializados disponibles",
     },
   ],
   searchFields: [
     "datosInstitucion.nombre",
     "datosInstitucion.parroquia",
     (data) =>
-      obtenerOtrosServiciosDisponibles(data, "farmacia", "basicos", true),
+      obtenerOtrosServiciosDisponibles(
+        data,
+        "farmacia",
+        "especializados",
+        true
+      ),
   ],
   compoundFilters: [
     {
@@ -29,4 +39,4 @@ const oserv_farm_basicos = {
     },
   ],
 };
-export default oserv_farm_basicos;
+export default oserv_farm_especializados;

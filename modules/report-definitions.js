@@ -121,6 +121,9 @@ const ReportDefinitions = (() => {
           "oserv_imag_inactivos.js",
           "oserv_imag_inexistentes.js",
           "oserv_farm_basicos.js",
+          "oserv_farm_especializados.js",
+          "oserv_farm_altoCosto.js",
+          "oserv_lab_disponibilidad.js",
           "oserv_coc_activos.js",
           "oserv_coc_activosProblemas.js",
           "oserv_coc_inactivos.js",
@@ -142,6 +145,7 @@ const ReportDefinitions = (() => {
     ];
     // Esperar a que TODAS las importaciones finalicen.
     await Promise.all(importPromises);
+
     loadInstitutions();
   };
 

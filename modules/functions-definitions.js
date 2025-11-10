@@ -75,18 +75,20 @@ const FUNCTIONS_DEFINITIONS_BY_SECTION = {
 
       const obtenerLabelPorKey = (key) => {
         // Corrección: se agregó la flecha '=>' después de '(t)'
-        const grupoEncontrado = OTROS_SERVICIOS_DATA[servicio].find((t) => t.key === tipo);
+        const grupoEncontrado = OTROS_SERVICIOS_DATA[servicio].find(
+          (t) => t.key === tipo
+        );
 
         if (!grupoEncontrado) {
-            return null; // Manejar el caso si no se encuentra el grupo
+          return null; // Manejar el caso si no se encuentra el grupo
         }
 
         const encontrado = grupoEncontrado.items.find(
-            (item) => item.key === key
+          (item) => item.key === key
         );
         return encontrado ? encontrado.label : null; // Devuelve el label o null si no se encuentra
       };
-      
+
       const serviciosFiltrados = Object.entries(dataServicio)
         .filter(([, servicio]) => servicio.disponible === disponible)
         .map(
