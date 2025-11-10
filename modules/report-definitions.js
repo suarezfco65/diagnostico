@@ -57,13 +57,12 @@ const ReportDefinitions = (() => {
 
   const init = async () => {
     // Importar todos los módulos necesarios de forma dinámica
-    const importPromises = [
-      importarModulosDesdeNavegador(
+    await importarModulosDesdeNavegador(
         ["inst_general.js", "inst_ente.js"],
         REPORT_DEFINITIONS_BY_SECTION.I,
         "./I"
-      ),
-      importarModulosDesdeNavegador(
+      );
+    await importarModulosDesdeNavegador(
         [
           "aut_director.js",
           "aut_subDirector.js",
@@ -73,8 +72,8 @@ const ReportDefinitions = (() => {
         ],
         REPORT_DEFINITIONS_BY_SECTION.II,
         "./II"
-      ),
-      importarModulosDesdeNavegador(
+      );
+    await importarModulosDesdeNavegador(
         [
           "pers_todos.js",
           "pers_servicios_medicos.js",
@@ -84,8 +83,8 @@ const ReportDefinitions = (() => {
         ],
         REPORT_DEFINITIONS_BY_SECTION.III,
         "./III"
-      ),
-      importarModulosDesdeNavegador(
+      );
+    await importarModulosDesdeNavegador(
         [
           "serv_activos.js",
           "serv_activosProblemas.js",
@@ -94,8 +93,8 @@ const ReportDefinitions = (() => {
         ],
         REPORT_DEFINITIONS_BY_SECTION.IV,
         "./IV"
-      ),
-      importarModulosDesdeNavegador(
+      );
+    await importarModulosDesdeNavegador(
         [
           "oserv_imag_activos.js",
           "oserv_imag_activosProblemas.js",
@@ -114,22 +113,19 @@ const ReportDefinitions = (() => {
         ],
         REPORT_DEFINITIONS_BY_SECTION.V,
         "./V"
-      ),
-      importarModulosDesdeNavegador(
+      );
+    await importarModulosDesdeNavegador(
         ["infr_cond_cocina.js","infr_cond_consultorios.js","infr_cond_farmacia.js","infr_cond_hospitalizacion.js","infr_cond_laboratorio.js","infr_cond_quirofanos.js",
           "infr_servPub_1.js","infr_servPub_2.js",
         ],
         REPORT_DEFINITIONS_BY_SECTION.VI,
         "./VI"
-      ),
-      importarModulosDesdeNavegador(
+      );
+    await importarModulosDesdeNavegador(
         ["proy_actuales.js"],
         REPORT_DEFINITIONS_BY_SECTION.VII,
         "./VII"
       ),
-    ];
-    // Esperar a que TODAS las importaciones finalicen.
-    await Promise.all(importPromises);
 
     loadInstitutions();
   };
