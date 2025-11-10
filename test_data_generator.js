@@ -450,13 +450,14 @@ function createSectionVIIData() {
 
   // Función para simular entre 0 y 3 proyectos por categoría
   const generateProyectosArray = (placeholder) => {
-    const count = Math.floor(Math.random() * 4); // 0 a 3 proyectos
+    const count = Math.floor(Math.random() * 2); // 0 a 1 proyectos
+    const fase = Math.floor(Math.random() * 3) + 1; // 1 a 3 fases
     const array = [];
     // Usamos el placeholder como base para simular una descripción de proyecto
     const baseDesc = placeholder.split(":")[1].trim().replace(/\.$/, "");
-    for (let i = 0; i < count; i++) {
-      array.push(`${baseDesc} (Fase ${i + 1})`);
-    }
+    //    for (let i = 0; i < count; i++) {
+    array.push(`${baseDesc} (Fase ${fase})`);
+    //    }
     return array;
   };
 

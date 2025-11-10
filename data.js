@@ -56,7 +56,6 @@ export const ENTES_ADSCRITOS = [
   { value: "MPPS", label: "MPPS" },
   { value: "IVSS", label: "IVSS" },
   { value: "IPASME", label: "IPASME" },
-  { value: "SANIDAD", label: "Sanidad" },
   { value: "UNIVERSIDAD C DE LA S", label: "Universidad C de la S" },
   { value: "GDC", label: "GDC" },
   { value: "ALCALDIA", label: "Alcaldía" },
@@ -482,8 +481,8 @@ export const SERVICIOS_PUBLICOS = [
     ],
   },
   {
-    label: "SEGURIDAD",
-    key: "seguridad",
+    label: "SERVICIO DE SEGURIDAD",
+    key: "servicioSeguridad",
     type: "radio",
     options: [
       { value: "DISPONIBLE" },

@@ -4,13 +4,22 @@ const infr_servPub_2 = {
   label: "Servicios Públicos Electricidad Gas Internet Seguridad",
   fields: [
     { key: "datosInstitucion.nombre", label: "Nombre" },
-    { key: "infraestructura.serviciosPublicos.electricidad.estado", label: "Electricidad" },
+    {
+      key: "infraestructura.serviciosPublicos.electricidad.estado",
+      label: "Electricidad",
+    },
     { key: "infraestructura.serviciosPublicos.gas.estado", label: "Gas" },
-    { key: "infraestructura.serviciosPublicos.internet.estado", label: "Internet" },
-    { key: "infraestructura.serviciosPublicos.seguridad.estado", label: "Seguridad" },
+    {
+      key: "infraestructura.serviciosPublicos.internet.estado",
+      label: "Internet",
+    },
+    {
+      key: "infraestructura.serviciosPublicos.servicioSeguridad.estado",
+      label: "Servicio de Seguridad",
+    },
     { key: "datosInstitucion.parroquia", label: "Parroquia" },
   ],
-  searchFields: ["datosInstitucion.parroquia","datosInstitucion.nombre"],
+  searchFields: ["datosInstitucion.parroquia", "datosInstitucion.nombre"],
   compoundFilters: [
     {
       key: "datosInstitucion.parroquia",
