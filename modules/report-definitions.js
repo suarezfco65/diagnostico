@@ -116,12 +116,14 @@ const ReportDefinitions = (() => {
         "./V"
       ),
       importarModulosDesdeNavegador(
-        ["infr_cond_cocina.js"],
+        ["infr_cond_cocina.js","infr_cond_consultorios.js","infr_cond_farmacia.js","infr_cond_hospitalizacion.js","infr_cond_laboratorio.js","infr_cond_quirofanos.js",
+          "infr_servPub_1.js","infr_servPub_2.js",
+        ],
         REPORT_DEFINITIONS_BY_SECTION.VI,
         "./VI"
       ),
       importarModulosDesdeNavegador(
-        [],
+        ["proy_actuales.js"],
         REPORT_DEFINITIONS_BY_SECTION.VII,
         "./VII"
       ),

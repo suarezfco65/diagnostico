@@ -7,6 +7,7 @@ const infr_cond_cocina = {
     { key: "datosInstitucion.nombre", label: "Nombre" },
     { key: "infraestructura.condiciones.cocina.paredes", label: "Paredes" },
     { key: "infraestructura.condiciones.cocina.techos", label: "Techos" },
+    { key: "infraestructura.condiciones.cocina.pisos", label: "Pisos" },
     { key: "infraestructura.condiciones.cocina.aa", label: "A/A" },
     {
       key: "infraestructura.condiciones.cocina.observacion",

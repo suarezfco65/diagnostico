@@ -382,15 +382,23 @@ function createSectionVIData() {
       nombreEspec = "Ascensores";
     }
 
+    // Generar valores aleatorios para cantidad y operativos
+    const cantidad = Math.floor(Math.random() * 20) + 1; // 1 a 20
+    const operativos = Math.floor(Math.random() * (cantidad + 1)); // 0 a cantidad
+
     condicionesData[key] = {
       paredes: getRandomItem(CONDICIONES_OPTIONS),
       pisos: getRandomItem(CONDICIONES_OPTIONS),
       techos: getRandomItem(CONDICIONES_OPTIONS),
       aa: getRandomItem(CONDICIONES_OPTIONS),
+      cantidad: cantidad,
+      operativos: operativos,
       observacion: getRandomItem([
         "OK",
         "Necesita pintura",
         "Fuga de agua en techo",
+        `Solo ${operativos} de ${cantidad} operativos`,
+        "Requiere mantenimiento urgente",
         "",
       ]),
       nombreEspec: nombreEspec,
@@ -426,10 +434,11 @@ function createSectionVIData() {
       "",
       "Falla grave de electricidad",
       "Falta de ventilación en general",
+      "Infraestructura en condiciones regulares",
+      "Varios equipos fuera de servicio",
     ]),
   };
 }
-
 // test_data_generator.js (Función corregida)
 
 /**
@@ -444,7 +453,7 @@ function createSectionVIIData() {
     const count = Math.floor(Math.random() * 4); // 0 a 3 proyectos
     const array = [];
     // Usamos el placeholder como base para simular una descripción de proyecto
-    const baseDesc = placeholder.split(":")[0].trim().replace(/\.$/, "");
+    const baseDesc = placeholder.split(":")[1].trim().replace(/\.$/, "");
     for (let i = 0; i < count; i++) {
       array.push(`${baseDesc} (Fase ${i + 1})`);
     }
