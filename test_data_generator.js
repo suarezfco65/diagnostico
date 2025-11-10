@@ -341,7 +341,7 @@ function createSectionVData() {
             if (item.isOther && Math.random() < 0.3) {
               nombreEspec =
                 groupName === "laboratorio"
-                  ? "Hematología Especial"
+                  ? "HEMATOLOGÍA ESPECIALIZADA"
                   : "MEDICAMENTOS CONTROLADOS";
             }
 

@@ -48,27 +48,8 @@ const REPORT_DEFINITIONS_BY_SECTION = {
   III: [], // Reportes de la Sección III: Personal
   IV: [], // Reportes de la Sección IV: Servicios Médicos
   V: [], // Reportes de la Sección V: Otros Servicios
-  // Reportes de la Sección VI: Infraestructura
-  VI: [
-    { id: "infra_cond_malas", label: "Áreas con Malas Condiciones" },
-    { id: "infra_serv_sin", label: "Centros sin Servicios Públicos" },
-    {
-      id: "infra_servicios",
-      label: "Disponibilidad de Servicios Públicos",
-      compoundFilters: [
-        {
-          key: "infraestructura.serviciosPublicos.agua.estado",
-          label: "Servicio de Agua Activo",
-          type: "boolean",
-        },
-      ],
-    },
-  ],
-  // Reportes de la Sección VII: Proyectos
-  VII: [
-    { id: "proy_existentes", label: "Proyectos Registrados por Área" },
-    { id: "proy_cero", label: "Centros sin Proyectos" },
-  ],
+  VI: [], // Reportes de la Sección VI: Infraestructura
+  VII: [], // Reportes de la Sección VII: Proyectos
 };
 
 const ReportDefinitions = (() => {
@@ -123,7 +104,9 @@ const ReportDefinitions = (() => {
           "oserv_farm_basicos.js",
           "oserv_farm_especializados.js",
           "oserv_farm_altoCosto.js",
-          "oserv_lab_disponibilidad.js",
+          "oserv_lab_disponibilidad_1.js",
+          "oserv_lab_disponibilidad_2.js",
+          "oserv_lab_disponibilidad_3.js",
           "oserv_coc_activos.js",
           "oserv_coc_activosProblemas.js",
           "oserv_coc_inactivos.js",
@@ -133,7 +116,7 @@ const ReportDefinitions = (() => {
         "./V"
       ),
       importarModulosDesdeNavegador(
-        [],
+        ["infr_cond_cocina.js"],
         REPORT_DEFINITIONS_BY_SECTION.VI,
         "./VI"
       ),
