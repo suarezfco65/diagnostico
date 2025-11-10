@@ -3,14 +3,14 @@ import FUNCTIONS_DEFINITIONS_BY_SECTION from "../functions-definitions.js";
 const obtenerOtrosServiciosEstado =
   FUNCTIONS_DEFINITIONS_BY_SECTION.V.obtenerOtrosServiciosEstado;
 const oserv_coc_inactivos = {
-  id: "oserv_inactivos",
+  id: "oserv_coc_inactivos",
   label: "Servicios de Cocina Inactivos",
   fields: [
     { key: "datosInstitucion.nombre", label: "Institución" },
     { key: "datosInstitucion.parroquia", label: "Parroquia" },
     {
       key: (data) => obtenerOtrosServiciosEstado(data, "cocina", "INACTIVO"),
-      label: "Servicios Inactivos",
+      label: "Servicios de cocina Inactivos",
     },
   ],
   searchFields: [

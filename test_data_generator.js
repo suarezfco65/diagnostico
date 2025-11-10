@@ -196,7 +196,7 @@ function createSectionIVData() {
   SERVICIOS_MEDICOS.forEach((servicio) => {
     const key = servicio.key;
     // Usamos ACTIVO/INACTIVO, etc. de ESTADOS_SERVICIO
-    const estado = getRandomItem(ESTADOS_SERVICIO.slice(0, 4));
+    const estado = getRandomItem(ESTADOS_SERVICIO);
     let observacion = "";
     let nombreEspec = "";
 
@@ -293,7 +293,7 @@ function createSectionVData() {
     if (Array.isArray(groupsToIterate)) {
       // ✅ CORRECCIÓN: Iterar sobre los items directamente y asignarlos de forma plana
       groupsToIterate.forEach((item) => {
-        const estado = getRandomItem(ESTADOS_SERVICIO.slice(0, 3));
+        const estado = getRandomItem(ESTADOS_SERVICIO);
         let nombreEspec = "";
 
         if (item.isOther && Math.random() < 0.3) {

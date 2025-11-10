@@ -3,14 +3,14 @@ import FUNCTIONS_DEFINITIONS_BY_SECTION from "../functions-definitions.js";
 const obtenerOtrosServiciosEstado =
   FUNCTIONS_DEFINITIONS_BY_SECTION.V.obtenerOtrosServiciosEstado;
 const oserv_coc_inexistentes = {
-  id: "oserv_inexistentes",
+  id: "oserv_coc_inexistentess",
   label: "Servicios de Cocina Inexistentes",
   fields: [
     { key: "datosInstitucion.nombre", label: "Institución" },
     { key: "datosInstitucion.parroquia", label: "Parroquia" },
     {
       key: (data) => obtenerOtrosServiciosEstado(data, "cocina", "INEXISTENTE"),
-      label: "Servicios Inexistentes",
+      label: "Servicios de cocina Inexistentes",
     },
   ],
   searchFields: [

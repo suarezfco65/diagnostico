@@ -3,20 +3,20 @@ import FUNCTIONS_DEFINITIONS_BY_SECTION from "../functions-definitions.js";
 const obtenerOtrosServiciosEstado =
   FUNCTIONS_DEFINITIONS_BY_SECTION.V.obtenerOtrosServiciosEstado;
 const oserv_imag_inactivos = {
-  id: "oserv_inactivos",
+  id: "oserv_imag_inactivos",
   label: "Servicios de Imagenologias Inactivos",
   fields: [
     { key: "datosInstitucion.nombre", label: "Institución" },
     { key: "datosInstitucion.parroquia", label: "Parroquia" },
     {
-      key: (data) => obtenerOtrosServiciosEstado(data, "cocina", "INACTIVO"),
-      label: "Servicios Inactivos",
+      key: (data) => obtenerOtrosServiciosEstado(data, "imagenologia", "INACTIVO"),
+      label: "Servicios de Imagenologias Inactivos",
     },
   ],
   searchFields: [
     "datosInstitucion.nombre",
     "datosInstitucion.parroquia",
-    (data) => obtenerOtrosServiciosEstado(data, "cocina", "INACTIVO"),
+    (data) => obtenerOtrosServiciosEstado(data, "imagenologia", "INACTIVO"),
   ],
   compoundFilters: [
     {

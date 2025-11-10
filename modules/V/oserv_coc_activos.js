@@ -10,7 +10,7 @@ const oserv_coc_activos = {
     { key: "datosInstitucion.parroquia", label: "Parroquia" },
     {
       key: (data) => obtenerOtrosServiciosEstado(data, "cocina", "ACTIVO"),
-      label: "Servicios Activos",
+      label: "Servicio de cocina Activos",
     },
   ],
   searchFields: [

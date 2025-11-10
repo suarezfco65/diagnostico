@@ -3,7 +3,7 @@ import FUNCTIONS_DEFINITIONS_BY_SECTION from "../functions-definitions.js";
 const obtenerOtrosServiciosEstado =
   FUNCTIONS_DEFINITIONS_BY_SECTION.V.obtenerOtrosServiciosEstado;
 const oserv_imag_activos = {
-  id: "oserv_activos",
+  id: "oserv_imag_activos",
   label: "Servicios de Imagenologias Activos",
   fields: [
     { key: "datosInstitucion.nombre", label: "Institución" },
@@ -11,7 +11,7 @@ const oserv_imag_activos = {
     {
       key: (data) =>
         obtenerOtrosServiciosEstado(data, "imagenologia", "ACTIVO"),
-      label: "Servicios Activos",
+      label: "Servicios de Imagenologias Activos",
     },
   ],
   searchFields: [
