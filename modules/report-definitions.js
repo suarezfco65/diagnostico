@@ -120,6 +120,7 @@ const ReportDefinitions = (() => {
           "oserv_imag_activosProblemas.js",
           "oserv_imag_inactivos.js",
           "oserv_imag_inexistentes.js",
+          "oserv_farm_basicos.js",
           "oserv_coc_activos.js",
           "oserv_coc_activosProblemas.js",
           "oserv_coc_inactivos.js",

@@ -1,22 +1,22 @@
 import { PARROQUIAS_CARACAS } from "../../data.js";
 import FUNCTIONS_DEFINITIONS_BY_SECTION from "../functions-definitions.js";
-const obtenerOtrosServiciosEstado =
-  FUNCTIONS_DEFINITIONS_BY_SECTION.V.obtenerOtrosServiciosEstado;
-const oserv_coc_inexistentes = {
-  id: "oserv_coc_inexistentess",
-  label: "Servicios de Cocina Inexistentes",
+const obtenerOtrosServiciosDisponibles =
+  FUNCTIONS_DEFINITIONS_BY_SECTION.V.obtenerOtrosServiciosDisponibles;
+const oserv_farm_basicos = {
+  id: "oserv_farm_basicos",
+  label: "Medicamentos Basicos Disponibles en Farmacia",
   fields: [
     { key: "datosInstitucion.nombre", label: "Institución" },
     { key: "datosInstitucion.parroquia", label: "Parroquia" },
     {
-      key: (data) => obtenerOtrosServiciosEstado(data, "cocina", "NO EXISTE"),
-      label: "Servicios de cocina Inexistentes",
+      key: (data) => obtenerOtrosServiciosDisponibles(data, "farmacia", "basicos", true),
+      label: "Servicio de cocina Activos",
     },
   ],
   searchFields: [
     "datosInstitucion.nombre",
     "datosInstitucion.parroquia",
-    (data) => obtenerOtrosServiciosEstado(data, "cocina", "NO EXISTE"),
+    (data) => obtenerOtrosServiciosDisponibles(data, "farmacia", "basicos", true),
   ],
   compoundFilters: [
     {
@@ -27,4 +27,4 @@ const oserv_coc_inexistentes = {
     },
   ],
 };
-export default oserv_coc_inexistentes;
+export default oserv_farm_basicos;

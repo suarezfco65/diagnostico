@@ -9,14 +9,14 @@ const oserv_imag_inexistentes = {
     { key: "datosInstitucion.nombre", label: "Institución" },
     { key: "datosInstitucion.parroquia", label: "Parroquia" },
     {
-      key: (data) => obtenerOtrosServiciosEstado(data, "imagenologia", "INEXISTENTE"),
+      key: (data) => obtenerOtrosServiciosEstado(data, "imagenologia", "NO EXISTE"),
       label: "Servicios de Imagenologias Inexistentes",
     },
   ],
   searchFields: [
     "datosInstitucion.nombre",
     "datosInstitucion.parroquia",
-    (data) => obtenerOtrosServiciosEstado(data, "imagenologia", "INEXISTENTE"),
+    (data) => obtenerOtrosServiciosEstado(data, "imagenologia", "NO EXISTE"),
   ],
   compoundFilters: [
     {
