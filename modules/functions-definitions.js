@@ -1,4 +1,4 @@
-import { SERVICIOS_MEDICOS, OTROS_SERVICIOS_DATA } from "../../data.js";
+import { SERVICIOS_MEDICOS, OTROS_SERVICIOS_DATA } from "../data.js";
 const FUNCTIONS_DEFINITIONS_BY_SECTION = {
   III: {
     totalPersonal: (
