@@ -4,10 +4,12 @@ import * as Storage from "../storage.js";
 
 const TableGenerator = (() => {
   const EXPORT_BTN = document.getElementById("export-excel-btn"); // Obtener el botón globalmente
+  const CHART_BTN = document.getElementById("chart-btn"); // Obtener el botón de gráfico
   const generateTable = (institutions, reportDefinition) => {
     if (institutions.length === 0) {
       showNoDataMessage();
       if (EXPORT_BTN) EXPORT_BTN.classList.add("d-none");
+      if (CHART_BTN) CHART_BTN.classList.add("d-none");
       return;
     }
 
@@ -17,6 +19,15 @@ const TableGenerator = (() => {
 
     updateReportTitle(reportDefinition);
     showResultCount(institutions.length);
+
+    if (reportDefinition.chart) {
+      reportDefinition.chart(institutions);
+      // ❗ MOSTRAR BOTÓN DE GRÁFICO ❗
+      if (CHART_BTN) CHART_BTN.classList.remove("d-none");
+    } else {
+      // OCULTAR BOTÓN DE GRÁFICO SI NO HAY GRÁFICO
+      if (CHART_BTN) CHART_BTN.classList.add("d-none");
+    }
 
     // ❗ MOSTRAR BOTÓN DE EXPORTACIÓN ❗
     if (EXPORT_BTN) EXPORT_BTN.classList.remove("d-none");
