@@ -1,7 +1,7 @@
 import { PARROQUIAS_CARACAS } from "../../data.js";
-import FUNCTIONS_DEFINITIONS_BY_SECTION from "../functions-definitions.js";
+import FUNCTIONS_BY_SECTIONS from "../functions-definitions.js";
 const obtenerOtrosServiciosEstado =
-  FUNCTIONS_DEFINITIONS_BY_SECTION.V.obtenerOtrosServiciosEstado;
+  FUNCTIONS_BY_SECTIONS.V.obtenerOtrosServiciosEstado;
 const oserv_coc_inexistentes = {
   id: "oserv_coc_inexistentess",
   label: "Servicios de Cocina Inexistentes",

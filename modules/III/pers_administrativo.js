@@ -1,6 +1,6 @@
 import { PARROQUIAS_CARACAS } from "../../data.js";
-import FUNCTIONS_DEFINITIONS_BY_SECTION from "../functions-definitions.js";
-const totalPersonal = FUNCTIONS_DEFINITIONS_BY_SECTION.III.totalPersonal;
+import FUNCTIONS_BY_SECTIONS from "../functions-definitions.js";
+const totalPersonal = FUNCTIONS_BY_SECTIONS.III.totalPersonal;
 const pers_administrativo = {
   id: "pers_administrativo",
   label: "Personal Administrativo del centro médico",

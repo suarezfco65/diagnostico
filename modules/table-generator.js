@@ -40,8 +40,8 @@ const TableGenerator = (() => {
     return `
             <div class="table-responsive">
                 <table class="table table-striped table-hover table-sm">
-                    <thead class="table-dark">${headers}</thead>
-                    <tbody>${rows}</tbody>
+                    <thead class="table-dark" id="report-header">${headers}</thead>
+                    <tbody id="report-rows">${rows}</tbody>
                 </table>
             </div>
         `;

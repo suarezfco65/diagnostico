@@ -1,6 +1,6 @@
 import { PARROQUIAS_CARACAS } from "../../data.js";
-import FUNCTIONS_DEFINITIONS_BY_SECTION from "../functions-definitions.js";
-const totalPersonal = FUNCTIONS_DEFINITIONS_BY_SECTION.III.totalPersonal;
+import FUNCTIONS_BY_SECTIONS from "../functions-definitions.js";
+const totalPersonal = FUNCTIONS_BY_SECTIONS.III.totalPersonal;
 const pers_todos = {
   id: "pers_todos",
   label: "Personal Total del centro médico",
@@ -35,6 +35,7 @@ const pers_todos = {
       options: PARROQUIAS_CARACAS.sort(), // Usar las parroquias como opciones
     },
   ],
+/*
   chart: {(instituciones) => {
             // Datos de ejemplo
         const data = [
@@ -131,6 +132,7 @@ const pers_todos = {
                 }))
             }
         });
-    }
+    },
+    */
 };
 export default pers_todos;

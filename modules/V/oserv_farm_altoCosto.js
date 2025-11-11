@@ -1,7 +1,7 @@
 import { PARROQUIAS_CARACAS } from "../../data.js";
-import FUNCTIONS_DEFINITIONS_BY_SECTION from "../functions-definitions.js";
+import FUNCTIONS_BY_SECTIONS from "../functions-definitions.js";
 const obtenerOtrosServiciosDisponibles =
-  FUNCTIONS_DEFINITIONS_BY_SECTION.V.obtenerOtrosServiciosDisponibles;
+  FUNCTIONS_BY_SECTIONS.V.obtenerOtrosServiciosDisponibles;
 const oserv_farm_altoCosto = {
   id: "oserv_farm_altoCosto",
   label: "Medicamentos Alto Costo Disponibles en Farmacia",

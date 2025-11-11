@@ -1,7 +1,7 @@
 import { PARROQUIAS_CARACAS, OTROS_SERVICIOS_DATA } from "../../data.js";
-import FUNCTIONS_DEFINITIONS_BY_SECTION from "../functions-definitions.js";
+import FUNCTIONS_BY_SECTIONS from "../functions-definitions.js";
 const obtenerOtrosServiciosDisponibles =
-  FUNCTIONS_DEFINITIONS_BY_SECTION.V.obtenerOtrosServiciosDisponibles;
+  FUNCTIONS_BY_SECTIONS.V.obtenerOtrosServiciosDisponibles;
 
 const addFields = () => {
   oserv_lab_disponibilidad.fields = [

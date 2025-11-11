@@ -1,7 +1,7 @@
 import { PARROQUIAS_CARACAS } from "../../data.js";
-import FUNCTIONS_DEFINITIONS_BY_SECTION from "../functions-definitions.js";
+import FUNCTIONS_BY_SECTIONS from "../functions-definitions.js";
 const obtenerServiciosMedicos =
-  FUNCTIONS_DEFINITIONS_BY_SECTION.IV.obtenerServiciosMedicos;
+  FUNCTIONS_BY_SECTIONS.IV.obtenerServiciosMedicos;
 const serv_activos = {
   id: "serv_activos",
   label: "Servicios Médicos Activos",
