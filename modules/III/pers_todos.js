@@ -40,7 +40,8 @@ const pers_todos = {
       "Parroquia",
       ["Requerido", "Disponible"]
     );
-    const categories = sumarizeParroquia.map((v) => v.name);
+    sumarizeParroquia.sort((a, b) => b.sumas.Requerido - a.sumas.Requerido);
+
     const dataRequerido = sumarizeParroquia.map((v) => ({
       name: v.name,
       y: v.sumas.Requerido,
@@ -64,6 +65,9 @@ const pers_todos = {
         "Requerido",
         "Disponible",
       ]);
+    sumarizeParroquiaInstitucion.forEach((parroquia) => {
+      parroquia.detalles.sort((a, b) => b.sumas.Requerido - a.sumas.Requerido);
+    });
 
     const drilldownDisponible = sumarizeParroquiaInstitucion.map((vl1) => ({
       id: `${vl1.name}-disp`,
@@ -93,21 +97,12 @@ const pers_todos = {
       ]),
     }));
 
-    console.log({
-      categories,
-      dataRequerido,
-      dataDisponible,
-      dataDeficit,
-      drilldownDisponible,
-      drilldownRequerido,
-    });
-
     const highchartsOptions = {
       chart: {
         type: "column",
       },
       title: {
-        text: "Requerido vs. Disponible por Parroquia con Detalle (Drilldown)",
+        text: "Personal total del Centro Médico<br>(Requerido vs. Disponible por Parroquia con (Drilldown))",
       },
       subtitle: {
         text: "Haga clic en una columna para ver el detalle por institución. La línea roja muestra el Déficit (%) de cada institución.",
