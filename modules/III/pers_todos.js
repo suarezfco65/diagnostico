@@ -35,104 +35,163 @@ const pers_todos = {
       options: PARROQUIAS_CARACAS.sort(), // Usar las parroquias como opciones
     },
   ],
-/*
-  chart: {(instituciones) => {
-            // Datos de ejemplo
-        const data = [
-            { institucion: 'CDI El Valle', parroquia: 'San Bernardino', requerido: 344, disponible: 156 },
-            { institucion: 'Clínica San Juan', parroquia: 'Sucre', requerido: 325, disponible: 190 },
-            { institucion: 'Modulo de Salud Coche', parroquia: 'San Pedro', requerido: 383, disponible: 227 },
-            { institucion: 'Ambulatorio Las Mercedes', parroquia: 'San Juan', requerido: 352, disponible: 182 },
-            { institucion: 'CDI El Valle', parroquia: 'San Agustín', requerido: 330, disponible: 147 },
-            { institucion: 'Clínica San Juan', parroquia: 'San Agustín', requerido: 315, disponible: 143 }
-            // Agrega más datos según sea necesario
-        ];
+  chart: (instituciones) => {
+    const sumarizeParroquia = FUNCTIONS_BY_SECTIONS.sumarizeByField(
+      "Parroquia",
+      ["Requerido", "Disponible"]
+    );
+    const categories = sumarizeParroquia.map((v) => v.name);
+    const dataRequerido = sumarizeParroquia.map((v) => ({
+      name: v.name,
+      y: v.sumas.Requerido,
+      drilldown: `${v.name}-req`,
+    }));
+    const dataDisponible = sumarizeParroquia.map((v) => ({
+      name: v.name,
+      y: v.sumas.Disponible,
+      drilldown: `${v.name}-disp`,
+    }));
+    const dataDeficit = sumarizeParroquia.map(
+      (v) =>
+        Math.round(
+          ((v.sumas.Requerido - v.sumas.Disponible) * 100 * 100) /
+            v.sumas.Requerido
+        ) / 100
+    );
 
-        // Agrupar datos por parroquia
-        const groupedData = {};
-        data.forEach(item => {
-            if (!groupedData[item.parroquia]) {
-                groupedData[item.parroquia] = { requerido: 0, disponible: 0, instituciones: [] };
-            }
-            groupedData[item.parroquia].requerido += item.requerido;
-            groupedData[item.parroquia].disponible += item.disponible;
-            groupedData[item.parroquia].instituciones.push({
-                name: item.institucion,
-                requeridos: item.requerido,
-                disponibles: item.disponible
-            });
-        });
+    const sumarizeParroquiaInstitucion =
+      FUNCTIONS_BY_SECTIONS.sumarizeByTwoLevels("Parroquia", "Institución", [
+        "Requerido",
+        "Disponible",
+      ]);
 
-        // Preparar datos para el gráfico
-        const seriesData = [];
-        const drilldownData = [];
+    const drilldownDisponible = sumarizeParroquiaInstitucion.map((vl1) => ({
+      id: `${vl1.name}-disp`,
+      name: `Disponible`,
+      data: vl1.detalles.map((vl2) => [
+        `${vl2.name}</br> (Déficit ${
+          Math.round(
+            ((vl2.sumas.Requerido - vl2.sumas.Disponible) * 100 * 100) /
+              vl2.sumas.Requerido
+          ) / 100
+        }%)`,
+        vl2.sumas.Disponible,
+      ]),
+    }));
 
-        for (const parroquia in groupedData) {
-            const { requerido, disponible, instituciones } = groupedData[parroquia];
-            const deficit = ((requerido - disponible) / requerido) * 100;
+    const drilldownRequerido = sumarizeParroquiaInstitucion.map((vl1) => ({
+      id: `${vl1.name}-req`,
+      name: `Requerido`,
+      data: vl1.detalles.map((vl2) => [
+        `${vl2.name}</br> (Déficit ${
+          Math.round(
+            ((vl2.sumas.Requerido - vl2.sumas.Disponible) * 100 * 100) /
+              vl2.sumas.Requerido
+          ) / 100
+        }%)`,
+        vl2.sumas.Requerido,
+      ]),
+    }));
 
-            seriesData.push({
-                name: parroquia,
-                y: requerido,
-                drilldown: parroquia,
-                available: disponible,
-                deficit: deficit.toFixed(2) // Guardar el porcentaje de déficit
-            });
+    console.log({
+      categories,
+      dataRequerido,
+      dataDisponible,
+      dataDeficit,
+      drilldownDisponible,
+      drilldownRequerido,
+    });
 
-            drilldownData.push({
-                id: parroquia,
-                data: instituciones.map(inst => [
-                    inst.name,
-                    inst.requeridos,
-                    inst.disponibles,
-                    ((inst.requeridos - inst.disponibles) / inst.requeridos * 100).toFixed(2) // Porcentaje de déficit
-                ])
-            });
-        }
+    const highchartsOptions = {
+      chart: {
+        type: "column",
+      },
+      title: {
+        text: "Requerido vs. Disponible por Parroquia con Detalle (Drilldown)",
+      },
+      subtitle: {
+        text: "Haga clic en una columna para ver el detalle por institución. La línea roja muestra el Déficit (%) de cada institución.",
+      },
+      xAxis: {
+        type: "category",
+      },
+      yAxis: [
+        {
+          // Eje Y 0: Cantidades absolutas (Requerido/Disponible)
+          min: 0,
+          title: {
+            text: "Cantidad Total de Recursos",
+          },
+        },
+        {
+          // Eje Y 1: Porcentaje de Déficit
+          title: {
+            text: "Déficit Promedio (%)",
+            style: { color: "#f45b5b" },
+          },
+          labels: {
+            format: "{value}%",
+            style: { color: "#f45b5b" },
+          },
+          opposite: true,
+          min: 0,
+          max: 65,
+        },
+      ],
+      tooltip: {
+        shared: true,
+      },
+      plotOptions: {
+        column: {
+          cursor: "pointer",
+          pointPadding: 0.1,
+          borderWidth: 0,
+        },
+        // Mantenemos dataLabels global en 'false' para las columnas si el gráfico se ve abarrotado.
+        series: {
+          dataLabels: {
+            enabled: false,
+          },
+        },
+      },
 
-        // Crear el gráfico
-        Highcharts.chart('container', {
-            chart: {
-                type: 'column'
-            },
-            title: {
-                text: 'Personal Requerido y Disponible por Parroquia con Drilldown'
-            },
-            xAxis: {
-                type: 'category'
-            },
-            yAxis: {
-                title: {
-                    text: 'Cantidad de Personal'
-                }
-            },
-            tooltip: {
-                pointFormat: 'Requerido: <b>{point.y}</b><br/>Disponible: <b>{point.available}</b><br/>Déficit: <b>{point.deficit}%</b>'
-            },
-            series: [{
-                name: 'Parroquias',
-                colorByPoint: true,
-                data: seriesData.map(item => ({
-                    name: item.name,
-                    y: item.y,
-                    drilldown: item.drilldown,
-                    available: item.available,
-                    deficit: item.deficit
-                }))
-            }],
-            drilldown: {
-                series: drilldownData.map(item => ({
-                    id: item.id,
-                    data: item.data.map(inst => [
-                        inst[0], // Nombre de la institución
-                        inst[1], // Personal requerido
-                        inst[2], // Personal disponible
-                        inst[3]  // Porcentaje de déficit
-                    ])
-                }))
-            }
-        });
-    },
-    */
+      // --- SERIES PRINCIPALES (Nivel 1: Parroquias) ---
+      series: [
+        {
+          name: "Requerido Total",
+          color: "#434348",
+          data: dataRequerido,
+        },
+        {
+          name: "Disponible Total",
+          color: "#7cb5ec",
+          data: dataDisponible,
+        },
+        {
+          name: "Déficit Promedio (%)",
+          type: "line",
+          yAxis: 1,
+          color: "#f45b5b",
+          data: dataDeficit,
+          tooltip: {
+            valueSuffix: "%",
+          },
+          marker: { enabled: true },
+          // Opcional: Agregar dataLabels aquí si también quieres ver los promedios en la línea principal
+        },
+      ],
+
+      // --- CONFIGURACIÓN DE DRILLDOWN (Nivel 2: Instituciones) ---
+      drilldown: {
+        // CORRECCIÓN: Usar el operador spread (...) para combinar los arrays
+        series: [...drilldownDisponible, ...drilldownRequerido],
+        breadcrumbs: {
+          format: "<< Volver a Parroquias",
+        },
+      },
+    };
+    // Crear el gráfico
+    Highcharts.chart("modal-chart", highchartsOptions);
+  },
 };
 export default pers_todos;
