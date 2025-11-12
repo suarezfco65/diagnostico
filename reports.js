@@ -6,8 +6,10 @@ import { TableGenerator } from "./modules/table-generator.js";
 import { UIManager } from "./modules/ui-manager.js";
 
 const ReportsModule = (() => {
-  let currentSection = null;
-  let currentReportId = null;
+  const state = {
+  currentSection : null,
+  currentReportId : null,
+  }
 
   const init = async () => {
     try {
@@ -51,13 +53,14 @@ const ReportsModule = (() => {
   };
 
   const handleGlobalClick = (e) => {
-    if (e.target.id === "logout-btn") {
+    const target = e.target;
+    if (target.id === "logout-btn") {
       AuthManager.handleLogout();
-    } else if (e.target.classList.contains("compound-filter-btn")) {
+    } else if (target.classList.contains("compound-filter-btn")) {
       handleCompoundFilterClick(e);
-    } else if (e.target.id === "apply-compound-filters-btn") {
+    } else if (target.id === "apply-compound-filters-btn") {
       handleApplyCompoundFilters(e);
-    } else if (e.target.id === "clear-compound-filters-btn") {
+    } else if (target.id === "clear-compound-filters-btn") {
       handleClearCompoundFilters(e);
     }
   };
@@ -66,8 +69,8 @@ const ReportsModule = (() => {
     const section = e.target.dataset.section;
     const reportId = e.target.value;
 
-    currentSection = section;
-    currentReportId = reportId;
+    state.currentSection = section;
+    state.currentReportId = reportId;
 
     UIManager.updateUIState(section, reportId);
 
@@ -80,31 +83,31 @@ const ReportsModule = (() => {
 
   const handleSearchInput = (e) => {
     const section = e.target.dataset.section;
-    if (currentSection === section && currentReportId) {
-      generateReport(section, currentReportId);
+    if (state.currentSection === section && state.currentReportId) {
+      generateReport(section, state.currentReportId);
     }
   };
 
   const handleCompoundFilterClick = (e) => {
     const section = e.target.dataset.section;
-    if (!currentReportId) {
+    if (!state.currentReportId) {
       console.warn("No se puede abrir el modal: No hay reporte seleccionado.");
       return;
     }
-    FilterManager.openCompoundFilterModal(section, currentReportId);
+    FilterManager.openCompoundFilterModal(section, state.currentReportId);
   };
 
   const handleApplyCompoundFilters = () => {
     FilterManager.applyCompoundFiltersFromModal();
-    if (currentSection && currentReportId) {
-      generateReport(currentSection, currentReportId);
+    if (state.currentSection && state.currentReportId) {
+      generateReport(state.currentSection, state.currentReportId);
     }
   };
 
   const handleClearCompoundFilters = () => {
     FilterManager.clearCompoundFilters();
-    if (currentSection && currentReportId) {
-      generateReport(currentSection, currentReportId);
+    if (state.currentSection && state.currentReportId) {
+      generateReport(state.currentSection, state.currentReportId);
     }
   };
 

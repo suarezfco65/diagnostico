@@ -1,72 +1,142 @@
 import { SERVICIOS_MEDICOS, OTROS_SERVICIOS_DATA } from "../data.js";
+
 const FUNCTIONS_BY_SECTIONS = {
-  resumirPorCampo: (tituloColumna) => {
-    // Selecciona todas las filas de la tabla
-    const rows = document.querySelectorAll('#report-rows tr');
-    const conteo = {};
-    // Obtiene los encabezados de la tabla
-    const encabezados = document.querySelectorAll('#report-header th');
-    const indices = Array.from(encabezados).map(th => th.textContent.trim());
-    // Encuentra el índice de la columna correspondiente al título dado
-    const indiceColumna = indices.indexOf(tituloColumna);
-    if (indiceColumna === -1) {
-        console.error(`El título "${tituloColumna}" no se encontró en los encabezados.`);
-        return [];
-    }
-    // Recorre cada fila y cuenta las ocurrencias del campo especificado
-    rows.forEach(row => {
-        const campo = row.cells[indiceColumna].textContent.trim(); // Obtiene el texto de la columna especificada
-        if (conteo[campo]) {
-            conteo[campo] += 1; // Incrementa el contador si ya existe
-        } else {
-            conteo[campo] = 1; // Inicializa el contador
-        }
-    });
-    // Convierte el objeto en un arreglo con la estructura deseada
-    const resultado = Object.keys(conteo).map(campo => ({
-        name: campo,
-        y: conteo[campo],
-        drilldown: campo
-    }));
-    // Ordena el resultado de mayor a menor por cantidad (campo 'y')
-    resultado.sort((a, b) => b.y - a.y);
-    return resultado;
+  sumarizeByField: (field, fieldToSumarize=[]) => {
+      // Selecciona todas las filas de la tabla
+      const rows = document.querySelectorAll('#report-rows tr');
+      const conteo = {};
+      const sumas = {};
+
+      // Obtiene los encabezados de la tabla
+      const encabezados = document.querySelectorAll('#report-header th');
+      const indices = Array.from(encabezados).map(th => th.textContent.trim());
+
+      // Encuentra el índice de la columna correspondiente al título dado
+      const indiceColumna = indices.indexOf(field);
+      if (indiceColumna === -1) {
+          console.error(`El título "${field}" no se encontró en los encabezados.`);
+          return [];
+      }
+
+      // Inicializa el objeto de sumas para cada campo a sumarizar
+      fieldToSumarize.forEach(campo => {
+          sumas[campo] = 0;
+      });
+
+      // Recorre cada fila y cuenta las ocurrencias del campo especificado
+      rows.forEach(row => {
+          const campo = row.cells[indiceColumna].textContent.trim(); // Obtiene el texto de la columna especificada
+
+          // Inicializa el conteo del campo si no existe
+          if (!conteo[campo]) {
+              conteo[campo] = { cantidad: 0, sumas: {} };
+          }
+          conteo[campo].cantidad += 1; // Incrementa el contador
+
+          // Suma los valores de los campos especificados
+          fieldToSumarize.forEach(campoASumar => {
+              const valor = parseFloat(row.cells[indices.indexOf(campoASumar)].textContent.trim());
+              if (!isNaN(valor)) {
+                  conteo[campo].sumas[campoASumar] = (conteo[campo].sumas[campoASumar] || 0) + valor; // Suma el valor al total
+              }
+          });
+      });
+
+      // Convierte el objeto en un arreglo con la estructura deseada
+      const resultado = Object.keys(conteo).map(campo => ({
+          name: campo,
+          cantidad: conteo[campo].cantidad,
+          sumas: conteo[campo].sumas
+      }));
+
+      return resultado;
   },
-generarDrilldownData:(tituloParroquia, tituloTipo) => {
+  sumarizeByTwoLevels: (fieldLevel1, fieldLevel2, fieldsToSumarize=[]) => {
     // Selecciona todas las filas de la tabla
     const rows = document.querySelectorAll('#report-rows tr');
-    // Acumulador para las parroquias
-    const acc = {};
+    const conteoNivel1 = {};
+    const conteoNivel2 = {};
+
     // Obtiene los encabezados de la tabla
     const encabezados = document.querySelectorAll('#report-header th');
     const indices = Array.from(encabezados).map(th => th.textContent.trim());
+
     // Encuentra los índices de las columnas correspondientes a los títulos dados
-    const indiceParroquia = indices.indexOf(tituloParroquia);
-    const indiceTipo = indices.indexOf(tituloTipo);
-    if (indiceParroquia === -1 || indiceTipo === -1) {
-        console.error(`Uno de los títulos "${tituloParroquia}" o "${tituloTipo}" no se encontró en los encabezados.`);
+    const indiceNivel1 = indices.indexOf(fieldLevel1);
+    const indiceNivel2 = indices.indexOf(fieldLevel2);
+
+    if (indiceNivel1 === -1) {
+        console.error(`El título "${fieldLevel1}" no se encontró en los encabezados.`);
         return [];
     }
-    // Recorre cada fila y cuenta los tipos dentro de cada parroquia
-    rows.forEach(row => {
-        const parroquia = row.cells[indiceParroquia].textContent.trim();
-        const tipo = row.cells[indiceTipo].textContent.trim();
-        // Inicializar la parroquia si no existe
-        if (!acc[parroquia]) {
-            acc[parroquia] = { name: parroquia, id: parroquia, data: {} };
-        }
-        // Contar los tipos
-        acc[parroquia].data[tipo] = (acc[parroquia].data[tipo] || 0) + 1;
+    if (indiceNivel2 === -1) {
+        console.error(`El título "${fieldLevel2}" no se encontró en los encabezados.`);
+        return [];
+    }
+
+    // Inicializa el objeto de sumas para cada campo a sumarizar
+    fieldsToSumarize.forEach(campo => {
+        conteoNivel1[campo] = {};
+        conteoNivel2[campo] = {};
     });
-    // Convertir el acumulador en un arreglo y ordenar por cantidad
-    const drilldownData = Object.values(acc).map(({ name, id, data }) => ({
-        name,
-        id,
-        data: Object.entries(data).sort(([, a], [, b]) => b - a), // Ordenar por cantidad
+
+    // Recorre cada fila y cuenta las ocurrencias de los campos especificados
+    rows.forEach(row => {
+        const campoNivel1 = row.cells[indiceNivel1].textContent.trim();
+        const campoNivel2 = row.cells[indiceNivel2].textContent.trim();
+
+        // Inicializa el conteo del nivel 1 si no existe
+        if (!conteoNivel1[campoNivel1]) {
+            conteoNivel1[campoNivel1] = { cantidad: 0, sumas: {} };
+        }
+        conteoNivel1[campoNivel1].cantidad += 1; // Incrementa el contador del nivel 1
+
+        // Inicializa el conteo del nivel 2 si no existe
+        if (!conteoNivel2[campoNivel1]) {
+            conteoNivel2[campoNivel1] = {};
+        }
+        if (!conteoNivel2[campoNivel1][campoNivel2]) {
+            conteoNivel2[campoNivel1][campoNivel2] = { cantidad: 0, sumas: {} };
+        }
+        conteoNivel2[campoNivel1][campoNivel2].cantidad += 1; // Incrementa el contador del nivel 2
+
+        // Suma los valores de los campos especificados
+        fieldsToSumarize.forEach(campoASumar => {
+            const valor = parseFloat(row.cells[indices.indexOf(campoASumar)].textContent.trim());
+            if (!isNaN(valor)) {
+                // Suma al nivel 1
+                conteoNivel1[campoNivel1].sumas[campoASumar] = (conteoNivel1[campoNivel1].sumas[campoASumar] || 0) + valor;
+
+                // Suma al nivel 2
+                conteoNivel2[campoNivel1][campoNivel2].sumas[campoASumar] = (conteoNivel2[campoNivel1][campoNivel2].sumas[campoASumar] || 0) + valor;
+            }
+        });
+    });
+
+    // Convierte el objeto de conteo del nivel 1 en un arreglo
+    const resultadoNivel1 = Object.keys(conteoNivel1).map(campo => ({
+        name: campo,
+        cantidad: conteoNivel1[campo].cantidad,
+        sumas: conteoNivel1[campo].sumas,
+        detalles: Object.keys(conteoNivel2[campo]).map(subCampo => ({
+            name: subCampo,
+            cantidad: conteoNivel2[campo][subCampo].cantidad,
+            sumas: conteoNivel2[campo][subCampo].sumas
+        }))
     }));
-    return drilldownData;
+
+    return resultadoNivel1;
 },
+
   chartDrillDown:(chartTitle, chartSubtitle, serieName, serieDrilldown) => {
+    const dataSerie = FUNCTIONS_BY_SECTIONS.sumarizeByField(serieName).map((v) => ({name:v.name, y:v.cantidad, drilldown:v.name }));
+    // Ordena el resultado de mayor a menor por cantidad
+    dataSerie.sort((a, b) => b.y - a.y);
+
+    const dataSeriesDrilldown = FUNCTIONS_BY_SECTIONS.sumarizeByTwoLevels(serieName, serieDrilldown).map((valueLevel1) => ({name:valueLevel1.name,id:valueLevel1.name,data:valueLevel1.detalles.map((valueLevel2) => ([valueLevel2.name, valueLevel2.cantidad]))}))
+    dataSeriesDrilldown.forEach(item => {
+        item.data.sort((a, b) => b[1] - a[1]);
+    });
     Highcharts.chart("modal-chart", {
       chart: {
         type: "column",
@@ -110,7 +180,7 @@ generarDrilldownData:(tituloParroquia, tituloTipo) => {
           "<b>{point.y}</b><br/>",
       },
 
-      series: [{ name: serieName, colorByPoint: true, data: FUNCTIONS_BY_SECTIONS.resumirPorCampo(serieName) }],
+      series: [{ name: serieName, colorByPoint: true, data: dataSerie }],
 
       drilldown: {
         breadcrumbs: {
@@ -118,7 +188,7 @@ generarDrilldownData:(tituloParroquia, tituloTipo) => {
             align: "right",
           },
         },
-        series: FUNCTIONS_BY_SECTIONS.generarDrilldownData(serieName,serieDrilldown),
+        series: dataSeriesDrilldown,
       },
     });
 
