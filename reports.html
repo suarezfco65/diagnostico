@@ -513,7 +513,15 @@
             ></button>
           </div>
           <div class="modal-body">
-            <div id="modal-chart" style="height: 600px"></div>
+            <div
+              id="modal-chart"
+              style="
+                min-width: 400px;
+                max-width: 900px;
+                height: 650px;
+                margin: 0 auto;
+              "
+            ></div>
           </div>
           <div class="modal-footer">
             <button
@@ -534,6 +542,7 @@
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://code.highcharts.com/modules/heatmap.js"></script>
     <script src="https://code.highcharts.com/modules/drilldown.js"></script>
+    <script src="https://code.highcharts.com/modules/sunburst.js"></script>
     <script src="storage.js" type="module"></script>
     <script src="auth.js" type="module"></script>
     <script src="reports.js" type="module"></script>

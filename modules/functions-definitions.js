@@ -164,6 +164,66 @@ const FUNCTIONS_BY_SECTIONS = {
 
     return resultadoNivel1.slice(2);
   },
+  // 2. FUNCIÓN PARA PROCESAR LOS DATOS (JSON a Jerarquía Sunburst)
+  /**
+   * Transforma un array de objetos JSON en la estructura jerárquica para Highcharts Sunburst.
+   * * @param {Array<Object>} data - El array de objetos JSON (su jsonData).
+   * @param {string} centerField - Nombre del campo JSON para el nivel central (Ej: 'Institucion').
+   * @param {string} ring1Field - Nombre del campo JSON para el primer anillo (Ej: 'Parroquia').
+   * @param {string} ring2Field - Nombre del campo JSON para el segundo anillo/hoja (Ej: 'Tipo de Medicamento').
+   * @returns {Array<Object>} Datos listos para la serie del gráfico Sunburst.
+   */
+  createSunburstDataFromJSON: (data, centerField, ring1Field, ring2Field) => {
+    const map = {};
+    const sunburstData = [];
+
+    data.forEach((record) => {
+      // Obtenemos los valores de los campos dinámicamente
+      const centerValue = record[centerField]
+        ? record[centerField].trim()
+        : "Sin Centro";
+      const ring1Value = record[ring1Field]
+        ? record[ring1Field].trim()
+        : "Sin Anillo 1";
+      const ring2Str = record[ring2Field] ? record[ring2Field].trim() : "";
+
+      // 1. Separar los elementos del campo más granular (Medicamentos, que están separados por coma)
+      const ring2Items = ring2Str
+        .split(",")
+        .map((item) => item.trim())
+        .filter((item) => item !== "");
+
+      // 2. Usar una categoría genérica si el campo más granular está vacío
+      if (ring2Items.length === 0) {
+        ring2Items.push("NO INFORMADO");
+      }
+
+      // 3. Crear los nodos jerárquicos
+      ring2Items.forEach((ring2Item) => {
+        // Definición de la jerarquía basada en los parámetros
+        const path = [centerValue, ring1Value, ring2Item];
+        let currentPath = "";
+
+        path.forEach((level, index) => {
+          const parentPath = currentPath;
+          currentPath += (currentPath ? "." : "") + level;
+
+          if (!map[currentPath]) {
+            map[currentPath] = {
+              id: currentPath,
+              parent: parentPath || null,
+              name: level,
+              value: 0,
+            };
+            sunburstData.push(map[currentPath]);
+          }
+          // Contar el registro para el nodo actual
+          map[currentPath].value++;
+        });
+      });
+    });
+    return sunburstData;
+  },
 
   chartDrillDown: (chartTitle, chartSubtitle, serieName, serieDrilldown) => {
     const dataSerie = FUNCTIONS_BY_SECTIONS.sumarizeByField(serieName).map(
@@ -624,7 +684,6 @@ const FUNCTIONS_BY_SECTIONS = {
           },
         ],
       };
-      console.log(highchartsOptions);
       // Paso 4: Crear el gráfico
       Highcharts.chart("modal-chart", highchartsOptions);
     },

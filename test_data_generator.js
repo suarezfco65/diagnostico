@@ -209,7 +209,9 @@ function createSectionIVData() {
 
     // Simular el campo 'Otro'
     if (servicio.isOther) {
-      nombreEspec = "OFTALMOLOGÍA";
+      nombreEspec = getRandomItem(
+        SERVICIOS_MEDICOS.slice(0, 5).map((sm) => sm.label)
+      );
     }
 
     data[key] = {

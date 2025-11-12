@@ -13,7 +13,7 @@ const pers_obrero = {
     },
     {
       key: (data) => totalPersonal(data, `obrero`, ``, `disponible`),
-      label: "Disponoible",
+      label: "Disponible",
     },
     {
       key: (data) =>

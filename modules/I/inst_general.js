@@ -1,5 +1,5 @@
 import { PARROQUIAS_CARACAS, TIPOS_INSTITUCION } from "../../data.js";
-import  FUNCTIONS_BY_SECTIONS from "../functions-definitions.js";
+import FUNCTIONS_BY_SECTIONS from "../functions-definitions.js";
 const { chartDrillDown } = FUNCTIONS_BY_SECTIONS;
 
 const inst_general = {
@@ -32,7 +32,12 @@ const inst_general = {
     },
   ],
   chart: (instituciones) => {
-    chartDrillDown("Cantidad de Centros de salud", "Distribuidos por Parroquia y Tipo de Institución", "Parroquia", "Tipo Institución");
+    chartDrillDown(
+      "Cantidad de Centros de salud",
+      "Distribuidos por Tipo de Institución y Parroquia",
+      "Tipo Institución",
+      "Parroquia"
+    );
   },
 };
 

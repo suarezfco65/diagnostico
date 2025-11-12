@@ -1,5 +1,5 @@
 import { PARROQUIAS_CARACAS, ENTES_ADSCRITOS } from "../../data.js";
-import  FUNCTIONS_BY_SECTIONS from "../functions-definitions.js";
+import FUNCTIONS_BY_SECTIONS from "../functions-definitions.js";
 const { chartDrillDown } = FUNCTIONS_BY_SECTIONS;
 const inst_ente = {
   id: "inst_ente",
@@ -33,9 +33,9 @@ const inst_ente = {
   chart: (instituciones) => {
     chartDrillDown(
       "Cantidad de Centros de salud por Parroquia y Ente Adscrito",
-      "Distribuidos por Parroquia y Ente Adscrito",
-      "Parroquia",
-      "Ente Adscrito"
+      "Distribuidos por Ente Adscrito y Parroquia",
+      "Ente Adscrito",
+      "Parroquia"
     );
   },
 };
