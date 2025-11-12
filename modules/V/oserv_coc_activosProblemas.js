@@ -11,7 +11,7 @@ const oserv_coc_activosProblemas = {
     {
       key: (data) =>
         obtenerOtrosServiciosEstado(data, "cocina", "ACTIVO C/PROB"),
-      label: "Servicios de cocina Activos con Problemas",
+      label: "Servicios de Cocina Activos con Problemas",
     },
   ],
   searchFields: [
@@ -27,5 +27,12 @@ const oserv_coc_activosProblemas = {
       options: PARROQUIAS_CARACAS.sort(), // Usar las parroquias como opciones
     },
   ],
+  chart: (instituciones) => {
+    FUNCTIONS_BY_SECTIONS.IV.chartDensity(
+      "de Cocina",
+      "Activos con Problemas",
+      8
+    );
+  },
 };
 export default oserv_coc_activosProblemas;

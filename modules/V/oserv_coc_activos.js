@@ -10,7 +10,7 @@ const oserv_coc_activos = {
     { key: "datosInstitucion.parroquia", label: "Parroquia" },
     {
       key: (data) => obtenerOtrosServiciosEstado(data, "cocina", "ACTIVO"),
-      label: "Servicio de cocina Activos",
+      label: "Servicios de Cocina Activos",
     },
   ],
   searchFields: [
@@ -26,5 +26,8 @@ const oserv_coc_activos = {
       options: PARROQUIAS_CARACAS.sort(), // Usar las parroquias como opciones
     },
   ],
+  chart: (instituciones) => {
+    FUNCTIONS_BY_SECTIONS.IV.chartDensity("de Cocina", "Activos", 2);
+  },
 };
 export default oserv_coc_activos;

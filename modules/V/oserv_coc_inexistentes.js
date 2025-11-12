@@ -10,7 +10,7 @@ const oserv_coc_inexistentes = {
     { key: "datosInstitucion.parroquia", label: "Parroquia" },
     {
       key: (data) => obtenerOtrosServiciosEstado(data, "cocina", "NO EXISTE"),
-      label: "Servicios de cocina Inexistentes",
+      label: "Servicios de Cocina Inexistentes",
     },
   ],
   searchFields: [
@@ -26,5 +26,8 @@ const oserv_coc_inexistentes = {
       options: PARROQUIAS_CARACAS.sort(), // Usar las parroquias como opciones
     },
   ],
+  chart: (instituciones) => {
+    FUNCTIONS_BY_SECTIONS.IV.chartDensity("de Cocina", "Inexistentes", 5);
+  },
 };
 export default oserv_coc_inexistentes;

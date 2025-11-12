@@ -9,7 +9,8 @@ const oserv_imag_inactivos = {
     { key: "datosInstitucion.nombre", label: "Institución" },
     { key: "datosInstitucion.parroquia", label: "Parroquia" },
     {
-      key: (data) => obtenerOtrosServiciosEstado(data, "imagenologia", "INACTIVO"),
+      key: (data) =>
+        obtenerOtrosServiciosEstado(data, "imagenologia", "INACTIVO"),
       label: "Servicios de Imagenologias Inactivos",
     },
   ],
@@ -26,5 +27,8 @@ const oserv_imag_inactivos = {
       options: PARROQUIAS_CARACAS.sort(), // Usar las parroquias como opciones
     },
   ],
+  chart: (instituciones) => {
+    FUNCTIONS_BY_SECTIONS.IV.chartDensity("de Imagenologias", "Inactivos", 3);
+  },
 };
 export default oserv_imag_inactivos;

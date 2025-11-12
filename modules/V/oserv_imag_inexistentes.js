@@ -9,7 +9,8 @@ const oserv_imag_inexistentes = {
     { key: "datosInstitucion.nombre", label: "Institución" },
     { key: "datosInstitucion.parroquia", label: "Parroquia" },
     {
-      key: (data) => obtenerOtrosServiciosEstado(data, "imagenologia", "NO EXISTE"),
+      key: (data) =>
+        obtenerOtrosServiciosEstado(data, "imagenologia", "NO EXISTE"),
       label: "Servicios de Imagenologias Inexistentes",
     },
   ],
@@ -26,5 +27,12 @@ const oserv_imag_inexistentes = {
       options: PARROQUIAS_CARACAS.sort(), // Usar las parroquias como opciones
     },
   ],
+  chart: (instituciones) => {
+    FUNCTIONS_BY_SECTIONS.IV.chartDensity(
+      "de Imagenologias",
+      "Inexistentes",
+      5
+    );
+  },
 };
 export default oserv_imag_inexistentes;

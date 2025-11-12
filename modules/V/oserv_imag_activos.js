@@ -27,5 +27,8 @@ const oserv_imag_activos = {
       options: PARROQUIAS_CARACAS.sort(), // Usar las parroquias como opciones
     },
   ],
+  chart: (instituciones) => {
+    FUNCTIONS_BY_SECTIONS.IV.chartDensity("de Imagenologias", "Activos", 2);
+  },
 };
 export default oserv_imag_activos;

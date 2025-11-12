@@ -17,7 +17,8 @@ const oserv_imag_activosProblemas = {
   searchFields: [
     "datosInstitucion.nombre",
     "datosInstitucion.parroquia",
-    (data) => obtenerOtrosServiciosEstado(data, "imagenologia", "ACTIVO C/PROB"),
+    (data) =>
+      obtenerOtrosServiciosEstado(data, "imagenologia", "ACTIVO C/PROB"),
   ],
   compoundFilters: [
     {
@@ -27,5 +28,12 @@ const oserv_imag_activosProblemas = {
       options: PARROQUIAS_CARACAS.sort(), // Usar las parroquias como opciones
     },
   ],
+  chart: (instituciones) => {
+    FUNCTIONS_BY_SECTIONS.IV.chartDensity(
+      "de Imagenologias",
+      "Activos con Problemas",
+      8
+    );
+  },
 };
 export default oserv_imag_activosProblemas;
