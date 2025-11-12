@@ -37,5 +37,8 @@ const pers_paramedicos_y_afines = {
       options: PARROQUIAS_CARACAS.sort(), // Usar las parroquias como opciones
     },
   ],
+  chart: (instituciones) => {
+    FUNCTIONS_BY_SECTIONS.III.chartDrilldown("Paramédicos y Afines");
+  },
 };
 export default pers_paramedicos_y_afines;

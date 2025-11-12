@@ -1,228 +1,543 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SISCOMRES - Reportes y Consultas</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    </head>
-<body>
-<div id="header-placeholder"></div>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="header-placeholder"></div>
 
     <div class="container mt-5">
-        <header class="mb-4">
-            <div class="d-flex justify-content-between align-items-center">
-                <h1>Reportes de Indicadores de Gestión</h1>
-                <div>
-                    <span id="welcome-message" class="me-3"></span>
-                    <button class="btn btn-danger" id="logout-btn">Cerrar Sesión</button>
-                </div>
+      <header class="mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+          <h1>Reportes de Indicadores de Gestión</h1>
+          <div>
+            <span id="welcome-message" class="me-3"></span>
+            <button class="btn btn-danger" id="logout-btn">
+              Cerrar Sesión
+            </button>
+          </div>
+        </div>
+        <hr />
+      </header>
+
+      <div id="alert-container" class="mt-3"></div>
+
+      <div id="reports-content" class="d-none">
+        <ul class="nav nav-tabs" id="reportTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link active"
+              id="tab-I-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#tab-I"
+              type="button"
+              role="tab"
+              aria-controls="tab-I"
+              aria-selected="true"
+            >
+              I. Institución
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link"
+              id="tab-II-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#tab-II"
+              type="button"
+              role="tab"
+              aria-controls="tab-II"
+              aria-selected="false"
+            >
+              II. Autoridades
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link"
+              id="tab-III-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#tab-III"
+              type="button"
+              role="tab"
+              aria-controls="tab-III"
+              aria-selected="false"
+            >
+              III. Personal
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link"
+              id="tab-IV-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#tab-IV"
+              type="button"
+              role="tab"
+              aria-controls="tab-IV"
+              aria-selected="false"
+            >
+              IV. Serv. Médicos
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link"
+              id="tab-V-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#tab-V"
+              type="button"
+              role="tab"
+              aria-controls="tab-V"
+              aria-selected="false"
+            >
+              V. Otros Serv.
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link"
+              id="tab-VI-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#tab-VI"
+              type="button"
+              role="tab"
+              aria-controls="tab-VI"
+              aria-selected="false"
+            >
+              VI. Infraestructura
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link"
+              id="tab-VII-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#tab-VII"
+              type="button"
+              role="tab"
+              aria-controls="tab-VII"
+              aria-selected="false"
+            >
+              VII. Proyectos
+            </button>
+          </li>
+        </ul>
+
+        <div
+          class="tab-content border border-top-0 p-3 mb-4"
+          id="reportTabContent"
+        >
+          <div
+            class="tab-pane fade show active"
+            id="tab-I"
+            role="tabpanel"
+            aria-labelledby="tab-I-tab"
+          >
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="report-select-I" class="form-label"
+                  >Seleccione el Indicador:</label
+                >
+                <select
+                  class="form-select report-select"
+                  id="report-select-I"
+                  data-section="I"
+                ></select>
+              </div>
+              <div class="col-md-3 mb-3">
+                <label for="search-filter-I" class="form-label"
+                  >Buscar en Reporte (Texto):</label
+                >
+                <input
+                  type="text"
+                  class="form-control search-filter-input"
+                  id="search-filter-I"
+                  placeholder="Escriba texto para filtrar..."
+                  data-section="I"
+                />
+              </div>
+              <div class="col-md-3 mb-3 d-flex align-items-end">
+                <button
+                  class="btn btn-secondary w-100 compound-filter-btn"
+                  data-bs-toggle="modal"
+                  data-bs-target="#compoundFilterModal"
+                  data-section="I"
+                  id="compound-filter-btn-I"
+                >
+                  Filtro Compuesto
+                </button>
+              </div>
             </div>
-            <hr>
-        </header>
+          </div>
 
-        <div id="alert-container" class="mt-3"></div>
-
-        <div id="reports-content" class="d-none">
-            <ul class="nav nav-tabs" id="reportTabs" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="tab-I-tab" data-bs-toggle="tab" data-bs-target="#tab-I" type="button" role="tab" aria-controls="tab-I" aria-selected="true">I. Institución</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="tab-II-tab" data-bs-toggle="tab" data-bs-target="#tab-II" type="button" role="tab" aria-controls="tab-II" aria-selected="false">II. Autoridades</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="tab-III-tab" data-bs-toggle="tab" data-bs-target="#tab-III" type="button" role="tab" aria-controls="tab-III" aria-selected="false">III. Personal</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="tab-IV-tab" data-bs-toggle="tab" data-bs-target="#tab-IV" type="button" role="tab" aria-controls="tab-IV" aria-selected="false">IV. Serv. Médicos</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="tab-V-tab" data-bs-toggle="tab" data-bs-target="#tab-V" type="button" role="tab" aria-controls="tab-V" aria-selected="false">V. Otros Serv.</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="tab-VI-tab" data-bs-toggle="tab" data-bs-target="#tab-VI" type="button" role="tab" aria-controls="tab-VI" aria-selected="false">VI. Infraestructura</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="tab-VII-tab" data-bs-toggle="tab" data-bs-target="#tab-VII" type="button" role="tab" aria-controls="tab-VII" aria-selected="false">VII. Proyectos</button>
-                </li>
-            </ul>
-
-            <div class="tab-content border border-top-0 p-3 mb-4" id="reportTabContent">
-                
-                <div class="tab-pane fade show active" id="tab-I" role="tabpanel" aria-labelledby="tab-I-tab">
-                    
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="report-select-I" class="form-label">Seleccione el Indicador:</label>
-                            <select class="form-select report-select" id="report-select-I" data-section="I"></select>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label for="search-filter-I" class="form-label">Buscar en Reporte (Texto):</label>
-                            <input type="text" class="form-control search-filter-input" id="search-filter-I" placeholder="Escriba texto para filtrar..." data-section="I">
-                        </div>
-                        <div class="col-md-3 mb-3 d-flex align-items-end">
-                            <button class="btn btn-secondary w-100 compound-filter-btn" 
-                                    data-bs-toggle="modal" data-bs-target="#compoundFilterModal" 
-                                    data-section="I" id="compound-filter-btn-I">
-                                Filtro Compuesto
-                            </button>
-                        </div>
-                    </div>
-                    
-                </div>
-                
-                <div class="tab-pane fade" id="tab-II" role="tabpanel" aria-labelledby="tab-II-tab">
-                    <div class="row">
-                        <div class="col-md-5 mb-3"><label for="report-select-II" class="form-label">Seleccione el Indicador:</label><select class="form-select report-select" id="report-select-II" data-section="II"></select></div>
-                        <div class="col-md-4 mb-3">
-                            <label for="search-filter-II" class="form-label">Buscar en Reporte (Texto):</label>
-                            <input type="text" class="form-control search-filter-input" id="search-filter-II" placeholder="Escriba texto para filtrar..." data-section="II">
-                        </div>
-                        <div class="col-md-3 mb-3 d-flex align-items-end">
-                            <button class="btn btn-secondary w-100 compound-filter-btn" 
-                                    data-bs-toggle="modal" data-bs-target="#compoundFilterModal" 
-                                    data-section="II" id="compound-filter-btn-II">
-                                Filtro Compuesto
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="tab-III" role="tabpanel" aria-labelledby="tab-III-tab">
-                    <div class="row">
-                        <div class="col-md-5 mb-3"><label for="report-select-III" class="form-label">Seleccione el Indicador:</label><select class="form-select report-select" id="report-select-III" data-section="III"></select></div>
-                        <div class="col-md-4 mb-3"><label for="search-filter-III" class="form-label">Buscar en Reporte (Texto):</label><input type="text" class="form-control search-filter-input" id="search-filter-III" placeholder="Escriba texto para filtrar..." data-section="III"></div>
-                        <div class="col-md-3 mb-3 d-flex align-items-end">
-                            <button class="btn btn-secondary w-100 compound-filter-btn" 
-                                    data-bs-toggle="modal" data-bs-target="#compoundFilterModal" 
-                                    data-section="III" id="compound-filter-btn-III">
-                                Filtro Compuesto
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="tab-IV" role="tabpanel" aria-labelledby="tab-IV-tab">
-                    <div class="row">
-                        <div class="col-md-5 mb-3"><label for="report-select-IV" class="form-label">Seleccione el Indicador:</label><select class="form-select report-select" id="report-select-IV" data-section="IV"></select></div>
-                        <div class="col-md-4 mb-3"><label for="search-filter-IV" class="form-label">Buscar en Reporte (Texto):</label><input type="text" class="form-control search-filter-input" id="search-filter-IV" placeholder="Escriba texto para filtrar..." data-section="IV"></div>
-                        <div class="col-md-3 mb-3 d-flex align-items-end">
-                            <button class="btn btn-secondary w-100 compound-filter-btn" 
-                                    data-bs-toggle="modal" data-bs-target="#compoundFilterModal" 
-                                    data-section="IV" id="compound-filter-btn-IV">
-                                Filtro Compuesto
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="tab-V" role="tabpanel" aria-labelledby="tab-V-tab">
-                    <div class="row">
-                        <div class="col-md-5 mb-3"><label for="report-select-V" class="form-label">Seleccione el Indicador:</label><select class="form-select report-select" id="report-select-V" data-section="V"></select></div>
-                        <div class="col-md-4 mb-3"><label for="search-filter-V" class="form-label">Buscar en Reporte (Texto):</label><input type="text" class="form-control search-filter-input" id="search-filter-V" placeholder="Escriba texto para filtrar..." data-section="V"></div>
-                        <div class="col-md-3 mb-3 d-flex align-items-end">
-                            <button class="btn btn-secondary w-100 compound-filter-btn" 
-                                    data-bs-toggle="modal" data-bs-target="#compoundFilterModal" 
-                                    data-section="V" id="compound-filter-btn-V">
-                                Filtro Compuesto
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="tab-VI" role="tabpanel" aria-labelledby="tab-VI-tab">
-                    <div class="row">
-                        <div class="col-md-5 mb-3"><label for="report-select-VI" class="form-label">Seleccione el Indicador:</label><select class="form-select report-select" id="report-select-VI" data-section="VI"></select></div>
-                        <div class="col-md-4 mb-3"><label for="search-filter-VI" class="form-label">Buscar en Reporte (Texto):</label><input type="text" class="form-control search-filter-input" id="search-filter-VI" placeholder="Escriba texto para filtrar..." data-section="VI"></div>
-                        <div class="col-md-3 mb-3 d-flex align-items-end">
-                            <button class="btn btn-secondary w-100 compound-filter-btn" 
-                                    data-bs-toggle="modal" data-bs-target="#compoundFilterModal" 
-                                    data-section="VI" id="compound-filter-btn-VI">
-                                Filtro Compuesto
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="tab-VII" role="tabpanel" aria-labelledby="tab-VII-tab">
-                    <div class="row">
-                        <div class="col-md-5 mb-3"><label for="report-select-VII" class="form-label">Seleccione el Indicador:</label><select class="form-select report-select" id="report-select-VII" data-section="VII"></select></div>
-                        <div class="col-md-4 mb-3"><label for="search-filter-VII" class="form-label">Buscar en Reporte (Texto):</label><input type="text" class="form-control search-filter-input" id="search-filter-VII" placeholder="Escriba texto para filtrar..." data-section="VII"></div>
-                        <div class="col-md-3 mb-3 d-flex align-items-end">
-                            <button class="btn btn-secondary w-100 compound-filter-btn" 
-                                    data-bs-toggle="modal" data-bs-target="#compoundFilterModal" 
-                                    data-section="VII" id="compound-filter-btn-VII">
-                                Filtro Compuesto
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                </div>
-            
-            <hr>
-            
-            <div id="report-results" class="mt-4">
-                <h4>Resultado del Reporte: <span id="report-title-output"></span></h4>
-                <div class="btn-group">
-                    <button class="btn btn-primary btn-sm d-none" id="export-excel-btn">
-                        <i class="bi bi-file-earmark-spreadsheet"></i> Exportar a Excel
-                    </button>
-                    <button class="btn btn-primary btn-sm d-none" id="chart-btn" data-bs-toggle="modal" data-bs-target="#chartModal">
-                        <i class="bi bi-file-earmark-chart"></i> Gráfico
-                    </button>
-                </div>
-                
-                <div class="alert alert-info" role="alert" id="initial-message">
-                    Seleccione un indicador y filtros para generar un reporte.
-                </div>
-                <div id="report-data-output"></div>
+          <div
+            class="tab-pane fade"
+            id="tab-II"
+            role="tabpanel"
+            aria-labelledby="tab-II-tab"
+          >
+            <div class="row">
+              <div class="col-md-5 mb-3">
+                <label for="report-select-II" class="form-label"
+                  >Seleccione el Indicador:</label
+                ><select
+                  class="form-select report-select"
+                  id="report-select-II"
+                  data-section="II"
+                ></select>
+              </div>
+              <div class="col-md-4 mb-3">
+                <label for="search-filter-II" class="form-label"
+                  >Buscar en Reporte (Texto):</label
+                >
+                <input
+                  type="text"
+                  class="form-control search-filter-input"
+                  id="search-filter-II"
+                  placeholder="Escriba texto para filtrar..."
+                  data-section="II"
+                />
+              </div>
+              <div class="col-md-3 mb-3 d-flex align-items-end">
+                <button
+                  class="btn btn-secondary w-100 compound-filter-btn"
+                  data-bs-toggle="modal"
+                  data-bs-target="#compoundFilterModal"
+                  data-section="II"
+                  id="compound-filter-btn-II"
+                >
+                  Filtro Compuesto
+                </button>
+              </div>
             </div>
+          </div>
+          <div
+            class="tab-pane fade"
+            id="tab-III"
+            role="tabpanel"
+            aria-labelledby="tab-III-tab"
+          >
+            <div class="row">
+              <div class="col-md-5 mb-3">
+                <label for="report-select-III" class="form-label"
+                  >Seleccione el Indicador:</label
+                ><select
+                  class="form-select report-select"
+                  id="report-select-III"
+                  data-section="III"
+                ></select>
+              </div>
+              <div class="col-md-4 mb-3">
+                <label for="search-filter-III" class="form-label"
+                  >Buscar en Reporte (Texto):</label
+                ><input
+                  type="text"
+                  class="form-control search-filter-input"
+                  id="search-filter-III"
+                  placeholder="Escriba texto para filtrar..."
+                  data-section="III"
+                />
+              </div>
+              <div class="col-md-3 mb-3 d-flex align-items-end">
+                <button
+                  class="btn btn-secondary w-100 compound-filter-btn"
+                  data-bs-toggle="modal"
+                  data-bs-target="#compoundFilterModal"
+                  data-section="III"
+                  id="compound-filter-btn-III"
+                >
+                  Filtro Compuesto
+                </button>
+              </div>
+            </div>
+          </div>
+          <div
+            class="tab-pane fade"
+            id="tab-IV"
+            role="tabpanel"
+            aria-labelledby="tab-IV-tab"
+          >
+            <div class="row">
+              <div class="col-md-5 mb-3">
+                <label for="report-select-IV" class="form-label"
+                  >Seleccione el Indicador:</label
+                ><select
+                  class="form-select report-select"
+                  id="report-select-IV"
+                  data-section="IV"
+                ></select>
+              </div>
+              <div class="col-md-4 mb-3">
+                <label for="search-filter-IV" class="form-label"
+                  >Buscar en Reporte (Texto):</label
+                ><input
+                  type="text"
+                  class="form-control search-filter-input"
+                  id="search-filter-IV"
+                  placeholder="Escriba texto para filtrar..."
+                  data-section="IV"
+                />
+              </div>
+              <div class="col-md-3 mb-3 d-flex align-items-end">
+                <button
+                  class="btn btn-secondary w-100 compound-filter-btn"
+                  data-bs-toggle="modal"
+                  data-bs-target="#compoundFilterModal"
+                  data-section="IV"
+                  id="compound-filter-btn-IV"
+                >
+                  Filtro Compuesto
+                </button>
+              </div>
+            </div>
+          </div>
+          <div
+            class="tab-pane fade"
+            id="tab-V"
+            role="tabpanel"
+            aria-labelledby="tab-V-tab"
+          >
+            <div class="row">
+              <div class="col-md-5 mb-3">
+                <label for="report-select-V" class="form-label"
+                  >Seleccione el Indicador:</label
+                ><select
+                  class="form-select report-select"
+                  id="report-select-V"
+                  data-section="V"
+                ></select>
+              </div>
+              <div class="col-md-4 mb-3">
+                <label for="search-filter-V" class="form-label"
+                  >Buscar en Reporte (Texto):</label
+                ><input
+                  type="text"
+                  class="form-control search-filter-input"
+                  id="search-filter-V"
+                  placeholder="Escriba texto para filtrar..."
+                  data-section="V"
+                />
+              </div>
+              <div class="col-md-3 mb-3 d-flex align-items-end">
+                <button
+                  class="btn btn-secondary w-100 compound-filter-btn"
+                  data-bs-toggle="modal"
+                  data-bs-target="#compoundFilterModal"
+                  data-section="V"
+                  id="compound-filter-btn-V"
+                >
+                  Filtro Compuesto
+                </button>
+              </div>
+            </div>
+          </div>
+          <div
+            class="tab-pane fade"
+            id="tab-VI"
+            role="tabpanel"
+            aria-labelledby="tab-VI-tab"
+          >
+            <div class="row">
+              <div class="col-md-5 mb-3">
+                <label for="report-select-VI" class="form-label"
+                  >Seleccione el Indicador:</label
+                ><select
+                  class="form-select report-select"
+                  id="report-select-VI"
+                  data-section="VI"
+                ></select>
+              </div>
+              <div class="col-md-4 mb-3">
+                <label for="search-filter-VI" class="form-label"
+                  >Buscar en Reporte (Texto):</label
+                ><input
+                  type="text"
+                  class="form-control search-filter-input"
+                  id="search-filter-VI"
+                  placeholder="Escriba texto para filtrar..."
+                  data-section="VI"
+                />
+              </div>
+              <div class="col-md-3 mb-3 d-flex align-items-end">
+                <button
+                  class="btn btn-secondary w-100 compound-filter-btn"
+                  data-bs-toggle="modal"
+                  data-bs-target="#compoundFilterModal"
+                  data-section="VI"
+                  id="compound-filter-btn-VI"
+                >
+                  Filtro Compuesto
+                </button>
+              </div>
+            </div>
+          </div>
+          <div
+            class="tab-pane fade"
+            id="tab-VII"
+            role="tabpanel"
+            aria-labelledby="tab-VII-tab"
+          >
+            <div class="row">
+              <div class="col-md-5 mb-3">
+                <label for="report-select-VII" class="form-label"
+                  >Seleccione el Indicador:</label
+                ><select
+                  class="form-select report-select"
+                  id="report-select-VII"
+                  data-section="VII"
+                ></select>
+              </div>
+              <div class="col-md-4 mb-3">
+                <label for="search-filter-VII" class="form-label"
+                  >Buscar en Reporte (Texto):</label
+                ><input
+                  type="text"
+                  class="form-control search-filter-input"
+                  id="search-filter-VII"
+                  placeholder="Escriba texto para filtrar..."
+                  data-section="VII"
+                />
+              </div>
+              <div class="col-md-3 mb-3 d-flex align-items-end">
+                <button
+                  class="btn btn-secondary w-100 compound-filter-btn"
+                  data-bs-toggle="modal"
+                  data-bs-target="#compoundFilterModal"
+                  data-section="VII"
+                  id="compound-filter-btn-VII"
+                >
+                  Filtro Compuesto
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
+        <hr />
+
+        <div id="report-results" class="mt-4">
+          <h4>Resultado del Reporte: <span id="report-title-output"></span></h4>
+          <div class="btn-group">
+            <button class="btn btn-primary btn-sm d-none" id="export-excel-btn">
+              <i class="bi bi-file-earmark-spreadsheet"></i> Exportar a Excel
+            </button>
+            <button
+              class="btn btn-primary btn-sm d-none"
+              id="chart-btn"
+              data-bs-toggle="modal"
+              data-bs-target="#chartModal"
+            >
+              <i class="bi bi-file-earmark-chart"></i> Gráfico
+            </button>
+          </div>
+
+          <div class="alert alert-info" role="alert" id="initial-message">
+            Seleccione un indicador y filtros para generar un reporte.
+          </div>
+          <div id="report-data-output"></div>
+        </div>
+      </div>
     </div>
-    <div class="modal fade" id="compoundFilterModal" tabindex="-1" aria-labelledby="compoundFilterModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="compoundFilterModalLabel">Filtros Avanzados para: <span id="filter-modal-report-title"></span></h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="compound-filter-form">
-                        <div id="compound-filter-inputs-container">
-                            </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" id="clear-compound-filters-btn" data-bs-dismiss="modal">Limpiar Filtros</button>
-                    <button type="button" class="btn btn-primary" id="apply-compound-filters-btn">Aplicar Filtros</button>
-                </div>
-            </div>
+    <div
+      class="modal fade"
+      id="compoundFilterModal"
+      tabindex="-1"
+      aria-labelledby="compoundFilterModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="compoundFilterModalLabel">
+              Filtros Avanzados para:
+              <span id="filter-modal-report-title"></span>
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="compound-filter-form">
+              <div id="compound-filter-inputs-container"></div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-danger"
+              id="clear-compound-filters-btn"
+              data-bs-dismiss="modal"
+            >
+              Limpiar Filtros
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              id="apply-compound-filters-btn"
+            >
+              Aplicar Filtros
+            </button>
+          </div>
         </div>
+      </div>
     </div>
 
-    <div class="modal fade" id="chartModal" tabindex="-1" aria-labelledby="chartModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="chartModalLabel">Gráfico de Centros de Salud</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div id="modal-chart" style="height: 500px;"></div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                </div>
-            </div>
+    <div
+      class="modal fade"
+      id="chartModal"
+      tabindex="-1"
+      aria-labelledby="chartModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="chartModalLabel">
+              Gráfico de Centros de Salud
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div id="modal-chart" style="height: 600px"></div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cerrar
+            </button>
+          </div>
         </div>
+      </div>
     </div>
 
     <div id="compound-filter-legend" class="mt-3 mb-4"></div>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script> 
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/rainabba/jquery-table2excel/dist/jquery.table2excel.min.js"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/heatmap.js"></script>
     <script src="https://code.highcharts.com/modules/drilldown.js"></script>
     <script src="storage.js" type="module"></script>
     <script src="auth.js" type="module"></script>
     <script src="reports.js" type="module"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module" src="header.js"></script>
-</body>
+  </body>
 </html>

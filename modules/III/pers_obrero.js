@@ -35,5 +35,8 @@ const pers_obrero = {
       options: PARROQUIAS_CARACAS.sort(), // Usar las parroquias como opciones
     },
   ],
+  chart: (instituciones) => {
+    FUNCTIONS_BY_SECTIONS.III.chartDrilldown("Obrero");
+  },
 };
 export default pers_obrero;

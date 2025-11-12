@@ -35,5 +35,8 @@ const pers_servicios_medicos = {
       options: PARROQUIAS_CARACAS.sort(), // Usar las parroquias como opciones
     },
   ],
+  chart: (instituciones) => {
+    FUNCTIONS_BY_SECTIONS.III.chartDrilldown("Servicio Médico");
+  },
 };
 export default pers_servicios_medicos;

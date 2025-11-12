@@ -1,6 +1,34 @@
 import { SERVICIOS_MEDICOS, OTROS_SERVICIOS_DATA } from "../data.js";
 
 const FUNCTIONS_BY_SECTIONS = {
+  tableToJson: () => {
+    const tableHead = document.getElementById("report-header");
+    const tableBody = document.getElementById("report-rows");
+    const data = [];
+
+    // Obtener los encabezados de la tabla
+    const headers = Array.from(tableHead.getElementsByTagName("th")).map(
+      (th) => th.innerText
+    );
+
+    // Obtener las filas del tbody
+    const rows = tableBody.getElementsByTagName("tr");
+
+    // Iterar sobre las filas
+    for (let i = 0; i < rows.length; i++) {
+      const cells = rows[i].getElementsByTagName("td");
+      const rowData = {};
+
+      // Construir el objeto de datos usando los encabezados
+      for (let j = 0; j < cells.length; j++) {
+        rowData[headers[j]] = cells[j].innerText; // Asignar el valor de la celda al encabezado correspondiente
+      }
+
+      data.push(rowData);
+    }
+
+    return data;
+  },
   sumarizeByField: (field, fieldToSumarize = []) => {
     // Selecciona todas las filas de la tabla
     const rows = document.querySelectorAll("#report-rows tr");
@@ -236,6 +264,198 @@ const FUNCTIONS_BY_SECTIONS = {
         }
       }
       return total;
+    },
+    chartDrilldown: (alcance) => {
+      const sumarizeParroquia = FUNCTIONS_BY_SECTIONS.sumarizeByField(
+        "Parroquia",
+        ["Requerido", "Disponible"]
+      );
+      sumarizeParroquia.sort((a, b) => b.sumas.Requerido - a.sumas.Requerido);
+
+      const dataRequerido = sumarizeParroquia.map((v) => ({
+        name: v.name,
+        y: v.sumas.Requerido,
+        drilldown: `${v.name}-req`,
+      }));
+      const dataDisponible = sumarizeParroquia.map((v) => ({
+        name: v.name,
+        y: v.sumas.Disponible,
+        drilldown: `${v.name}-disp`,
+      }));
+      const dataDeficit = sumarizeParroquia.map((v) => ({
+        name: v.name,
+        y:
+          Math.round(
+            ((v.sumas.Requerido - v.sumas.Disponible) * 100 * 100) /
+              v.sumas.Requerido
+          ) / 100,
+        drilldown: `${v.name}-def`,
+      }));
+      const sumarizeParroquiaInstitucion =
+        FUNCTIONS_BY_SECTIONS.sumarizeByTwoLevels("Parroquia", "Institución", [
+          "Requerido",
+          "Disponible",
+        ]);
+      sumarizeParroquiaInstitucion.forEach((parroquia) => {
+        parroquia.detalles.sort(
+          (a, b) => b.sumas.Requerido - a.sumas.Requerido
+        );
+      });
+
+      const drilldownDisponible = sumarizeParroquiaInstitucion.map((vl1) => ({
+        id: `${vl1.name}-disp`,
+        name: `Disponible`,
+        data: vl1.detalles.map((vl2) => [
+          `${vl2.name}</br> (Déficit ${
+            Math.round(
+              ((vl2.sumas.Requerido - vl2.sumas.Disponible) * 100 * 100) /
+                vl2.sumas.Requerido
+            ) / 100
+          }%)`,
+          vl2.sumas.Disponible,
+        ]),
+        dataLabels: {
+          enabled: true, // Habilitar dataLabels para el valor requerido
+          format: "{point.y}", // Mostrar el valor de requerido
+        },
+      }));
+
+      const drilldownRequerido = sumarizeParroquiaInstitucion.map((vl1) => ({
+        id: `${vl1.name}-req`,
+        name: `Requerido`,
+        data: vl1.detalles.map((vl2) => [
+          `${vl2.name}</br> (Déficit ${
+            Math.round(
+              ((vl2.sumas.Requerido - vl2.sumas.Disponible) * 100 * 100) /
+                vl2.sumas.Requerido
+            ) / 100
+          }%)`,
+          vl2.sumas.Requerido,
+        ]),
+        dataLabels: {
+          enabled: true, // Habilitar dataLabels para el valor requerido
+          format: "{point.y}", // Mostrar el valor de requerido
+        },
+      }));
+
+      const drilldownDeficit = sumarizeParroquiaInstitucion.map((vl1) => ({
+        id: `${vl1.name}-def`,
+        name: `Deficit`,
+        data: vl1.detalles.map((vl2) => [
+          `${vl2.name}</br> (Déficit ${
+            Math.round(
+              ((vl2.sumas.Requerido - vl2.sumas.Disponible) * 100 * 100) /
+                vl2.sumas.Requerido
+            ) / 100
+          }%)`,
+          Math.round(
+            ((vl2.sumas.Requerido - vl2.sumas.Disponible) * 100 * 100) /
+              vl2.sumas.Requerido
+          ) / 100,
+        ]),
+        type: "line",
+        yAxis: 1,
+        color: "#f45b5b",
+        tooltip: {
+          valueSuffix: "%",
+        },
+        marker: { enabled: true },
+      }));
+
+      const highchartsOptions = {
+        chart: {
+          type: "column",
+        },
+        title: {
+          text: `Personal ${alcance} del Centro Médico por Parroquia`,
+        },
+        subtitle: {
+          text: "(Requerido, Disponible y Deficit %)",
+        },
+        xAxis: {
+          type: "category",
+        },
+        yAxis: [
+          {
+            // Eje Y 0: Cantidades absolutas (Requerido/Disponible)
+            min: 0,
+            title: {
+              text: "Cantidad Total de Recursos",
+            },
+          },
+          {
+            // Eje Y 1: Porcentaje de Déficit
+            title: {
+              text: "Déficit Promedio (%)",
+              style: { color: "#f45b5b" },
+            },
+            labels: {
+              format: "{value}%",
+              style: { color: "#f45b5b" },
+            },
+            opposite: true,
+            min: 0,
+            max: 65,
+          },
+        ],
+        tooltip: {
+          shared: true,
+        },
+        plotOptions: {
+          column: {
+            cursor: "pointer",
+            pointPadding: 0.1,
+            borderWidth: 0,
+          },
+          // Mantenemos dataLabels global en 'false' para las columnas si el gráfico se ve abarrotado.
+          series: {
+            dataLabels: {
+              enabled: false,
+            },
+          },
+        },
+
+        // --- SERIES PRINCIPALES (Nivel 1: Parroquias) ---
+        series: [
+          {
+            name: "Requerido Total",
+            color: "#434348",
+            data: dataRequerido,
+          },
+          {
+            name: "Disponible Total",
+            color: "#7cb5ec",
+            data: dataDisponible,
+          },
+          {
+            name: "Déficit Promedio (%)",
+            type: "line",
+            yAxis: 1,
+            color: "#f45b5b",
+            data: dataDeficit,
+            tooltip: {
+              valueSuffix: "%",
+            },
+            marker: { enabled: true },
+            // Opcional: Agregar dataLabels aquí si también quieres ver los promedios en la línea principal
+          },
+        ],
+
+        // --- CONFIGURACIÓN DE DRILLDOWN (Nivel 2: Instituciones) ---
+        drilldown: {
+          // CORRECCIÓN: Usar el operador spread (...) para combinar los arrays
+          series: [
+            ...drilldownDisponible,
+            ...drilldownRequerido,
+            ...drilldownDeficit,
+          ],
+          breadcrumbs: {
+            format: "<< Volver a Parroquias",
+          },
+        },
+      };
+      // Crear el gráfico
+      Highcharts.chart("modal-chart", highchartsOptions);
     },
   },
   IV: {

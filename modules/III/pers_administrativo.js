@@ -35,5 +35,8 @@ const pers_administrativo = {
       options: PARROQUIAS_CARACAS.sort(), // Usar las parroquias como opciones
     },
   ],
+  chart: (instituciones) => {
+    FUNCTIONS_BY_SECTIONS.III.chartDrilldown("Administrativo");
+  },
 };
 export default pers_administrativo;
