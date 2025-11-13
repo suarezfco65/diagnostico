@@ -165,106 +165,117 @@ const FUNCTIONS_BY_SECTIONS = {
     return resultadoNivel1.slice(2);
   },
 
-  /**
-   * Genera el objeto de configuración de Highcharts para un Heatmap
-   * de las condiciones de las instalaciones.
-   * * @param {Array<Object>} institutionsData - La lista de objetos de las instituciones.
-   * * @param {string} Infraestructura - Nombre de la infraestructura (Ej. "Cocina").
-   * @param {Array<string>} categories - El array de nombres de las columnas/categorias a analizar (ej: ["Paredes", "Techos"]).
-   * @returns {Object} La configuración completa del Highcharts.
-   */
-  generateHeatmapConfig: (institutionsData, infraestructura) => {
-    // 1. Definir los niveles de condición que serán las series (colores de la barra)
-    const conditions = ["MALAS COND", "REGULAR COND", "BUENAS COND"];
+  generateHeatmapConfig:
+    /**
+     * Genera el objeto de configuración de Highcharts para un Heatmap
+     * de las condiciones de las instalaciones.
+     * * @param {Array<Object>} institutionsData - La lista de objetos de las instituciones.
+     * * @param {string} Infraestructura - Nombre de la infraestructura (Ej. "Cocina").
+     * @param {Array<string>} categories - El array de nombres de las columnas/categorias a analizar (ej: ["Paredes", "Techos"]).
+     * @returns {Object} La configuración completa del Highcharts.
+     */
+    (institutionsData, infraestructura) => {
+      // 1. Definir los niveles de condición que serán las series (colores de la barra)
+      const conditions = ["MALAS COND", "REGULAR COND", "BUENAS COND"];
 
-    // 2. Estructura de datos para agrupar: { 'Parroquia A': { 'MALAS COND': 10, 'REGULAR COND': 5, ... }, ... }
-    const groupedData = {};
+      // 2. Estructura de datos para agrupar: { 'Parroquia A': { 'MALAS COND': 10, 'REGULAR COND': 5, ... }, ... }
+      const groupedData = {};
 
-    // 3. Procesar los datos para contar las condiciones por parroquia
-    institutionsData.forEach((institution) => {
-      const parroquia = institution.Parroquia || "SIN PARROQUIA"; // Manejar datos faltantes
-      if (!groupedData[parroquia]) {
-        groupedData[parroquia] = {
-          "MALAS COND": 0,
-          "REGULAR COND": 0,
-          "BUENAS COND": 0,
-        };
-      }
-
-      // Se evalúan 4 categorías por institución: Paredes, Techos, Pisos, A/A
-      ["Paredes", "Techos", "Pisos", "A/A"].forEach((category) => {
-        const condition = institution[category];
-        if (conditions.includes(condition)) {
-          groupedData[parroquia][condition]++;
+      // 3. Procesar los datos para contar las condiciones por parroquia
+      institutionsData.forEach((institution) => {
+        const parroquia = institution.Parroquia || "SIN PARROQUIA"; // Manejar datos faltantes
+        if (!groupedData[parroquia]) {
+          groupedData[parroquia] = {
+            "MALAS COND": 0,
+            "REGULAR COND": 0,
+            "BUENAS COND": 0,
+          };
         }
+
+        // Se evalúan 4 categorías por institución: Paredes, Techos, Pisos, A/A
+        ["Paredes", "Techos", "Pisos", "A/A"].forEach((category) => {
+          const condition = institution[category];
+          if (conditions.includes(condition)) {
+            groupedData[parroquia][condition]++;
+          }
+        });
       });
-    });
 
-    // 4. Transformar los datos agrupados al formato de series de Highcharts
-    const categories = Object.keys(groupedData); // Las parroquias serán las categorías del Eje Y
+      // 4. Transformar los datos agrupados al formato de series de Highcharts
+      const categories = Object.keys(groupedData); // Las parroquias serán las categorías del Eje Y
 
-    // Ordenar el array de parroquias (categories)
-    categories.sort((a, b) => {
-      // Acceder a la cuenta de 'BUENAS COND' para la Parroquia 'b' y 'a'
-      const countA = groupedData[a]["BUENAS COND"];
-      const countB = groupedData[b]["BUENAS COND"];
-      // Devolver la diferencia (countB - countA) para un orden descendente
-      return countB - countA;
-    });
+      // Ordenar el array de parroquias (categories)
+      categories.sort((a, b) => {
+        // Acceder a la cuenta de 'BUENAS COND' para la Parroquia 'b' y 'a'
+        const countA =
+          groupedData[a]["MALAS COND"] /
+          (groupedData[a]["MALAS COND"] +
+            groupedData[a]["REGULAR COND"] +
+            groupedData[a]["BUENAS COND"]);
+        const countB =
+          groupedData[b]["MALAS COND"] /
+          (groupedData[b]["MALAS COND"] +
+            groupedData[b]["REGULAR COND"] +
+            groupedData[b]["BUENAS COND"]);
+        // Devolver la diferencia (countB - countA) para un orden descendente
+        return countA - countB;
+      });
 
-    // 5. Transformar los datos agrupados al formato de series de Highcharts usando el orden de 'categories'
-    const series = conditions.map((condition) => {
+      // 5. Transformar los datos agrupados al formato de series de Highcharts usando el orden de 'categories'
+      const series = conditions.map((condition) => {
+        return {
+          name: condition,
+          data: categories.map(
+            (parroquia) => groupedData[parroquia][condition]
+          ),
+          color:
+            condition === "MALAS COND"
+              ? "#C04000"
+              : condition === "REGULAR COND"
+              ? "#FFBF00"
+              : "#00A86B", // Rojo, Ámbar, Verde
+        };
+      });
+
+      // 6. Generar la configuración del Highcharts
       return {
-        name: condition,
-        data: categories.map((parroquia) => groupedData[parroquia][condition]),
-        color:
-          condition === "MALAS COND"
-            ? "#C04000"
-            : condition === "REGULAR COND"
-            ? "#FFBF00"
-            : "#00A86B", // Rojo, Ámbar, Verde
+        chart: {
+          type: "bar",
+        },
+        title: {
+          text: `Resumen de Condiciones de Infraestructura - ${infraestructura}`,
+        },
+        subtitle: {
+          text: "Agrupadas por Parroquia",
+        },
+        xAxis: {
+          categories: categories,
+          title: {
+            text: "Parroquias",
+          },
+        },
+        yAxis: {
+          min: 0,
+          title: {
+            text: "Total de Evaluaciones",
+          },
+        },
+        tooltip: {
+          // Mostrar la contribución en el total (formato porcentaje)
+          pointFormat:
+            "{series.name}: <b>{point.y}</b> ({point.percentage:.0f}%)<br/>",
+        },
+        plotOptions: {
+          series: {
+            stacking: "percent", // Apilamiento en porcentaje para comparación de proporciones
+          },
+        },
+        series: series,
+        credits: {
+          enabled: false,
+        },
       };
-    });
-
-    // 6. Generar la configuración del Highcharts
-    return {
-      chart: {
-        type: "bar",
-      },
-      title: {
-        text: `Resumen de Condiciones de Infraestructura - ${infraestructura}`,
-      },
-      subtitle: {
-        text: "Agrupadas por Parroquia",
-      },
-      xAxis: {
-        categories: categories,
-        title: {
-          text: "Parroquias",
-        },
-      },
-      yAxis: {
-        min: 0,
-        title: {
-          text: "Total de Evaluaciones",
-        },
-      },
-      tooltip: {
-        // Mostrar la contribución en el total (formato porcentaje)
-        pointFormat:
-          "{series.name}: <b>{point.y}</b> ({point.percentage:.0f}%)<br/>",
-      },
-      plotOptions: {
-        series: {
-          stacking: "percent", // Apilamiento en porcentaje para comparación de proporciones
-        },
-      },
-      series: series,
-      credits: {
-        enabled: false,
-      },
-    };
-  },
+    },
 
   generateHighchartsDataBarrasAgrupadas:
     /**
