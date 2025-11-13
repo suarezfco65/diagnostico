@@ -27,7 +27,12 @@ const serv_inexistentes = {
     },
   ],
   chart: (instituciones) => {
-    FUNCTIONS_BY_SECTIONS.IV.chartDensity("Médicos", "Inexistentes", 5);
+    FUNCTIONS_BY_SECTIONS.IV.chartDensity(
+      "Servicios",
+      "Médicos",
+      "Inexistentes",
+      5
+    );
   },
 };
 export default serv_inexistentes;

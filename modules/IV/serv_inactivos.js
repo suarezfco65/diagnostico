@@ -27,7 +27,12 @@ const serv_inactivos = {
     },
   ],
   chart: (instituciones) => {
-    FUNCTIONS_BY_SECTIONS.IV.chartDensity("Médicos", "Inactivos", 3);
+    FUNCTIONS_BY_SECTIONS.IV.chartDensity(
+      "Servicios",
+      "Médicos",
+      "Inactivos",
+      3
+    );
   },
 };
 export default serv_inactivos;

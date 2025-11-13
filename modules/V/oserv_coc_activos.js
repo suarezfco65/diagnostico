@@ -27,7 +27,12 @@ const oserv_coc_activos = {
     },
   ],
   chart: (instituciones) => {
-    FUNCTIONS_BY_SECTIONS.IV.chartDensity("de Cocina", "Activos", 2);
+    FUNCTIONS_BY_SECTIONS.IV.chartDensity(
+      "Servicios",
+      "de Cocina",
+      "Activos",
+      2
+    );
   },
 };
 export default oserv_coc_activos;

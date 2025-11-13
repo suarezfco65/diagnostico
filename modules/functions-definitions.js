@@ -225,6 +225,67 @@ const FUNCTIONS_BY_SECTIONS = {
     return sunburstData;
   },
 
+  /**
+   * Transforma un array de objetos JSON en la estructura jerárquica para Highcharts Treemap/Sunburst.
+   * * @param {Array<Object>} data - El array de objetos JSON (su jsonData).
+   * @param {string} centerField - Nombre del campo JSON para el nivel superior (Ej: 'Institución').
+   * @param {string} ring1Field - Nombre del campo JSON para el nivel intermedio (Ej: 'Parroquia').
+   * @param {string} ring2Field - Nombre del campo JSON para el nivel hoja (Ej: 'Tipo de Medicamento').
+   * @returns {Array<Object>} Datos listos para la serie del gráfico Treemap/Sunburst.
+   */
+  createTreemapDataFromJSON: (data, centerField, ring1Field, ring2Field) => {
+    const map = {};
+    const sunburstData = [];
+
+    data.forEach((record) => {
+      // Obtenemos los valores de los campos dinámicamente
+      const centerValue = record[centerField]
+        ? record[centerField].trim()
+        : "Sin Institución";
+      const ring1Value = record[ring1Field]
+        ? record[ring1Field].trim()
+        : "Sin Parroquia";
+      const ring2Str = record[ring2Field] ? record[ring2Field].trim() : "";
+
+      // 1. Separar los elementos del campo más granular (Medicamentos, que están separados por coma)
+      const ring2Items = ring2Str
+        .split(",")
+        .map((item) => item.trim())
+        .filter((item) => item !== "");
+
+      // 2. Usar una categoría genérica si el campo más granular está vacío
+      if (ring2Items.length === 0) {
+        ring2Items.push("NO INFORMADO");
+      }
+
+      // 3. Crear los nodos jerárquicos
+      ring2Items.forEach((ring2Item) => {
+        // Definición de la jerarquía basada en los parámetros
+        // NOTA: Para Treemap, el orden es Jerarquía Mayor -> Jerarquía Menor
+        const path = [centerValue, ring1Value, ring2Item];
+        let currentPath = "";
+
+        path.forEach((level, index) => {
+          const parentPath = currentPath;
+          currentPath += (currentPath ? "." : "") + level;
+
+          if (!map[currentPath]) {
+            map[currentPath] = {
+              id: currentPath,
+              parent: parentPath || null,
+              name: level,
+              value: 0,
+            };
+            sunburstData.push(map[currentPath]);
+          }
+          // Contar el registro para el nodo actual (cada medicamento cuenta como 1)
+          map[currentPath].value++;
+        });
+      });
+    });
+    return sunburstData;
+  },
+
   chartDrillDown: (chartTitle, chartSubtitle, serieName, serieDrilldown) => {
     const dataSerie = FUNCTIONS_BY_SECTIONS.sumarizeByField(serieName).map(
       (v) => ({ name: v.name, y: v.cantidad, drilldown: v.name })
@@ -538,103 +599,139 @@ const FUNCTIONS_BY_SECTIONS = {
 
       return serviciosUnicos.join(", ");
     },
-    chartDensity: (tipo, situacion, color) => {
-      // Paso 1: Limpieza de la data
+    chartDensity: (prestacion, tipo, situacion, color) => {
+      // -----------------------------------------------------------------
+      // FASE I: PREPARACIÓN Y CONTEO DE DATOS (Agrupación y Frecuencias)
+      // -----------------------------------------------------------------
+
       const rawData = FUNCTIONS_BY_SECTIONS.tableToJson();
 
-      const serviceMap = {};
+      const serviceMap = {}; // Contiene { Parroquia: { Servicio: Frecuencia } }
       const uniqueParroquias = new Set();
       const uniqueServices = new Set();
 
+      // 1. Conteo de Frecuencias y Extracción de Nombres Únicos
       rawData.forEach((item) => {
         uniqueParroquias.add(item.Parroquia);
-        const services = item[`Servicios ${tipo} ${situacion}`].split(", ");
+        // El nombre del campo es dinámico, ej: 'Servicios Requerido Total'
+        const services = item[`${prestacion} ${tipo} ${situacion}`].split(", ");
 
         services.forEach((service) => {
           uniqueServices.add(service);
 
-          // Inicializar si es necesario
-          if (!serviceMap[item.Parroquia]) {
-            serviceMap[item.Parroquia] = {};
-          }
-          if (!serviceMap[item.Parroquia][service]) {
-            serviceMap[item.Parroquia][service] = 0;
-          }
-
-          // Contar el servicio
-          serviceMap[item.Parroquia][service]++;
+          // Inicializar y contar
+          serviceMap[item.Parroquia] = serviceMap[item.Parroquia] || {};
+          serviceMap[item.Parroquia][service] =
+            (serviceMap[item.Parroquia][service] || 0) + 1;
         });
       });
 
-      const parroquiasArray = Array.from(uniqueParroquias).sort();
+      const servicesList = Array.from(uniqueServices);
+      const parroquiasList = Array.from(uniqueParroquias);
 
-      // Nuevo paso: 1.5 - Calcular la frecuencia total de cada servicio
-      const serviceTotalCount = {};
-      uniqueServices.forEach((service) => {
-        let total = 0;
-        // Sumar la frecuencia de este servicio en todas las parroquias
-        parroquiasArray.forEach((parroquia) => {
-          if (serviceMap[parroquia] && serviceMap[parroquia][service]) {
-            total += serviceMap[parroquia][service];
-          }
+      // 2. Cálculo de Totales por Categoría
+
+      const serviceTotalCount = {}; // Total global de instituciones por Servicio
+      const parishTotalCount = {}; // Total de servicios contados (suma de frecuencias) por Parroquia
+
+      parroquiasList.forEach((parroquia) => {
+        let totalServices = 0;
+
+        servicesList.forEach((service) => {
+          const frequency = serviceMap[parroquia]
+            ? serviceMap[parroquia][service] || 0
+            : 0;
+
+          // a) Conteo total por Servicio (para ordenar el Eje Y)
+          serviceTotalCount[service] =
+            (serviceTotalCount[service] || 0) + frequency;
+
+          // b) Conteo total por Parroquia (para ordenar el Eje X)
+          totalServices += frequency;
         });
-        serviceTotalCount[service] = total;
+
+        parishTotalCount[parroquia] = totalServices;
       });
 
-      const servicesArray = Array.from(uniqueServices).sort((a, b) => {
-        // Ordenar de mayor a menor (frecuencia b - frecuencia a)
-        return serviceTotalCount[a] - serviceTotalCount[b];
-      });
+      // -----------------------------------------------------------------
+      // FASE II: ORDENAMIENTO Y FORMATO (Creación de Categorías y Data)
+      // -----------------------------------------------------------------
 
-      // Paso 2: Creacion de datos para hig charts
+      // 3. Ordenamiento y Formato del Eje Y (Servicios)
+      const orderedServicesArray = servicesList.sort(
+        (a, b) =>
+          // Ordenar de MENOR a MAYOR por total de servicio
+          serviceTotalCount[a] - serviceTotalCount[b]
+      );
+
+      const formattedServicesArray = orderedServicesArray.map(
+        (service) => `${service} (${serviceTotalCount[service]})`
+      );
+
+      // 4. Ordenamiento y Formato del Eje X (Parroquias)
+      const orderedParroquiasArray = parroquiasList.sort(
+        (a, b) =>
+          // Ordenar de MAYOR a MENOR por total de parroquia
+          parishTotalCount[b] - parishTotalCount[a]
+      );
+
+      const formattedParroquiasArray = orderedParroquiasArray.map(
+        (parroquia) => `${parroquia} (${parishTotalCount[parroquia]})`
+      );
+
+      // 5. Creación de Datos del Heatmap (¡CRÍTICO: Usar los arrays ordenados para indexar!)
       const heatmapData = [];
 
-      parroquiasArray.forEach((parroquia, xIndex) => {
-        servicesArray.forEach((service, yIndex) => {
+      // Crear un mapa de índice rápido para las parroquias y servicios ordenados
+      const parroquiaIndexMap = orderedParroquiasArray.reduce(
+        (acc, name, i) => ({ ...acc, [name]: i }),
+        {}
+      );
+      const serviceIndexMap = orderedServicesArray.reduce(
+        (acc, name, i) => ({ ...acc, [name]: i }),
+        {}
+      );
+
+      parroquiasList.forEach((parroquia) => {
+        servicesList.forEach((service) => {
           const frequency = serviceMap[parroquia]
             ? serviceMap[parroquia][service] || 0
             : 0;
 
           if (frequency > 0) {
+            // Obtener el índice (X/Y) según el ordenamiento FINAL
+            const xIndex = parroquiaIndexMap[parroquia];
+            const yIndex = serviceIndexMap[service];
+
             heatmapData.push([xIndex, yIndex, frequency]);
           }
         });
       });
 
-      // 💡 Paso 3: Formatear el nombre de cada especialidad para el Eje Y
-      const formattedServicesArray = servicesArray.map((service) => {
-        const total = serviceTotalCount[service];
-        // Formato final: "Especialidad (Total)"
-        return `${service} (${total})`;
-      });
-
-      //Paso 4: Configuracion de highcharts
+      // -----------------------------------------------------------------
+      // FASE III: CONFIGURACIÓN Y RENDERIZADO DEL GRÁFICO
+      // -----------------------------------------------------------------
 
       const highchartsOptions = {
         chart: {
           type: "heatmap",
-          // Ajustar el margen si hay muchos servicios
           marginTop: 40,
           marginBottom: 80,
         },
         title: {
-          text: `Densidad de Servicios ${tipo} - ${situacion}`,
+          text: `Densidad de ${prestacion} ${tipo} - ${situacion}`,
         },
-        /*
-      subtitle: {
-        text: "La intensidad del color indica cuántas instituciones ofrecen un servicio específico dentro de una parroquia.",
-      },
-      */
         xAxis: {
-          categories: parroquiasArray, // Eje X: Parroquias
+          // 💡 USAR EL ARRAY ORDENADO Y FORMATEADO PARA EL EJE X
+          categories: formattedParroquiasArray,
           title: null,
           labels: {
-            rotation: -45, // Rotar para evitar superposición
+            rotation: -45,
             align: "right",
           },
         },
         yAxis: {
-          // 💡 Usar el array con el formato "Servicio (Total)"
+          // 💡 USAR EL ARRAY ORDENADO Y FORMATEADO PARA EL EJE Y
           categories: formattedServicesArray,
           title: null,
           labels: {
@@ -644,7 +741,7 @@ const FUNCTIONS_BY_SECTIONS = {
         colorAxis: {
           min: 0,
           minColor: "#FFFFFF",
-          maxColor: Highcharts.getOptions().colors[color], // Usar el color principal de Highcharts (azul)
+          maxColor: Highcharts.getOptions().colors[color],
           stops: [
             [0, "#FFFFFF"],
             [
@@ -666,7 +763,7 @@ const FUNCTIONS_BY_SECTIONS = {
         },
         tooltip: {
           formatter: function () {
-            // Personalizar el tooltip
+            // El tooltip usa los nombres formateados automáticamente desde las categorías
             const parroquia = this.series.xAxis.categories[this.point.x];
             const servicio = this.series.yAxis.categories[this.point.y];
             return `<b>${parroquia}</b><br/>${servicio}: <b>${this.point.value}</b> instituciones`;
@@ -674,9 +771,9 @@ const FUNCTIONS_BY_SECTIONS = {
         },
         series: [
           {
-            name: "Frecuencia de Servicios",
+            name: `Frecuencia de ${prestacion}`,
             borderWidth: 1,
-            data: heatmapData, // Los datos generados
+            data: heatmapData, // La data usa los índices del ordenamiento
             dataLabels: {
               enabled: true,
               color: "#000000",
@@ -684,7 +781,8 @@ const FUNCTIONS_BY_SECTIONS = {
           },
         ],
       };
-      // Paso 4: Crear el gráfico
+
+      // 6. Renderizado
       Highcharts.chart("modal-chart", highchartsOptions);
     },
   },

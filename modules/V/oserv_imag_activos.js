@@ -28,7 +28,12 @@ const oserv_imag_activos = {
     },
   ],
   chart: (instituciones) => {
-    FUNCTIONS_BY_SECTIONS.IV.chartDensity("de Imagenologias", "Activos", 2);
+    FUNCTIONS_BY_SECTIONS.IV.chartDensity(
+      "Servicios",
+      "de Imagenologias",
+      "Activos",
+      2
+    );
   },
 };
 export default oserv_imag_activos;

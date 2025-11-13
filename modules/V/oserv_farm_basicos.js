@@ -4,14 +4,14 @@ const obtenerOtrosServiciosDisponibles =
   FUNCTIONS_BY_SECTIONS.V.obtenerOtrosServiciosDisponibles;
 const oserv_farm_basicos = {
   id: "oserv_farm_basicos",
-  label: "Medicamentos Basicos Disponibles en Farmacia",
+  label: "Medicamentos Básicos Disponibles en Farmacia",
   fields: [
     { key: "datosInstitucion.nombre", label: "Institución" },
     { key: "datosInstitucion.parroquia", label: "Parroquia" },
     {
       key: (data) =>
         obtenerOtrosServiciosDisponibles(data, "farmacia", "basicos", true),
-      label: "Medicamentos Basicos disponibles",
+      label: "Medicamentos Básicos Disponibles",
     },
   ],
   searchFields: [
@@ -28,5 +28,13 @@ const oserv_farm_basicos = {
       options: PARROQUIAS_CARACAS.sort(), // Usar las parroquias como opciones
     },
   ],
+  chart: (instituciones) => {
+    FUNCTIONS_BY_SECTIONS.IV.chartDensity(
+      "Medicamentos",
+      "Básicos",
+      "Disponibles",
+      2
+    );
+  },
 };
 export default oserv_farm_basicos;

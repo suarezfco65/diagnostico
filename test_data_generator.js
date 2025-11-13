@@ -24,16 +24,46 @@ import {
 // =================================================================
 
 const NOMBRES_INSTITUCION = [
-  "CDI Los Próceres",
-  "Hospital Periférico",
-  "Ambulatorio Petare",
-  "Clínica El Sol",
-  "Modulo de Salud Chacao",
-  "Hospital Universitario",
-  "CDI El Valle",
-  "Ambulatorio Las Mercedes",
-  "Clínica San Juan",
-  "Modulo de Salud Coche",
+  "Dr José Gregorio Hernández",
+  "Dr Miguel Perez Carreño",
+  "Dr Alejandro Rhode",
+  "del Sur",
+  "del Oeste",
+  "Dr Carlos Diez del Ciervo",
+  "Don Felipe Ponte",
+  "Universitario",
+  "Oncológico",
+  "del Este",
+  "General La Lucha",
+  "San Juan",
+  "Dr Arreaza Almeida",
+  "Armando Castillo",
+  "Maternidad Santa Ana",
+  "Dr German Quintero",
+  "Dr Domingo Luciani",
+  "Popular Lebrún",
+  "Acosta Ortiz",
+  "San Capracio de Lérins",
+  "San Lucas Evangelista",
+  "San Pantaleón",
+  "San José",
+  "Dr José María Vargas",
+  "Dr Jacinto Convit",
+  "Dr Luis Razetti",
+  "Dr Pablo Acosta Ortiz",
+  "Dr Fernando Ascanio Gosling",
+  "Dr Antonio Fermín Martínez",
+  "Dr Fernando Gómez Aguado",
+  "Arnoldo Gabaldon",
+  "Pastor Oropeza",
+  "Luis Manuel Peñalver",
+  "Humberto Fernández Morán",
+  "Gustavo Machado",
+  "San Juan Pablo II",
+  "San Patricio",
+  "San Francisco de Asis",
+  "Santo Tomas de Aquino",
+  "San Rafael",
 ];
 
 // Opciones de estado usadas en varias secciones (IV, V, VI)
@@ -42,13 +72,48 @@ const ESTADOS_SERVICIO = ["ACTIVO", "ACTIVO C/PROB", "INACTIVO", "NO EXISTE"];
 // Opciones de condición de infraestructura (VI)
 const CONDICIONES_OPTIONS = ["BUENAS COND", "REGULAR COND", "MALAS COND"];
 
-const NOMBRES_PERSONAS = [
+const APELLIDOS_PERSONAS = [
   "Ramirez",
   "Lopez",
   "Perez",
   "Gomez",
   "Blanco",
   "Mora",
+  "Suárez",
+  "Hernández",
+  "Martinez",
+  "Jimenez",
+  "Arenas",
+  "Galindo",
+  "Piña",
+  "Caballero",
+  "Gonzalez",
+  "Ferrer",
+];
+
+const NOMBRES_PERSONAS = [
+  "Juan",
+  "Jesus",
+  "María",
+  "Pedro",
+  "Carlos",
+  "Juana",
+  "Victor",
+  "Adriana",
+  "Nestor",
+  "Narciso",
+  "Ricardo",
+  "Diego",
+  "Jessica",
+  "Luis",
+  "Francisco",
+  "Raúl",
+  "Enrique",
+  "Dulce",
+  "Josefina",
+  "Jhon",
+  "Angelica",
+  "Andrés",
 ];
 
 // =================================================================
@@ -102,6 +167,16 @@ function createSectionIData(nombre) {
     tipoInstitucion = "HOSPITAL DE EMERGENCIAS";
   }
 
+  nombre = `${
+    tipoInstitucion.startsWith("HOSPITAL")
+      ? "Hospital"
+      : tipo.value === "OTRO_TIPO"
+      ? "Hospital"
+      : tipo.label === "Clínica clandestina"
+      ? "Centro de Cuidados"
+      : tipo.label
+  } ${nombre}`;
+
   const ente = getRandomItem(ENTES_ADSCRITOS);
   let enteAdscrito = ente.value;
   // Simular el caso OTRO_ENTE (30% de probabilidad)
@@ -133,7 +208,7 @@ function createSectionIIData() {
     const key = cargo.key;
     data[key] = {
       nombre: `${getRandomItem(NOMBRES_PERSONAS)} ${getRandomItem(
-        NOMBRES_PERSONAS
+        APELLIDOS_PERSONAS
       )}`,
       celular: `0412-${Math.floor(1000000 + Math.random() * 9000000)}`,
       correo: `${key}${Math.floor(Math.random() * 100)}@salud.gob.ve`,

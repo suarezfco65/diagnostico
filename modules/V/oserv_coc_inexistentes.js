@@ -27,7 +27,12 @@ const oserv_coc_inexistentes = {
     },
   ],
   chart: (instituciones) => {
-    FUNCTIONS_BY_SECTIONS.IV.chartDensity("de Cocina", "Inexistentes", 5);
+    FUNCTIONS_BY_SECTIONS.IV.chartDensity(
+      "Servicios",
+      "de Cocina",
+      "Inexistentes",
+      5
+    );
   },
 };
 export default oserv_coc_inexistentes;

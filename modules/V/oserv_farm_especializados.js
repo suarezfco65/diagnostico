@@ -16,7 +16,7 @@ const oserv_farm_especializados = {
           "especializados",
           true
         ),
-      label: "Medicamentos Especializados disponibles",
+      label: "Medicamentos Especializados Disponibles",
     },
   ],
   searchFields: [
@@ -38,5 +38,13 @@ const oserv_farm_especializados = {
       options: PARROQUIAS_CARACAS.sort(), // Usar las parroquias como opciones
     },
   ],
+  chart: (instituciones) => {
+    FUNCTIONS_BY_SECTIONS.IV.chartDensity(
+      "Medicamentos",
+      "Especializados",
+      "Disponibles",
+      2
+    );
+  },
 };
 export default oserv_farm_especializados;
