@@ -28,6 +28,7 @@ const serv_activosProblemas = {
   ],
   chart: (instituciones) => {
     FUNCTIONS_BY_SECTIONS.IV.chartDensity(
+      "Servicios",
       "Médicos",
       "Activos con Problemas",
       8
