@@ -326,9 +326,9 @@ export const OTROS_SERVICIOS_DATA = {
       groupLabel: "GINECOLOGÍA",
       key: "ginecologia",
       items: [
-        { label: "CITOLOGÍA", key: "citologia" },
-        { label: "MAMOGRAFÍA", key: "mamografia" },
-        { label: "DENSIOMETRÍA ÓSEA", key: "densitometriaOsea" },
+        { label: "Citología", key: "citologia" },
+        { label: "Mamografía", key: "mamografia" },
+        { label: "Densiometría Ósea", key: "densitometriaOsea" },
         { label: "OTROS", key: "otrosGinecologia", isOther: true },
       ],
     },

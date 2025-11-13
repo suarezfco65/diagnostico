@@ -47,6 +47,16 @@ const oserv_lab_disponibilidad_3 = {
       options: PARROQUIAS_CARACAS.sort(), // Usar las parroquias como opciones
     },
   ],
+  chart: (instituciones) => {
+    const dataInstituciones = FUNCTIONS_BY_SECTIONS.tableToJson();
+    // Nombres de las series que queremos graficar (las áreas principales)
+    const highchartsOptions =
+      FUNCTIONS_BY_SECTIONS.generateHighchartsDataBarrasAgrupadas(
+        dataInstituciones,
+        ["Perfiles", "Química Sanguínea", "Serología"]
+      );
+    Highcharts.chart("modal-chart", highchartsOptions);
+  },
 };
 
 export default oserv_lab_disponibilidad_3;

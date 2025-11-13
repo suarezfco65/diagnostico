@@ -164,127 +164,214 @@ const FUNCTIONS_BY_SECTIONS = {
 
     return resultadoNivel1.slice(2);
   },
-  // 2. FUNCIÓN PARA PROCESAR LOS DATOS (JSON a Jerarquía Sunburst)
-  /**
-   * Transforma un array de objetos JSON en la estructura jerárquica para Highcharts Sunburst.
-   * * @param {Array<Object>} data - El array de objetos JSON (su jsonData).
-   * @param {string} centerField - Nombre del campo JSON para el nivel central (Ej: 'Institucion').
-   * @param {string} ring1Field - Nombre del campo JSON para el primer anillo (Ej: 'Parroquia').
-   * @param {string} ring2Field - Nombre del campo JSON para el segundo anillo/hoja (Ej: 'Tipo de Medicamento').
-   * @returns {Array<Object>} Datos listos para la serie del gráfico Sunburst.
-   */
-  createSunburstDataFromJSON: (data, centerField, ring1Field, ring2Field) => {
-    const map = {};
-    const sunburstData = [];
-
-    data.forEach((record) => {
-      // Obtenemos los valores de los campos dinámicamente
-      const centerValue = record[centerField]
-        ? record[centerField].trim()
-        : "Sin Centro";
-      const ring1Value = record[ring1Field]
-        ? record[ring1Field].trim()
-        : "Sin Anillo 1";
-      const ring2Str = record[ring2Field] ? record[ring2Field].trim() : "";
-
-      // 1. Separar los elementos del campo más granular (Medicamentos, que están separados por coma)
-      const ring2Items = ring2Str
-        .split(",")
-        .map((item) => item.trim())
-        .filter((item) => item !== "");
-
-      // 2. Usar una categoría genérica si el campo más granular está vacío
-      if (ring2Items.length === 0) {
-        ring2Items.push("NO INFORMADO");
-      }
-
-      // 3. Crear los nodos jerárquicos
-      ring2Items.forEach((ring2Item) => {
-        // Definición de la jerarquía basada en los parámetros
-        const path = [centerValue, ring1Value, ring2Item];
-        let currentPath = "";
-
-        path.forEach((level, index) => {
-          const parentPath = currentPath;
-          currentPath += (currentPath ? "." : "") + level;
-
-          if (!map[currentPath]) {
-            map[currentPath] = {
-              id: currentPath,
-              parent: parentPath || null,
-              name: level,
-              value: 0,
-            };
-            sunburstData.push(map[currentPath]);
-          }
-          // Contar el registro para el nodo actual
-          map[currentPath].value++;
-        });
-      });
-    });
-    return sunburstData;
-  },
 
   /**
-   * Transforma un array de objetos JSON en la estructura jerárquica para Highcharts Treemap/Sunburst.
-   * * @param {Array<Object>} data - El array de objetos JSON (su jsonData).
-   * @param {string} centerField - Nombre del campo JSON para el nivel superior (Ej: 'Institución').
-   * @param {string} ring1Field - Nombre del campo JSON para el nivel intermedio (Ej: 'Parroquia').
-   * @param {string} ring2Field - Nombre del campo JSON para el nivel hoja (Ej: 'Tipo de Medicamento').
-   * @returns {Array<Object>} Datos listos para la serie del gráfico Treemap/Sunburst.
+   * Genera el objeto de configuración de Highcharts para un Heatmap
+   * de las condiciones de las instalaciones.
+   * * @param {Array<Object>} institutionsData - La lista de objetos de las instituciones.
+   * * @param {string} Infraestructura - Nombre de la infraestructura (Ej. "Cocina").
+   * @param {Array<string>} categories - El array de nombres de las columnas/categorias a analizar (ej: ["Paredes", "Techos"]).
+   * @returns {Object} La configuración completa del Highcharts.
    */
-  createTreemapDataFromJSON: (data, centerField, ring1Field, ring2Field) => {
-    const map = {};
-    const sunburstData = [];
+  generateHeatmapConfig: (institutionsData, infraestructura) => {
+    // 1. Definir los niveles de condición que serán las series (colores de la barra)
+    const conditions = ["MALAS COND", "REGULAR COND", "BUENAS COND"];
 
-    data.forEach((record) => {
-      // Obtenemos los valores de los campos dinámicamente
-      const centerValue = record[centerField]
-        ? record[centerField].trim()
-        : "Sin Institución";
-      const ring1Value = record[ring1Field]
-        ? record[ring1Field].trim()
-        : "Sin Parroquia";
-      const ring2Str = record[ring2Field] ? record[ring2Field].trim() : "";
+    // 2. Estructura de datos para agrupar: { 'Parroquia A': { 'MALAS COND': 10, 'REGULAR COND': 5, ... }, ... }
+    const groupedData = {};
 
-      // 1. Separar los elementos del campo más granular (Medicamentos, que están separados por coma)
-      const ring2Items = ring2Str
-        .split(",")
-        .map((item) => item.trim())
-        .filter((item) => item !== "");
-
-      // 2. Usar una categoría genérica si el campo más granular está vacío
-      if (ring2Items.length === 0) {
-        ring2Items.push("NO INFORMADO");
+    // 3. Procesar los datos para contar las condiciones por parroquia
+    institutionsData.forEach((institution) => {
+      const parroquia = institution.Parroquia || "SIN PARROQUIA"; // Manejar datos faltantes
+      if (!groupedData[parroquia]) {
+        groupedData[parroquia] = {
+          "MALAS COND": 0,
+          "REGULAR COND": 0,
+          "BUENAS COND": 0,
+        };
       }
 
-      // 3. Crear los nodos jerárquicos
-      ring2Items.forEach((ring2Item) => {
-        // Definición de la jerarquía basada en los parámetros
-        // NOTA: Para Treemap, el orden es Jerarquía Mayor -> Jerarquía Menor
-        const path = [centerValue, ring1Value, ring2Item];
-        let currentPath = "";
-
-        path.forEach((level, index) => {
-          const parentPath = currentPath;
-          currentPath += (currentPath ? "." : "") + level;
-
-          if (!map[currentPath]) {
-            map[currentPath] = {
-              id: currentPath,
-              parent: parentPath || null,
-              name: level,
-              value: 0,
-            };
-            sunburstData.push(map[currentPath]);
-          }
-          // Contar el registro para el nodo actual (cada medicamento cuenta como 1)
-          map[currentPath].value++;
-        });
+      // Se evalúan 4 categorías por institución: Paredes, Techos, Pisos, A/A
+      ["Paredes", "Techos", "Pisos", "A/A"].forEach((category) => {
+        const condition = institution[category];
+        if (conditions.includes(condition)) {
+          groupedData[parroquia][condition]++;
+        }
       });
     });
-    return sunburstData;
+
+    // 4. Transformar los datos agrupados al formato de series de Highcharts
+    const categories = Object.keys(groupedData); // Las parroquias serán las categorías del Eje Y
+
+    // Ordenar el array de parroquias (categories)
+    categories.sort((a, b) => {
+      // Acceder a la cuenta de 'BUENAS COND' para la Parroquia 'b' y 'a'
+      const countA = groupedData[a]["BUENAS COND"];
+      const countB = groupedData[b]["BUENAS COND"];
+      // Devolver la diferencia (countB - countA) para un orden descendente
+      return countB - countA;
+    });
+
+    // 5. Transformar los datos agrupados al formato de series de Highcharts usando el orden de 'categories'
+    const series = conditions.map((condition) => {
+      return {
+        name: condition,
+        data: categories.map((parroquia) => groupedData[parroquia][condition]),
+        color:
+          condition === "MALAS COND"
+            ? "#C04000"
+            : condition === "REGULAR COND"
+            ? "#FFBF00"
+            : "#00A86B", // Rojo, Ámbar, Verde
+      };
+    });
+
+    // 6. Generar la configuración del Highcharts
+    return {
+      chart: {
+        type: "bar",
+      },
+      title: {
+        text: `Resumen de Condiciones de Infraestructura - ${infraestructura}`,
+      },
+      subtitle: {
+        text: "Agrupadas por Parroquia",
+      },
+      xAxis: {
+        categories: categories,
+        title: {
+          text: "Parroquias",
+        },
+      },
+      yAxis: {
+        min: 0,
+        title: {
+          text: "Total de Evaluaciones",
+        },
+      },
+      tooltip: {
+        // Mostrar la contribución en el total (formato porcentaje)
+        pointFormat:
+          "{series.name}: <b>{point.y}</b> ({point.percentage:.0f}%)<br/>",
+      },
+      plotOptions: {
+        series: {
+          stacking: "percent", // Apilamiento en porcentaje para comparación de proporciones
+        },
+      },
+      series: series,
+      credits: {
+        enabled: false,
+      },
+    };
   },
+
+  generateHighchartsDataBarrasAgrupadas:
+    /**
+     * Genera el objeto de configuración JSON para un gráfico de barras agrupadas de Highcharts.
+     *
+     * @param {Array<Object>} dataInstituciones - El array de objetos con la información de las instituciones.
+     * @param {Array<string>} areasToAnalyze - El array de nombres de las columnas/áreas a analizar (ej: ["Cardiología", "Coagulación"]).
+     * @returns {Object} El objeto JSON con la estructura completa para Highcharts.
+     */
+    (dataInstituciones, areasToAnalyze) => {
+      if (
+        !dataInstituciones ||
+        dataInstituciones.length === 0 ||
+        !areasToAnalyze ||
+        areasToAnalyze.length === 0
+      ) {
+        console.error("Los datos o las áreas a analizar no son válidos.");
+        return {};
+      }
+
+      const frequencyCounts = {};
+      const allUniqueServices = new Set();
+
+      // Inicializar los contadores y el Set de servicios únicos
+      areasToAnalyze.forEach((area) => {
+        frequencyCounts[area] = {};
+      });
+
+      // 1. ITERAR Y CONTAR
+      dataInstituciones.forEach((institution) => {
+        areasToAnalyze.forEach((area) => {
+          const servicesString = institution[area];
+
+          if (servicesString) {
+            // Normaliza: limpia y divide la cadena de servicios
+            const services = servicesString
+              .split(",")
+              .map((s) => s.trim()) // Elimina espacios extra
+              .filter((s) => s.length > 0);
+
+            services.forEach((service) => {
+              allUniqueServices.add(service);
+              frequencyCounts[area][service] =
+                (frequencyCounts[area][service] || 0) + 1;
+            });
+          }
+        });
+      });
+
+      // 2. GENERAR ESTRUCTURA DE HIGHCHARTS
+      const xAxisCategories = Array.from(allUniqueServices).sort();
+
+      const highchartsSeries = areasToAnalyze.map((area) => {
+        const data = xAxisCategories.map((service) => {
+          // Obtener el conteo para ese servicio en el área actual (o 0 si no existe)
+          return frequencyCounts[area][service] || 0;
+        });
+
+        return {
+          name: area,
+          data: data,
+        };
+      });
+
+      return {
+        chart: {
+          type: "column",
+        },
+        title: {
+          text:
+            "Frecuencia de Servicios por Área: " + areasToAnalyze.join(", "),
+        },
+        subtitle: {
+          text:
+            "Total de instituciones analizadas: " + dataInstituciones.length,
+        },
+        xAxis: {
+          categories: xAxisCategories,
+          title: {
+            text: "Servicios Médicos Específicos",
+          },
+        },
+        yAxis: {
+          title: {
+            text: "Número de Instituciones que Ofrecen el Servicio",
+          },
+          allowDecimals: false,
+        },
+        tooltip: {
+          shared: true,
+          useHTML: true,
+          headerFormat:
+            '<span style="font-size:10px">{point.key}</span><table>',
+          pointFormat:
+            '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+            '<td style="padding:0"><b>{point.y}</b></td></tr>',
+          footerFormat: "</table>",
+        },
+        plotOptions: {
+          column: {
+            pointPadding: 0.2,
+            borderWidth: 0,
+          },
+        },
+        series: highchartsSeries,
+      };
+    },
 
   chartDrillDown: (chartTitle, chartSubtitle, serieName, serieDrilldown) => {
     const dataSerie = FUNCTIONS_BY_SECTIONS.sumarizeByField(serieName).map(
