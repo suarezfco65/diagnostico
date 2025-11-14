@@ -20,6 +20,13 @@ const TableGenerator = (() => {
     updateReportTitle(reportDefinition);
     showResultCount(institutions.length);
 
+    var popoverTriggerList = [].slice.call(
+      document.querySelectorAll('[data-bs-toggle="popover"]')
+    );
+    var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+      return new bootstrap.Popover(popoverTriggerEl);
+    });
+
     if (reportDefinition.chart) {
       reportDefinition.chart(institutions);
       // ❗ MOSTRAR BOTÓN DE GRÁFICO ❗
