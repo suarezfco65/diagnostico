@@ -1,269 +1,341 @@
-// dashboard.js
+// Importar la función getStorage del archivo storage.js
+// Asumiendo que ambos archivos están en el mismo directorio.
+import { getStorage } from "./storage.js";
 
-import Auth from "./auth.js";
-import * as Storage from "./storage.js";
-import * as IndicatorStorage from "./indicator_storage.js"; // Necesitas crear este módulo utilitario
+// Clave de almacenamiento para los datos del diagnóstico
+const STORAGE_KEY = "siscomres_diagnostico_data";
 
-const DASHBOARD_STORAGE_KEY = "siscomres_user_dashboards";
-let CURRENT_USER = null;
+// --- FUNCIONES DE CÁLCULO DE OPERATIVIDAD ---
 
-const DashboardModule = (() => {
-  // Elementos DOM
-  const dashboardContent = document.getElementById("dashboard-content");
-  const welcomeMessage = document.getElementById("welcome-message");
-  const logoutBtn = document.getElementById("logout-btn");
-  const dashboardSelect = document.getElementById("dashboard-select");
-  const currentDashboardTitle = document.getElementById(
-    "current-dashboard-title"
-  );
-  const dashboardGrid = document.getElementById("dashboard-grid");
-  const createNewBtn = document.getElementById("create-new-btn");
-  const modifyBtn = document.getElementById("modify-btn");
-  const deleteBtn = document.getElementById("delete-btn");
-  const dashboardEditorForm = document.getElementById("dashboard-editor-form");
+// Función para calcular porcentaje de operatividad
+function calcularPorcentajeOperatividad(operativos, total) {
+  if (total === 0) return 0;
+  // Redondear a 2 decimales
+  return Math.round((operativos / total) * 100);
+}
 
-  // =============================
-  // GESTIÓN DE ALMACENAMIENTO (Puntos 2, 4, 5)
-  // =============================
-
-  const getDashboardsData = () => {
-    const data = Storage.getStorage(DASHBOARD_STORAGE_KEY) || {};
-    return data;
+// Función para procesar los datos JSON y calcular promedios
+function procesarDatosOperativos(datosJSON) {
+  const areas = {
+    consultorios: { total: 0, operativos: 0 },
+    quirofanos: { total: 0, operativos: 0 },
+    hospitalizacion: { total: 0, operativos: 0 },
+    laboratorio: { total: 0, operativos: 0 },
+    farmacia: { total: 0, operativos: 0 },
+    cocina: { total: 0, operativos: 0 },
   };
 
-  const saveDashboardsData = (data) => {
-    Storage.saveStorage(data, DASHBOARD_STORAGE_KEY);
-  };
+  // Procesar cada centro de salud
+  // Se asume que datosJSON es un Array de objetos de centros de salud.
+  datosJSON.forEach((centro) => {
+    // Asegurarse de que la estructura exista antes de acceder a ella
+    const condiciones = centro?.infraestructura?.condiciones;
 
-  const getUserDashboards = () => {
-    const data = getDashboardsData();
-    return data[CURRENT_USER] || { lastDashboardId: null, dashboards: {} };
-  };
-
-  const saveUserDashboards = (userData) => {
-    const allData = getDashboardsData();
-    allData[CURRENT_USER] = userData;
-    saveDashboardsData(allData);
-  };
-
-  // =============================
-  // RENDERIZADO Y CONTROL (Puntos 5, 6)
-  // =============================
-
-  /**
-   * Carga el panel activo del usuario (último panel trabajado).
-   */
-  const loadCurrentDashboard = (dashboardId = null) => {
-    const userData = getUserDashboards();
-    const dashboards = userData.dashboards;
-    let targetId = dashboardId || userData.lastDashboardId;
-
-    // Si no hay ID, toma el primero disponible
-    if (!targetId && Object.keys(dashboards).length > 0) {
-      targetId = Object.keys(dashboards)[0];
+    if (condiciones) {
+      Object.keys(areas).forEach((area) => {
+        if (condiciones[area] && condiciones[area].cantidad !== undefined) {
+          areas[area].total += condiciones[area].cantidad;
+          // Asume que si no hay 'operativos', es 0
+          areas[area].operativos += condiciones[area].operativos || 0;
+        }
+      });
     }
+  });
 
-    if (!targetId || !dashboards[targetId]) {
-      // No hay paneles registrados
-      currentDashboardTitle.textContent = "Sin Paneles Registrados";
-      dashboardGrid.innerHTML =
-        '<div class="alert alert-info">Cree un nuevo panel para empezar.</div>';
-      modifyBtn.disabled = true;
-      deleteBtn.disabled = true;
-      return;
-    }
-
-    const dashboard = dashboards[targetId];
-    currentDashboardTitle.textContent = dashboard.nombre;
-
-    // Renderizar indicadores
-    renderDashboard(dashboard);
-
-    // Actualizar el último ID trabajado y el select
-    userData.lastDashboardId = targetId;
-    saveUserDashboards(userData);
-    dashboardSelect.value = targetId;
-
-    // Habilitar botones de gestión
-    modifyBtn.disabled = false;
-    deleteBtn.disabled = false;
-  };
-
-  /**
-   * Dibuja los gráficos en el dashboard. (Lógica dummy por ahora)
-   */
-  const renderDashboard = (dashboard) => {
-    dashboardGrid.innerHTML = "";
-    dashboard.indicadores.forEach((item) => {
-      const chartDiv = document.createElement("div");
-      chartDiv.className = `${item.tamano} mb-4`;
-      chartDiv.id = `chart-${item.idIndicador}-${item.orden}`;
-
-      // Título dummy
-      chartDiv.innerHTML = `<div class="card p-3"><h6 class="text-primary">${item.idIndicador}</h6><p>Gráfico pendiente de implementación Highcharts.</p></div>`;
-
-      dashboardGrid.appendChild(chartDiv);
-
-      // **AQUÍ IRÍA LA LÓGICA REAL DE Highcharts:**
-      // IndicatorStorage.getIndicatorDefinition(item.idIndicador);
-      // Highcharts.chart(chartDiv.id, config_generada);
-    });
-  };
-
-  /**
-   * Rellena el select con los paneles del usuario.
-   */
-  const renderDashboardSelect = () => {
-    const { dashboards } = getUserDashboards();
-    let html = "";
-    Object.entries(dashboards).forEach(([id, panel]) => {
-      html += `<option value="${id}">${panel.nombre}</option>`;
-    });
-    dashboardSelect.innerHTML = html;
-  };
-
-  // =============================
-  // GESTIÓN DE PANELES (Punto 7)
-  // =============================
-
-  const handleDashboardSelectChange = () => {
-    loadCurrentDashboard(dashboardSelect.value);
-  };
-
-  const handleDeleteDashboard = () => {
-    const currentId = dashboardSelect.value;
-    if (
-      !currentId ||
-      !confirm(
-        `¿Está seguro de eliminar el panel "${currentDashboardTitle.textContent}"?`
-      )
-    )
-      return;
-
-    const userData = getUserDashboards();
-    delete userData.dashboards[currentId];
-    userData.lastDashboardId = null; // Forzar a cargar otro panel o ninguno
-    saveUserDashboards(userData);
-
-    Storage.showAlert(
-      `Panel eliminado correctamente.`,
-      "alert-success",
-      "dashboard-alert-container"
-    );
-    initDashboard(); // Recargar la interfaz
-  };
-
-  const handleSaveDashboard = (e) => {
-    e.preventDefault();
-
-    const name = document.getElementById("edit-dashboard-name").value.trim();
-    const isCreating = !document.getElementById("edit-dashboard-id").value;
-    const currentId =
-      document.getElementById("edit-dashboard-id").value || "dsh_" + Date.now();
-
-    // Lógica de recolección de indicadores seleccionados
-    const indicators = Array.from(
-      document.querySelectorAll("#available-indicators-list input:checked")
-    ).map((input, index) => {
-      // Se debe implementar una interfaz más compleja para tamano y orden
-      return {
-        idIndicador: input.value,
-        orden: index + 1,
-        tamano: "col-md-6", // Default simple
-      };
-    });
-
-    if (indicators.length === 0) {
-      Storage.showAlert(
-        "Debe seleccionar al menos un indicador.",
-        "alert-warning",
-        "dashboard-alert-container"
-      );
-      return;
-    }
-
-    const newDashboard = {
-      id: currentId,
-      nombre: name,
-      fechaModificacion: new Date().toISOString(),
-      indicadores: indicators,
+  // Calcular porcentajes
+  const resultados = {};
+  Object.keys(areas).forEach((area) => {
+    resultados[area] = {
+      // Usar la función de cálculo redondeada
+      porcentaje: calcularPorcentajeOperatividad(
+        areas[area].operativos,
+        areas[area].total
+      ),
+      total: areas[area].total,
+      operativos: areas[area].operativos,
     };
+  });
 
-    const userData = getUserDashboards();
-    userData.dashboards[currentId] = newDashboard;
-    saveUserDashboards(userData);
+  return resultados;
+}
 
-    Storage.showAlert(
-      `Panel "${name}" guardado exitosamente.`,
-      "alert-success",
-      "dashboard-alert-container"
-    );
-    initDashboard(); // Recargar la interfaz con el nuevo panel
+// --- GENERACIÓN DINÁMICA DE DATOS PRINCIPALES ---
 
-    // Cerrar el modal (se requiere la inicialización de Bootstrap JS)
-    const modal = bootstrap.Modal.getInstance(
-      document.getElementById("dashboardModal")
-    );
-    if (modal) modal.hide();
+// 1. Obtener los datos del localStorage
+const rawData = getStorage(STORAGE_KEY);
+
+// 2. Procesar los datos crudos para generar el objeto operationalData
+const operationalData = procesarDatosOperativos(rawData);
+
+// Verificar si no hay datos y mostrar un mensaje si es necesario
+if (
+  Object.keys(operationalData).length === 0 ||
+  Object.values(operationalData).every((d) => d.total === 0)
+) {
+  console.warn(
+    "No se encontraron datos válidos en localStorage para generar el dashboard."
+  );
+  // Podrías poner datos de fallback o mostrar un mensaje en el DOM
+}
+
+// --- CONFIGURACIÓN Y VISUALIZACIÓN ---
+
+// Nombres legibles para las áreas
+const areaNames = {
+  consultorios: "Consultorios",
+  quirofanos: "Quirófanos",
+  hospitalizacion: "Hospitalización",
+  laboratorio: "Laboratorio",
+  farmacia: "Farmacia",
+  cocina: "Cocina",
+};
+
+// Colores para cada área
+const areaColors = {
+  consultorios: "#1a6fc4",
+  quirofanos: "#2ecc71",
+  hospitalizacion: "#3498db",
+  laboratorio: "#9b59b6",
+  farmacia: "#e74c3c",
+  cocina: "#f39c12",
+};
+
+/**
+ * Función para crear un gráfico gauge de Highcharts.
+ * (El código de esta función es el mismo que el original, no requiere cambios)
+ */
+function createGauge(containerId, title, value, color) {
+  Highcharts.chart(containerId, {
+    chart: {
+      type: "gauge",
+      plotBackgroundColor: null,
+      plotBackgroundBorderWidth: 0,
+      plotBorderWidth: 0,
+      height: "80%",
+    },
+    title: {
+      text: title,
+      style: {
+        fontSize: "14px",
+        fontWeight: "bold",
+      },
+    },
+    pane: {
+      startAngle: -90,
+      endAngle: 90,
+      background: null,
+      center: ["50%", "75%"],
+      size: "100%",
+    },
+    yAxis: {
+      min: 0,
+      max: 100,
+      tickPixelInterval: 30,
+      tickLength: 5,
+      tickWidth: 1,
+      minorTickInterval: null,
+      labels: {
+        distance: 20,
+        style: {
+          fontSize: "12px",
+        },
+      },
+      plotBands: [
+        {
+          from: 0,
+          to: 40,
+          color: "#DF5353", // Rojo
+          thickness: "20%",
+        },
+        {
+          from: 40,
+          to: 70,
+          color: "#DDDF0D", // Amarillo
+          thickness: "20%",
+        },
+        {
+          from: 70,
+          to: 100,
+          color: "#55BF3B", // Verde
+          thickness: "20%",
+        },
+      ],
+    },
+    series: [
+      {
+        name: "Operatividad",
+        data: [value],
+        tooltip: {
+          valueSuffix: " %",
+        },
+        dataLabels: {
+          format: "{y}%",
+          borderWidth: 0,
+          style: {
+            fontSize: "16px",
+            fontWeight: "bold",
+          },
+        },
+        dial: {
+          radius: "80%",
+          backgroundColor: color,
+          baseWidth: 12,
+          baseLength: "0%",
+          rearLength: "0%",
+        },
+      },
+    ],
+    credits: {
+      enabled: false,
+    },
+  });
+}
+
+/**
+ * Función principal para generar el dashboard completo.
+ */
+function generateDashboard() {
+  const gaugesContainer = document.getElementById("gaugesContainer");
+  const detailedStats = document.getElementById("detailedStats");
+
+  // Limpiar contenedores
+  gaugesContainer.innerHTML = "";
+  detailedStats.innerHTML = "";
+
+  // Crear gauges y estadísticas detalladas
+  Object.keys(operationalData).forEach((area) => {
+    const data = operationalData[area];
+    const areaName = areaNames[area];
+    const color = areaColors[area];
+
+    // Solo renderizar si hay unidades totales
+    if (data.total > 0) {
+      // Crear gauge card
+      const gaugeCol = document.createElement("div");
+      gaugeCol.className = "col-sm-6 col-lg-4";
+      gaugeCol.innerHTML = `
+                <div class="card gauge-card h-100">
+                    <div class="card-body text-center">
+                        <div class="gauge-container" id="gauge-${area}"></div>
+                        <h6 class="card-title area-title">${areaName}</h6>
+                        <p class="card-text area-stats">${data.operativos} de ${data.total} unidades</p>
+                    </div>
+                </div>
+            `;
+      gaugesContainer.appendChild(gaugeCol);
+
+      // Crear estadística detallada
+      const statCol = document.createElement("div");
+      statCol.className = "col-12";
+      statCol.innerHTML = `
+                <div class="d-flex justify-content-between align-items-center p-2 border-bottom">
+                    <div>
+                        <h6 class="mb-1">${areaName}</h6>
+                        <small class="text-muted">${data.operativos} de ${data.total} unidades operativas</small>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <span class="me-2 fw-bold">${data.porcentaje}%</span>
+                        <div class="progress" style="width: 100px;">
+                            <div class="progress-bar" role="progressbar" style="width: ${data.porcentaje}%; background-color: ${color};"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+      detailedStats.appendChild(statCol);
+
+      // Crear el gráfico gauge
+      setTimeout(() => {
+        createGauge(`gauge-${area}`, "", data.porcentaje, color);
+      }, 100);
+    }
+  });
+
+  // --- ACTUALIZAR SUMMARY CARDS ---
+
+  // Filtra las áreas con datos para calcular el promedio correctamente
+  const percentages = Object.values(operationalData)
+    .filter((d) => d.total > 0)
+    .map((area) => area.porcentaje);
+
+  let averagePercentage = 0;
+  if (percentages.length > 0) {
+    const totalPercentage = percentages.reduce((sum, p) => sum + p, 0);
+    averagePercentage = Math.round(totalPercentage / percentages.length);
+  }
+
+  const mostOperative = Object.values(operationalData).reduce(
+    (max, area) => (area.porcentaje > max.porcentaje ? area : max),
+    { porcentaje: -1 }
+  );
+  const criticalArea = Object.values(operationalData).reduce(
+    (min, area) => (area.porcentaje < min.porcentaje ? area : min),
+    { porcentaje: 101 }
+  );
+
+  const getAreaNameByPercentage = (percentage) => {
+    const [key] = Object.entries(operationalData).find(
+      ([, data]) => data.porcentaje === percentage
+    ) || [null];
+    return areaNames[key] || "N/A";
   };
 
-  // =============================
-  // INICIALIZACIÓN
-  // =============================
+  // 1. Operatividad General
+  const summaryGen = document.querySelector(
+    ".summary-card:nth-child(1) .operational-percentage"
+  );
+  if (summaryGen) {
+    summaryGen.textContent = `${averagePercentage}%`;
+  }
 
-  const initDashboard = () => {
-    renderDashboardSelect();
-    loadCurrentDashboard();
-  };
+  const highlightGen = document.querySelector(".highlight-card h4.mb-0");
+  const highlightBar = document.querySelector(".highlight-card .progress-bar");
 
-  const init = () => {
-    // 1. Autenticación (Punto 1)
-    CURRENT_USER = Auth.getCurrentUser();
-    Auth.requireAuth(); // Redirigir al login si no hay sesión
+  if (highlightGen) {
+    highlightGen.textContent = `${averagePercentage}%`;
+  }
 
-    welcomeMessage.textContent = `Bienvenido, ${CURRENT_USER}`;
-    dashboardContent.classList.remove("d-none");
+  if (highlightBar) {
+    highlightBar.style.width = `${averagePercentage}%`;
+  }
 
-    // 2. Cargar indicadores disponibles en el Modal
-    IndicatorStorage.renderAndCheckIndicators(
-      document.getElementById("available-indicators-list")
-    ); // Utilidad necesaria
+  // 2. Centros Evaluados
+  const centersEvaluated = document.querySelector(
+    ".summary-card:nth-child(2) .operational-percentage"
+  );
+  if (centersEvaluated) {
+    centersEvaluated.textContent = rawData.length.toString();
+  }
 
-    // 3. Inicializar el Dashboard
-    initDashboard();
+  // 3. Área Más Operativa
+  const mostOpPerc = document.querySelector(
+    ".summary-card:nth-child(3) .operational-percentage"
+  );
+  const mostOpText = document.querySelector(
+    ".summary-card:nth-child(3) small.text-muted"
+  );
 
-    // 4. Listeners
-    if (logoutBtn) logoutBtn.addEventListener("click", Auth.logout);
-    if (dashboardSelect)
-      dashboardSelect.addEventListener("change", handleDashboardSelectChange);
-    if (deleteBtn) deleteBtn.addEventListener("click", handleDeleteDashboard);
-    if (dashboardEditorForm)
-      dashboardEditorForm.addEventListener("submit", handleSaveDashboard);
+  if (mostOpPerc) {
+    mostOpPerc.textContent = `${mostOperative.porcentaje}%`;
+  }
+  if (mostOpText) {
+    mostOpText.textContent = getAreaNameByPercentage(mostOperative.porcentaje);
+  }
 
-    // Configuración de botones de Modal (Crear vs Modificar)
-    createNewBtn.addEventListener("click", () => {
-      document.getElementById("dashboardModalLabel").textContent =
-        "Crear Nuevo Panel";
-      dashboardEditorForm.reset();
-      document.getElementById("edit-dashboard-id").value = "";
-    });
+  // 4. Área Crítica
+  const critAreaPerc = document.querySelector(
+    ".summary-card:nth-child(4) .operational-percentage"
+  );
+  const critAreaText = document.querySelector(
+    ".summary-card:nth-child(4) small.text-muted"
+  );
 
-    modifyBtn.addEventListener("click", () => {
-      // Lógica para precargar datos en el modal antes de mostrarlo
-      document.getElementById("dashboardModalLabel").textContent =
-        "Modificar Panel";
-      const currentId = dashboardSelect.value;
-      const dashboard = getUserDashboards().dashboards[currentId];
+  if (critAreaPerc) {
+    critAreaPerc.textContent = `${criticalArea.porcentaje}%`;
+  }
+  if (critAreaText) {
+    critAreaText.textContent = getAreaNameByPercentage(criticalArea.porcentaje);
+  }
+}
 
-      document.getElementById("edit-dashboard-name").value = dashboard.nombre;
-      document.getElementById("edit-dashboard-id").value = currentId;
-
-      // Lógica: Marcar los checkboxes de los indicadores que ya están en el panel
-      IndicatorStorage.checkSelectedIndicators(dashboard.indicadores);
-    });
-  };
-
-  return { init };
-})();
-
-document.addEventListener("DOMContentLoaded", DashboardModule.init);
+// Inicializar el dashboard cuando el documento esté completamente cargado
+document.addEventListener("DOMContentLoaded", generateDashboard);
