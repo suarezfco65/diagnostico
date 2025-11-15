@@ -460,7 +460,11 @@ function createSectionVIData() {
     }
 
     // Generar valores aleatorios para cantidad y operativos
-    const cantidad = Math.floor(Math.random() * 20) + 1; // 1 a 20
+    const maximo = ["farmacia", "laboratorio", "cocina"].includes(area.key)
+      ? 2
+      : 20;
+
+    const cantidad = Math.floor(Math.random() * maximo) + 1; // 1 a 20
     const operativos = Math.floor(Math.random() * (cantidad + 1)); // 0 a cantidad
 
     condicionesData[key] = {

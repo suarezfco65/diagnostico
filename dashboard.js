@@ -1,11 +1,15 @@
 // Importar la función getStorage del archivo storage.js
-// Asumiendo que ambos archivos están en el mismo directorio.
 import { getStorage } from "./storage.js";
+
+// Importar los datos globales necesarios (Nombres de Área)
+import { filteredData, areaNames } from "./main_dashboard.js";
 
 // Clave de almacenamiento para los datos del diagnóstico
 const STORAGE_KEY = "siscomres_diagnostico_data";
 
+// ----------------------------------------------------------------------
 // --- FUNCIONES DE CÁLCULO DE OPERATIVIDAD ---
+// ----------------------------------------------------------------------
 
 // Función para calcular porcentaje de operatividad
 function calcularPorcentajeOperatividad(operativos, total) {
@@ -15,173 +19,174 @@ function calcularPorcentajeOperatividad(operativos, total) {
 }
 
 // Función para procesar los datos JSON y calcular promedios
-function procesarDatosOperativos(datosJSON) {
+// Acepta un array de datos (filtrado o completo)
+function procesarDatosOperativos(datosArray) {
+  console.log("Procesando datos operativos:", datosArray.length, "centros");
+
   const areas = {
-    consultorios: { total: 0, operativos: 0 },
-    quirofanos: { total: 0, operativos: 0 },
-    hospitalizacion: { total: 0, operativos: 0 },
-    laboratorio: { total: 0, operativos: 0 },
-    farmacia: { total: 0, operativos: 0 },
-    cocina: { total: 0, operativos: 0 },
+    consultorios: { total: 0, operativos: 0, nombreLegible: "Consultorios" },
+    quirofanos: { total: 0, operativos: 0, nombreLegible: "Quirófanos" },
+    hospitalizacion: {
+      total: 0,
+      operativos: 0,
+      nombreLegible: "Hospitalización",
+    },
+    laboratorio: { total: 0, operativos: 0, nombreLegible: "Laboratorio" },
+    farmacia: { total: 0, operativos: 0, nombreLegible: "Farmacia" },
+    cocina: { total: 0, operativos: 0, nombreLegible: "Cocina" },
   };
 
-  // Procesar cada centro de salud
-  // Se asume que datosJSON es un Array de objetos de centros de salud.
-  datosJSON.forEach((centro) => {
-    // Asegurarse de que la estructura exista antes de acceder a ella
+  datosArray.forEach((centro, index) => {
     const condiciones = centro?.infraestructura?.condiciones;
+    console.log(`Centro ${index + 1}:`, centro.datosInstitucion?.nombre);
+    console.log("Condiciones:", condiciones);
 
-    if (condiciones) {
+    if (condiciones && typeof condiciones === "object") {
       Object.keys(areas).forEach((area) => {
-        if (condiciones[area] && condiciones[area].cantidad !== undefined) {
-          areas[area].total += condiciones[area].cantidad;
-          // Asume que si no hay 'operativos', es 0
-          areas[area].operativos += condiciones[area].operativos || 0;
+        const datosArea = condiciones[area];
+
+        if (datosArea && typeof datosArea === "object") {
+          // Obtener cantidad y operativos directamente de la estructura
+          const cantidad = parseInt(datosArea.cantidad) || 0;
+          const operativos = parseInt(datosArea.operativos) || 0;
+
+          console.log(
+            `  ${area}: cantidad=${cantidad}, operativos=${operativos}`
+          );
+
+          if (cantidad > 0) {
+            areas[area].total += cantidad;
+            areas[area].operativos += operativos;
+          }
+        } else {
+          console.log(`  ${area}: NO HAY DATOS`);
         }
       });
+    } else {
+      console.log(
+        `  Centro ${index + 1}: No tiene condiciones de infraestructura`
+      );
     }
   });
 
   // Calcular porcentajes
-  const resultados = {};
   Object.keys(areas).forEach((area) => {
-    resultados[area] = {
-      // Usar la función de cálculo redondeada
-      porcentaje: calcularPorcentajeOperatividad(
-        areas[area].operativos,
-        areas[area].total
-      ),
-      total: areas[area].total,
-      operativos: areas[area].operativos,
-    };
+    areas[area].porcentaje = calcularPorcentajeOperatividad(
+      areas[area].operativos,
+      areas[area].total
+    );
+    console.log(
+      `RESULTADO ${area}: ${areas[area].operativos}/${areas[area].total} = ${areas[area].porcentaje}%`
+    );
   });
 
-  return resultados;
+  return areas;
 }
 
-// --- GENERACIÓN DINÁMICA DE DATOS PRINCIPALES ---
+// ----------------------------------------------------------------------
+// --- FUNCIONES DE VISUALIZACIÓN ---
+// ----------------------------------------------------------------------
 
-// 1. Obtener los datos del localStorage
-const rawData = getStorage(STORAGE_KEY);
+function createGauge(containerId, value, title) {
+  // *** CORRECCIÓN Highcharts error #13 ***
+  if (!document.getElementById(containerId)) {
+    console.warn(
+      `Highcharts: Contenedor ${containerId} no encontrado en el DOM.`
+    );
+    // Reintentar después de un breve delay
+    setTimeout(() => {
+      if (document.getElementById(containerId)) {
+        createGauge(containerId, value, title);
+      }
+    }, 100);
+    return;
+  }
 
-// 2. Procesar los datos crudos para generar el objeto operationalData
-const operationalData = procesarDatosOperativos(rawData);
-
-// Verificar si no hay datos y mostrar un mensaje si es necesario
-if (
-  Object.keys(operationalData).length === 0 ||
-  Object.values(operationalData).every((d) => d.total === 0)
-) {
-  console.warn(
-    "No se encontraron datos válidos en localStorage para generar el dashboard."
+  // Destruir gráfico existente si existe
+  const existingChart = Highcharts.charts.find(
+    (chart) => chart && chart.renderTo.id === containerId
   );
-  // Podrías poner datos de fallback o mostrar un mensaje en el DOM
-}
+  if (existingChart) {
+    existingChart.destroy();
+  }
 
-// --- CONFIGURACIÓN Y VISUALIZACIÓN ---
+  // Determinar color basado en el porcentaje
+  let color;
+  if (value >= 80) {
+    color = "#2ecc71"; // Verde
+  } else if (value >= 60) {
+    color = "#f39c12"; // Amarillo/Naranja
+  } else if (value >= 40) {
+    color = "#e67e22"; // Naranja
+  } else {
+    color = "#e74c3c"; // Rojo
+  }
 
-// Nombres legibles para las áreas
-const areaNames = {
-  consultorios: "Consultorios",
-  quirofanos: "Quirófanos",
-  hospitalizacion: "Hospitalización",
-  laboratorio: "Laboratorio",
-  farmacia: "Farmacia",
-  cocina: "Cocina",
-};
-
-// Colores para cada área
-const areaColors = {
-  consultorios: "#1a6fc4",
-  quirofanos: "#2ecc71",
-  hospitalizacion: "#3498db",
-  laboratorio: "#9b59b6",
-  farmacia: "#e74c3c",
-  cocina: "#f39c12",
-};
-
-/**
- * Función para crear un gráfico gauge de Highcharts.
- * (El código de esta función es el mismo que el original, no requiere cambios)
- */
-function createGauge(containerId, title, value, color) {
   Highcharts.chart(containerId, {
     chart: {
-      type: "gauge",
-      plotBackgroundColor: null,
-      plotBackgroundBorderWidth: 0,
-      plotBorderWidth: 0,
-      height: "80%",
+      type: "solidgauge",
+      height: 180,
+      backgroundColor: "transparent",
     },
     title: {
-      text: title,
-      style: {
-        fontSize: "14px",
-        fontWeight: "bold",
-      },
+      text: null,
     },
     pane: {
       startAngle: -90,
       endAngle: 90,
-      background: null,
-      center: ["50%", "75%"],
-      size: "100%",
+      background: {
+        backgroundColor: "#f8f9fa",
+        innerRadius: "60%",
+        outerRadius: "100%",
+        shape: "arc",
+        borderWidth: 0,
+      },
+    },
+    tooltip: {
+      enabled: false,
     },
     yAxis: {
       min: 0,
       max: 100,
-      tickPixelInterval: 30,
-      tickLength: 5,
-      tickWidth: 1,
+      stops: [
+        [0.1, "#e74c3c"], // Rojo
+        [0.4, "#e67e22"], // Naranja
+        [0.6, "#f39c12"], // Amarillo
+        [0.8, "#2ecc71"], // Verde
+      ],
+      lineWidth: 0,
       minorTickInterval: null,
+      tickAmount: 2,
       labels: {
-        distance: 20,
-        style: {
-          fontSize: "12px",
+        y: 16,
+        format: "{value}%",
+      },
+      title: {
+        text: null,
+      },
+    },
+    plotOptions: {
+      solidgauge: {
+        dataLabels: {
+          y: -20,
+          borderWidth: 0,
+          useHTML: true,
+          format:
+            '<div style="text-align:center">' +
+            '<span style="font-size:24px;font-weight:bold;color:{point.color}">{y}%</span>' +
+            "</div>",
         },
       },
-      plotBands: [
-        {
-          from: 0,
-          to: 40,
-          color: "#DF5353", // Rojo
-          thickness: "20%",
-        },
-        {
-          from: 40,
-          to: 70,
-          color: "#DDDF0D", // Amarillo
-          thickness: "20%",
-        },
-        {
-          from: 70,
-          to: 100,
-          color: "#55BF3B", // Verde
-          thickness: "20%",
-        },
-      ],
     },
     series: [
       {
-        name: "Operatividad",
+        name: title,
         data: [value],
-        tooltip: {
-          valueSuffix: " %",
-        },
         dataLabels: {
-          format: "{y}%",
-          borderWidth: 0,
-          style: {
-            fontSize: "16px",
-            fontWeight: "bold",
-          },
-        },
-        dial: {
-          radius: "80%",
-          backgroundColor: color,
-          baseWidth: 12,
-          baseLength: "0%",
-          rearLength: "0%",
+          format:
+            '<div style="text-align:center">' +
+            '<span style="font-size:24px;font-weight:bold;color:{point.color}">{y}%</span>' +
+            "</div>",
         },
       },
     ],
@@ -191,151 +196,313 @@ function createGauge(containerId, title, value, color) {
   });
 }
 
-/**
- * Función principal para generar el dashboard completo.
- */
-function generateDashboard() {
-  const gaugesContainer = document.getElementById("gaugesContainer");
-  const detailedStats = document.getElementById("detailedStats");
+function createColumnChart(operationalData) {
+  // *** CORRECCIÓN Highcharts error #13 ***
+  const containerId = "columnChartContainer";
+  if (!document.getElementById(containerId)) {
+    console.warn(
+      `Highcharts: Contenedor ${containerId} no encontrado en el DOM.`
+    );
+    // Reintentar después de un breve delay
+    setTimeout(() => {
+      if (document.getElementById(containerId)) {
+        createColumnChart(operationalData);
+      }
+    }, 100);
+    return;
+  }
 
-  // Limpiar contenedores
-  gaugesContainer.innerHTML = "";
-  detailedStats.innerHTML = "";
+  // Convertir los datos de operatividad para el formato de Highcharts
+  const categories = Object.values(operationalData).map(
+    (item) => item.nombreLegible
+  );
+  const data = Object.values(operationalData).map((item) => item.porcentaje);
 
-  // Crear gauges y estadísticas detalladas
-  Object.keys(operationalData).forEach((area) => {
+  // Destruir gráfico existente si existe
+  const existingChart = Highcharts.charts.find(
+    (chart) => chart && chart.renderTo.id === containerId
+  );
+  if (existingChart) {
+    existingChart.destroy();
+  }
+
+  Highcharts.chart(containerId, {
+    chart: {
+      type: "column",
+      height: 400,
+    },
+    title: {
+      text: "Comparativa de Operatividad por Área",
+      style: {
+        fontSize: "16px",
+        fontWeight: "bold",
+      },
+    },
+    xAxis: {
+      categories: categories,
+      crosshair: true,
+      title: {
+        text: null,
+      },
+    },
+    yAxis: {
+      min: 0,
+      max: 100,
+      title: {
+        text: "Porcentaje de Operatividad (%)",
+        style: {
+          fontSize: "12px",
+        },
+      },
+      labels: {
+        format: "{value}%",
+      },
+    },
+    tooltip: {
+      headerFormat:
+        '<span style="font-size:11px"><b>{point.key}</b></span><table>',
+      pointFormat:
+        '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+        '<td style="padding:0"><b>{point.y:.1f}%</b></td></tr>' +
+        '<tr><td style="padding:0">Unidades operativas: </td>' +
+        '<td style="padding:0"><b>{point.operativos} de {point.total}</b></td></tr>',
+      footerFormat: "</table>",
+      shared: true,
+      useHTML: true,
+    },
+    plotOptions: {
+      column: {
+        pointPadding: 0.2,
+        borderWidth: 0,
+        dataLabels: {
+          enabled: true,
+          format: "{y:.0f}%",
+          style: {
+            fontSize: "11px",
+            fontWeight: "bold",
+          },
+        },
+      },
+    },
+    series: [
+      {
+        name: "Operatividad",
+        data: Object.values(operationalData).map((area) => ({
+          y: area.porcentaje,
+          operativos: area.operativos,
+          total: area.total,
+          color:
+            area.porcentaje >= 80
+              ? "#2ecc71"
+              : area.porcentaje >= 60
+              ? "#f39c12"
+              : area.porcentaje >= 40
+              ? "#e67e22"
+              : "#e74c3c",
+        })),
+        colorByPoint: true,
+      },
+    ],
+    credits: {
+      enabled: false,
+    },
+  });
+}
+
+// Función para actualizar las estadísticas textuales debajo de cada gauge
+function updateAreaStats(operationalData) {
+  const statsElements = {
+    consultorios: document.getElementById("statsConsultorios"),
+    quirofanos: document.getElementById("statsQuirofanos"),
+    hospitalizacion: document.getElementById("statsHospitalizacion"),
+    laboratorio: document.getElementById("statsLaboratorio"),
+    farmacia: document.getElementById("statsFarmacia"),
+    cocina: document.getElementById("statsCocina"),
+  };
+
+  Object.keys(statsElements).forEach((area) => {
+    const element = statsElements[area];
     const data = operationalData[area];
-    const areaName = areaNames[area];
-    const color = areaColors[area];
+    if (element && data) {
+      element.textContent = `${data.operativos} de ${data.total} unidades`;
+    }
+  });
+}
 
-    // Solo renderizar si hay unidades totales
-    if (data.total > 0) {
-      // Crear gauge card
-      const gaugeCol = document.createElement("div");
-      gaugeCol.className = "col-sm-6 col-lg-4";
-      gaugeCol.innerHTML = `
-                <div class="card gauge-card h-100">
-                    <div class="card-body text-center">
-                        <div class="gauge-container" id="gauge-${area}"></div>
-                        <h6 class="card-title area-title">${areaName}</h6>
-                        <p class="card-text area-stats">${data.operativos} de ${data.total} unidades</p>
-                    </div>
-                </div>
-            `;
-      gaugesContainer.appendChild(gaugeCol);
+// Función para generar la tabla de detalles
+function generateDetailTable(operationalData) {
+  const tableBody = document.getElementById("detailedStatsTable");
+  if (!tableBody) return;
 
-      // Crear estadística detallada
-      const statCol = document.createElement("div");
-      statCol.className = "col-12";
-      statCol.innerHTML = `
-                <div class="d-flex justify-content-between align-items-center p-2 border-bottom">
-                    <div>
-                        <h6 class="mb-1">${areaName}</h6>
-                        <small class="text-muted">${data.operativos} de ${data.total} unidades operativas</small>
-                    </div>
-                    <div class="d-flex align-items-center">
-                        <span class="me-2 fw-bold">${data.porcentaje}%</span>
-                        <div class="progress" style="width: 100px;">
-                            <div class="progress-bar" role="progressbar" style="width: ${data.porcentaje}%; background-color: ${color};"></div>
-                        </div>
-                    </div>
-                </div>
-            `;
-      detailedStats.appendChild(statCol);
+  tableBody.innerHTML = "";
 
-      // Crear el gráfico gauge
-      setTimeout(() => {
-        createGauge(`gauge-${area}`, "", data.porcentaje, color);
-      }, 100);
+  Object.keys(operationalData).forEach((areaKey) => {
+    const area = operationalData[areaKey];
+    const row = tableBody.insertRow();
+
+    // Determinar clase de estado
+    let estadoClass = "text-danger";
+    let estadoText = "Crítico";
+    if (area.porcentaje >= 80) {
+      estadoClass = "text-success";
+      estadoText = "Excelente";
+    } else if (area.porcentaje >= 60) {
+      estadoClass = "text-warning";
+      estadoText = "Aceptable";
+    } else if (area.porcentaje >= 40) {
+      estadoClass = "text-orange";
+      estadoText = "Regular";
+    }
+
+    row.innerHTML = `
+      <td><strong>${area.nombreLegible}</strong></td>
+      <td>${area.operativos}</td>
+      <td>${area.total}</td>
+      <td><span class="fw-bold">${area.porcentaje}%</span></td>
+      <td><span class="${estadoClass} fw-bold">${estadoText}</span></td>
+    `;
+  });
+}
+
+// ----------------------------------------------------------------------
+// --- FUNCIÓN PRINCIPAL DE RENDERIZADO (Se llama al aplicar filtros) ---
+// ----------------------------------------------------------------------
+
+/**
+ * Función principal para generar el dashboard completo con los datos proporcionados.
+ * Se exporta para ser llamada por main_dashboard.js al cambiar el filtro.
+ * @param {Array} dataToRender - El array de centros de salud filtrados.
+ */
+export function renderDashboard(dataToRender) {
+  console.log("=== RENDER DASHBOARD OPERATIVIDAD ===");
+  console.log("Datos recibidos:", dataToRender);
+  console.log("Número de centros:", dataToRender.length);
+
+  // 1. PROCESAR DATOS
+  const operationalData = procesarDatosOperativos(dataToRender);
+
+  // Calcular el promedio general
+  let totalPorcentajes = 0;
+  let areasContadas = 0;
+  Object.values(operationalData).forEach((area) => {
+    // Solo contar áreas que tienen un total > 0 (fueron evaluadas)
+    if (area.total > 0) {
+      totalPorcentajes += area.porcentaje;
+      areasContadas++;
     }
   });
 
-  // --- ACTUALIZAR SUMMARY CARDS ---
+  const averagePercentage =
+    areasContadas > 0 ? Math.round(totalPorcentajes / areasContadas) : 0;
 
-  // Filtra las áreas con datos para calcular el promedio correctamente
-  const percentages = Object.values(operationalData)
-    .filter((d) => d.total > 0)
-    .map((area) => area.porcentaje);
+  console.log("Promedio general calculado:", averagePercentage);
 
-  let averagePercentage = 0;
-  if (percentages.length > 0) {
-    const totalPercentage = percentages.reduce((sum, p) => sum + p, 0);
-    averagePercentage = Math.round(totalPercentage / percentages.length);
-  }
-
-  const mostOperative = Object.values(operationalData).reduce(
-    (max, area) => (area.porcentaje > max.porcentaje ? area : max),
-    { porcentaje: -1 }
-  );
-  const criticalArea = Object.values(operationalData).reduce(
-    (min, area) => (area.porcentaje < min.porcentaje ? area : min),
-    { porcentaje: 101 }
+  // Encontrar el área más operativa y el área crítica
+  const areasEvaluadas = Object.values(operationalData).filter(
+    (a) => a.total > 0 && a.porcentaje > 0
   );
 
-  const getAreaNameByPercentage = (percentage) => {
-    const [key] = Object.entries(operationalData).find(
-      ([, data]) => data.porcentaje === percentage
-    ) || [null];
-    return areaNames[key] || "N/A";
-  };
+  let mostOperative =
+    areasEvaluadas.length > 0
+      ? areasEvaluadas.reduce((prev, current) =>
+          prev.porcentaje > current.porcentaje ? prev : current
+        )
+      : { nombreLegible: "N/A", porcentaje: 0 };
 
-  // 1. Operatividad General
-  const summaryGen = document.querySelector(
-    ".summary-card:nth-child(1) .operational-percentage"
+  let criticalArea =
+    areasEvaluadas.length > 0
+      ? areasEvaluadas.reduce((prev, current) =>
+          prev.porcentaje < current.porcentaje ? prev : current
+        )
+      : { nombreLegible: "N/A", porcentaje: 0 };
+
+  console.log("Área más operativa:", mostOperative);
+  console.log("Área crítica:", criticalArea);
+
+  // 2. ACTUALIZAR VISUALIZACIONES (Cards y Gráficos)
+
+  // A. Actualizar Summary Cards
+  const summary1 = document.querySelector("#summary-value-1");
+  if (summary1) summary1.textContent = `${averagePercentage}%`;
+
+  const summary2 = document.querySelector("#summary-value-2");
+  if (summary2) summary2.textContent = dataToRender.length.toString();
+
+  const centrosEvaluadosTexto = document.getElementById(
+    "centrosEvaluadosTexto"
   );
-  if (summaryGen) {
-    summaryGen.textContent = `${averagePercentage}%`;
-  }
+  if (centrosEvaluadosTexto)
+    centrosEvaluadosTexto.textContent = `Total de instituciones`;
 
-  const highlightGen = document.querySelector(".highlight-card h4.mb-0");
-  const highlightBar = document.querySelector(".highlight-card .progress-bar");
+  const summary3 = document.querySelector("#summary-value-3");
+  if (summary3) summary3.textContent = `${mostOperative.porcentaje}%`;
 
-  if (highlightGen) {
-    highlightGen.textContent = `${averagePercentage}%`;
-  }
+  const mostOpText = document.getElementById("mostOpText");
+  if (mostOpText) mostOpText.textContent = mostOperative.nombreLegible;
 
-  if (highlightBar) {
-    highlightBar.style.width = `${averagePercentage}%`;
-  }
+  const summary4 = document.querySelector("#summary-value-4");
+  if (summary4) summary4.textContent = `${criticalArea.porcentaje}%`;
 
-  // 2. Centros Evaluados
-  const centersEvaluated = document.querySelector(
-    ".summary-card:nth-child(2) .operational-percentage"
-  );
-  if (centersEvaluated) {
-    centersEvaluated.textContent = rawData.length.toString();
-  }
+  const critAreaText = document.getElementById("critAreaText");
+  if (critAreaText) critAreaText.textContent = criticalArea.nombreLegible;
 
-  // 3. Área Más Operativa
-  const mostOpPerc = document.querySelector(
-    ".summary-card:nth-child(3) .operational-percentage"
-  );
-  const mostOpText = document.querySelector(
-    ".summary-card:nth-child(3) small.text-muted"
-  );
+  // B. Actualizar Highlight Card
+  const highlightGen = document.getElementById("highlightGen");
+  if (highlightGen) highlightGen.textContent = `${averagePercentage}%`;
 
-  if (mostOpPerc) {
-    mostOpPerc.textContent = `${mostOperative.porcentaje}%`;
-  }
-  if (mostOpText) {
-    mostOpText.textContent = getAreaNameByPercentage(mostOperative.porcentaje);
-  }
+  const highlightBar = document.getElementById("highlightBar");
+  if (highlightBar) highlightBar.style.width = `${averagePercentage}%`;
 
-  // 4. Área Crítica
-  const critAreaPerc = document.querySelector(
-    ".summary-card:nth-child(4) .operational-percentage"
-  );
-  const critAreaText = document.querySelector(
-    ".summary-card:nth-child(4) small.text-muted"
-  );
+  const resumenMostOp = document.getElementById("resumenMostOp");
+  if (resumenMostOp) resumenMostOp.textContent = mostOperative.nombreLegible;
 
-  if (critAreaPerc) {
-    critAreaPerc.textContent = `${criticalArea.porcentaje}%`;
-  }
-  if (critAreaText) {
-    critAreaText.textContent = getAreaNameByPercentage(criticalArea.porcentaje);
-  }
+  const resumenMostOpPerc = document.getElementById("resumenMostOpPerc");
+  if (resumenMostOpPerc)
+    resumenMostOpPerc.textContent = `${mostOperative.porcentaje}%`;
+
+  const resumenCritArea = document.getElementById("resumenCritArea");
+  if (resumenCritArea) resumenCritArea.textContent = criticalArea.nombreLegible;
+
+  const resumenCritAreaPerc = document.getElementById("resumenCritAreaPerc");
+  if (resumenCritAreaPerc)
+    resumenCritAreaPerc.textContent = `${criticalArea.porcentaje}%`;
+
+  // C. Crear Gauges Individuales para cada área
+  Object.keys(operationalData).forEach((area) => {
+    const gaugeId = `gauge${area.charAt(0).toUpperCase() + area.slice(1)}`;
+    createGauge(
+      gaugeId,
+      operationalData[area].porcentaje,
+      operationalData[area].nombreLegible
+    );
+  });
+
+  // D. Actualizar estadísticas textuales
+  updateAreaStats(operationalData);
+
+  // E. Crear Gráfico de Barras
+  createColumnChart(operationalData);
+
+  // F. Generar tabla de detalles
+  generateDetailTable(operationalData);
+
+  console.log("=== FIN RENDER DASHBOARD ===");
 }
 
-// Inicializar el dashboard cuando el documento esté completamente cargado
-document.addEventListener("DOMContentLoaded", generateDashboard);
+// ----------------------------------------------------------------------
+// --- FUNCIÓN DE INICIALIZACIÓN (Se llama una vez al cargar la pestaña) ---
+// ----------------------------------------------------------------------
+
+/**
+ * Función de inicialización modificada para compatibilidad con main_dashboard.js.
+ * @param {Array} dataToUse - Los datos iniciales a usar (será dataCentrosDeSalud completa o filteredData).
+ */
+export function initialize(dataToUse) {
+  console.log("=== INICIALIZANDO DASHBOARD OPERATIVIDAD ===");
+  console.log("Datos iniciales:", dataToUse);
+
+  // Usar setTimeout para asegurar que el DOM esté listo
+  setTimeout(() => {
+    renderDashboard(dataToUse);
+  }, 100);
+}
