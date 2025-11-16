@@ -10,7 +10,9 @@
     <script src="https://code.highcharts.com/highcharts-more.js"></script>
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-    <script src="https://code.highcharts.com/modules/solid-gauge.js"></script>    
+    <script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
+    <script src="https://code.highcharts.com/modules/treemap.js"></script>
+    <script src="https://code.highcharts.com/modules/heatmap.js"></script>    
     <style>
         .dashboard-header {
             background: linear-gradient(135deg, #1a6fc4 0%, #0d4d8c 100%);
@@ -34,22 +36,24 @@
             font-size: 1.25rem;
             padding: 0.75rem 1.25rem;
         }
-        
         .gauge-item {
             position: relative;
         }
-        
         .text-orange {
             color: #e67e22 !important;
         }
-        
         .progress-bar {
             transition: width 0.5s ease-in-out;
         }
-        
         .highlight-card {
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             border-left: 4px solid #1a6fc4;
+        }
+        .nav-tabs .nav-link {
+            font-weight: 500;
+        }
+        .nav-tabs .nav-link.active {
+            font-weight: 600;
         }
     </style>
 </head>
@@ -63,7 +67,7 @@
             <div class="row align-items-center">
                 <div class="col-md-8">
                     <h1 class="display-5 fw-bold">Dashboards de Indicadores</h1>
-                    <p class="lead mb-0">Visualización centralizada de Operatividad e Infraestructura</p>
+                    <p class="lead mb-0">Visualización centralizada de Operatividad, Infraestructura y Servicios</p>
                 </div>
                 <div class="col-md-4 text-md-end">
                     <span class="badge bg-light text-dark fs-6">Plataforma SISCOMRES</span>
@@ -86,13 +90,31 @@
                     <i class="fas fa-tools me-1"></i>Infraestructura
                 </button>
             </li>
-            </ul>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="servicios-tab" data-bs-toggle="tab" data-bs-target="#servicios" type="button" role="tab" aria-controls="servicios" aria-selected="false">
+                    <i class="fas fa-bolt me-1"></i>Servicios Públicos
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="otros-servicios-tab" data-bs-toggle="tab" data-bs-target="#otros-servicios" type="button" role="tab" aria-controls="otros-servicios" aria-selected="false">
+                    <i class="fas fa-clinic-medical me-1"></i>Otros Servicios
+                </button>
+            </li>
+        </ul>
 
         <div class="tab-content" id="dashboardTabsContent">
             <div class="tab-pane fade show active" id="operatividad" role="tabpanel" aria-labelledby="operatividad-tab">
-                </div>
+                <!-- Contenido cargado dinámicamente -->
+            </div>
             <div class="tab-pane fade" id="infraestructura" role="tabpanel" aria-labelledby="infraestructura-tab">
-                </div>
+                <!-- Contenido cargado dinámicamente -->
+            </div>
+            <div class="tab-pane fade" id="servicios" role="tabpanel" aria-labelledby="servicios-tab">
+                <!-- Contenido cargado dinámicamente -->
+            </div>
+            <div class="tab-pane fade" id="otros-servicios" role="tabpanel" aria-labelledby="otros-servicios-tab">
+                <!-- Contenido cargado dinámicamente -->
+            </div>
         </div>
     </div>
 

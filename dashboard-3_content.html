@@ -1,0 +1,155 @@
+<div class="container-fluid py-4">
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card summary-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title text-muted">Servicios Críticos</h6>
+                            <h3 class="stats-value text-danger" id="servicios-criticos">0</h3>
+                            <span class="badge bg-danger">REQUIEREN ATENCIÓN</span>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-exclamation-triangle fa-2x text-danger"></i>
+                        </div>
+                    </div>
+                    <p class="card-text mt-2"><small class="text-muted">Servicios sin servicio</small></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card summary-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title text-muted">Servicios con Problemas</h6>
+                            <h3 class="stats-value text-warning" id="servicios-problemas">0</h3>
+                            <span class="badge bg-warning">ATENCIÓN REQUERIDA</span>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-tools fa-2x text-warning"></i>
+                        </div>
+                    </div>
+                    <p class="card-text mt-2"><small class="text-muted">Disponibilidad con problemas</small></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card summary-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title text-muted">Servicio Más Crítico</h6>
+                            <h3 class="stats-value text-info" id="servicio-critico-porcentaje">0%</h3>
+                            <span class="badge bg-info" id="servicio-critico-nombre">N/A</span>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-bolt fa-2x text-info"></i>
+                        </div>
+                    </div>
+                    <p class="card-text mt-2"><small class="text-muted">Mayor porcentaje sin servicio</small></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card summary-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title text-muted">Centros Afectados</h6>
+                            <h3 class="stats-value text-primary" id="centros-afectados">0</h3>
+                            <span class="badge bg-primary">CON PROBLEMAS</span>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-hospital fa-2x text-primary"></i>
+                        </div>
+                    </div>
+                    <p class="card-text mt-2"><small class="text-muted">Centros con servicios críticos</small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Charts Row -->
+    <div class="row mb-4">
+        <!-- Column Chart -->
+        <div class="col-lg-8">
+            <div class="card chart-card">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Estado de Servicios Públicos por Tipo</h5>
+                </div>
+                <div class="card-body">
+                    <div id="serviciosColumnChart" class="chart-container" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Donut Chart -->
+        <div class="col-lg-4">
+            <div class="card chart-card">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Distribución General de Estados</h5>
+                </div>
+                <div class="card-body">
+                    <div id="serviciosDonutChart" class="chart-container" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Treemap Chart -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card chart-card">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Mapa de Problemas de Servicios Públicos</h5>
+                    <p class="text-muted mb-0 small">Los bloques más grandes representan servicios con mayor cantidad de problemas</p>
+                </div>
+                <div class="card-body">
+                    <div id="serviciosTreemapChart" class="chart-container" style="height: 500px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detailed Table -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card chart-card">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Detalle de Servicios Públicos por Centro</h5>
+                    <div class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-outline-primary active" data-filter="all">Todos</button>
+                        <button type="button" class="btn btn-outline-danger" data-filter="sin-servicio">Sin Servicio</button>
+                        <button type="button" class="btn btn-outline-warning" data-filter="con-problemas">Con Problemas</button>
+                        <button type="button" class="btn btn-outline-success" data-filter="disponible">Disponible</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover servicios-table">
+                            <thead>
+                                <tr>
+                                    <th>Centro de Salud</th>
+                                    <th>Agua</th>
+                                    <th>Electricidad</th>
+                                    <th>Gas</th>
+                                    <th>Internet</th>
+                                    <th>Aire Acond.</th>
+                                    <th>Aseo Urbano</th>
+                                    <th>Seguridad</th>
+                                    <th>Combustible</th>
+                                    <th>Estado General</th>
+                                </tr>
+                            </thead>
+                            <tbody id="serviciosTableBody">
+                                <!-- Los datos de la tabla se generarán dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

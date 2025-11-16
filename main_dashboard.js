@@ -35,7 +35,16 @@ const dashboardMap = {
     js: "./dashboard-2.js",
     containerId: "infraestructura",
   },
-  // Agregue más dashboards aquí
+  servicios: {
+    html: "dashboard-3_content.html",
+    js: "./dashboard-3.js",
+    containerId: "servicios",
+  },
+  "otros-servicios": {
+    html: "dashboard-4_content.html",
+    js: "./dashboard-4.js",
+    containerId: "otros-servicios",
+  },
 };
 
 // --- MODAL Y FILTROS COMPARTIDOS ---
@@ -151,6 +160,8 @@ async function fetchDashboardContent(url) {
   html = html.replace(/<script[^>]*src="auth.js"[^>]*><\/script>/gi, "");
   html = html.replace(/<script[^>]*src="dashboard.js"[^>]*><\/script>/gi, "");
   html = html.replace(/<script[^>]*src="dashboard-2.js"[^>]*><\/script>/gi, "");
+  html = html.replace(/<script[^>]*src="dashboard-3.js"[^>]*><\/script>/gi, "");
+  html = html.replace(/<script[^>]*src="dashboard-4.js"[^>]*><\/script>/gi, "");
   html = html.replace(
     /<script[^>]*src="https:\/\/cdn.jsdelivr.net\/npm\/bootstrap[^>]*><\/script>/gi,
     ""
@@ -226,6 +237,31 @@ function renderCurrentDashboard() {
   }
 }
 
+// --- FUNCIÓN DE DEPURACIÓN (opcional) ---
+
+function debugDataStructure() {
+  console.log("=== DEBUG ESTRUCTURA DE DATOS ===");
+  if (dataCentrosDeSalud.length > 0) {
+    const primerCentro = dataCentrosDeSalud[0];
+    console.log("Primer centro:", primerCentro.datosInstitucion?.nombre);
+    console.log("Estructura infraestructura:", primerCentro.infraestructura);
+    console.log(
+      "Servicios públicos:",
+      primerCentro.infraestructura?.serviciosPublicos
+    );
+    console.log("Otros servicios:", primerCentro.otrosServicios);
+
+    // Verificar una área específica
+    if (primerCentro.infraestructura?.condiciones?.consultorios) {
+      console.log(
+        "Datos consultorios:",
+        primerCentro.infraestructura.condiciones.consultorios
+      );
+    }
+  }
+  console.log("Total de centros:", dataCentrosDeSalud.length);
+}
+
 // ----------------------------------------------------------------------
 // --- INICIALIZACIÓN GLOBAL CORREGIDA ---
 // ----------------------------------------------------------------------
@@ -244,7 +280,10 @@ function initializeMainDashboard() {
   // 2. Llenar los selectores de filtros del modal
   llenarFiltros();
 
-  // 3. Configurar el cambio de pestañas para cargar los contenidos
+  // 3. (Opcional) Depuración de estructura de datos
+  debugDataStructure();
+
+  // 4. Configurar el cambio de pestañas para cargar los contenidos
   const tabTriggers = document.querySelectorAll("#dashboardTabs button");
   tabTriggers.forEach((trigger) => {
     trigger.addEventListener("shown.bs.tab", (event) => {
@@ -255,7 +294,7 @@ function initializeMainDashboard() {
     });
   });
 
-  // 4. Cargar el dashboard por defecto (Operatividad)
+  // 5. Cargar el dashboard por defecto (Operatividad)
   loadDashboard(currentDashboardName);
 }
 

@@ -1,0 +1,176 @@
+<div class="container-fluid py-4">
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card summary-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title text-muted">Servicios Activos</h6>
+                            <h3 class="stats-value text-success" id="servicios-activos">0</h3>
+                            <span class="badge bg-success">OPERATIVOS</span>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-check-circle fa-2x text-success"></i>
+                        </div>
+                    </div>
+                    <p class="card-text mt-2"><small class="text-muted">Total de servicios funcionando</small></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card summary-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title text-muted">Cobertura Laboratorio</h6>
+                            <h3 class="stats-value text-info" id="cobertura-lab">0%</h3>
+                            <span class="badge bg-info">EXÁMENES DISPONIBLES</span>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-flask fa-2x text-info"></i>
+                        </div>
+                    </div>
+                    <p class="card-text mt-2"><small class="text-muted">Porcentaje de exámenes disponibles</small></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card summary-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title text-muted">Disponibilidad Farmacia</h6>
+                            <h3 class="stats-value text-warning" id="disp-farmacia">0%</h3>
+                            <span class="badge bg-warning">MEDICAMENTOS</span>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-pills fa-2x text-warning"></i>
+                        </div>
+                    </div>
+                    <p class="card-text mt-2"><small class="text-muted">Medicamentos en stock</small></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card summary-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title text-muted">Servicio Crítico</h6>
+                            <h3 class="stats-value text-danger" id="servicio-critico">N/A</h3>
+                            <span class="badge bg-danger" id="critico-badge">ATENCIÓN</span>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-exclamation-triangle fa-2x text-danger"></i>
+                        </div>
+                    </div>
+                    <p class="card-text mt-2"><small class="text-muted">Servicio con mayor inactividad</small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Charts Row -->
+    <div class="row mb-4">
+        <!-- Estado General de Servicios -->
+        <div class="col-lg-6">
+            <div class="card chart-card">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Estado General de Servicios por Área</h5>
+                </div>
+                <div class="card-body">
+                    <div id="estadoServiciosChart" class="chart-container" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Cobertura de Laboratorio -->
+        <div class="col-lg-6">
+            <div class="card chart-card">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Cobertura de Exámenes de Laboratorio</h5>
+                </div>
+                <div class="card-body">
+                    <div id="coberturaLabChart" class="chart-container" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Disponibilidad de Medicamentos -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card chart-card">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Disponibilidad de Medicamentos por Categoría</h5>
+                </div>
+                <div class="card-body">
+                    <div id="medicamentosChart" class="chart-container" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mapas de Calor -->
+    <div class="row mb-4">
+        <div class="col-lg-6">
+            <div class="card chart-card">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Mapa de Calor - Servicios de Imagenología</h5>
+                </div>
+                <div class="card-body">
+                    <div id="heatmapImagenologia" class="chart-container" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card chart-card">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Mapa de Calor - Servicios de Cocina</h5>
+                </div>
+                <div class="card-body">
+                    <div id="heatmapCocina" class="chart-container" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tablas Detalladas -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card chart-card">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Detalle de Servicios por Centro</h5>
+                    <div class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-outline-primary active" data-filter="all">Todos</button>
+                        <button type="button" class="btn btn-outline-success" data-filter="activo">Activos</button>
+                        <button type="button" class="btn btn-outline-warning" data-filter="problemas">Con Problemas</button>
+                        <button type="button" class="btn btn-outline-danger" data-filter="inactivo">Inactivos</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover servicios-table">
+                            <thead>
+                                <tr>
+                                    <th>Centro de Salud</th>
+                                    <th>Imagenología</th>
+                                    <th>Cocina</th>
+                                    <th>Laboratorio</th>
+                                    <th>Farmacia</th>
+                                    <th>Exámenes Disp.</th>
+                                    <th>Medicamentos Disp.</th>
+                                    <th>Estado General</th>
+                                </tr>
+                            </thead>
+                            <tbody id="otrosServiciosTableBody">
+                                <!-- Los datos de la tabla se generarán dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
