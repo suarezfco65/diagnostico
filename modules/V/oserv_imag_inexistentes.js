@@ -29,6 +29,7 @@ const oserv_imag_inexistentes = {
   ],
   chart: (instituciones) => {
     FUNCTIONS_BY_SECTIONS.IV.chartDensity(
+      "Servicios",
       "de Imagenologias",
       "Inexistentes",
       5
