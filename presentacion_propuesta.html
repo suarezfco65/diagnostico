@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Propuesta SISCOMRES - Capacidad de Análisis Integral de Salud</title>
+    <!-- Enlace a Bootstrap 5 CDN -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+    />
+    <style>
+      .jumbotron-header {
+        background-color: #004d40; /* Verde oscuro para ser institucional */
+        color: white;
+        padding: 4rem 2rem;
+        margin-bottom: 0;
+      }
+      .card-citas {
+        font-size: 0.8em;
+        color: #6c757d;
+        margin-top: 10px;
+      }
+      .icon-large {
+        font-size: 2.5rem;
+        margin-right: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Encabezado / Jumbotron -->
+    <div class="jumbotron-header text-center">
+      <h1 class="display-4">Propuesta de Sistema de Información SISCOMRES</h1>
+      <p class="lead">
+        Comisión Permanente de Salud del CONCEJO LEGISLATIVO DEL MUNICIPIO
+        BOLIVARIANO LIBERTADOR
+      </p>
+      <hr class="my-4" />
+      <p class="h4">
+        SISCOMRES: Herramienta de Visualización Estratégica para la Red de Salud
+      </p>
+      <p class="text-uppercase small">
+        Sistema desarrollado a partir de la Ficha de Diagnóstico Inicial (Datos
+        de Prueba)
+      </p>
+    </div>
+
+    <!-- Contenido Principal -->
+    <div class="container mt-5">
+      <!-- NOTA DE ADVERTENCIA SOBRE DATOS DE PRUEBA -->
+      <div class="alert alert-warning text-center" role="alert">
+        <i class="bi bi-exclamation-triangle-fill"></i> **NOTA IMPORTANTE:** Los
+        indicadores presentados a continuación reflejan la **CAPACIDAD
+        ANALÍTICA** del prototipo SISCOMRES, utilizando una simulación de **150
+        Centros** cargados con **Datos de Prueba TEST ⚠**. Estas cifras no
+        representan necesariamente el estado actual de la Red de Salud.
+      </div>
+
+      <!-- Plataforma Integral -->
+      <h2 class="mb-4 text-center text-primary">
+        Alcance del Sistema Prototipo: Plataforma Integral
+      </h2>
+      <p class="text-center lead">
+        SISCOMRES consolida la evaluación de **seis áreas fundamentales** en
+        dashboards para una gestión ágil y centralizada:
+      </p>
+
+      <div class="row row-cols-2 row-cols-md-3 g-4 mb-5">
+        <div class="col">
+          <div class="card h-100 shadow-sm border-info">
+            <div class="card-body">
+              <h5 class="card-title text-info">
+                <i class="bi bi-bar-chart-fill icon-large"></i>Operatividad
+              </h5>
+              <p class="card-text">
+                Permite la visualización del rendimiento general (promedio) de
+                áreas clave como **Farmacia, Laboratorio y Quirófanos**.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card h-100 shadow-sm border-info">
+            <div class="card-body">
+              <h5 class="card-title text-info">
+                <i class="bi bi-building-fill icon-large"></i>Infraestructura
+              </h5>
+              <p class="card-text">
+                Evalúa y compara el estado de componentes estructurales
+                (Paredes, Pisos, Techos) y equipamiento (A/A) en áreas como
+                **Consultorios y Hospitalización**.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card h-100 shadow-sm border-info">
+            <div class="card-body">
+              <h5 class="card-title text-info">
+                <i class="bi bi-hospital-fill icon-large"></i>Servicios Médicos
+              </h5>
+              <p class="card-text">
+                Identifica por centro y por tipo de especialidad, cuáles
+                servicios están **Activos, Inactivos, con Problemas o
+                Inexistentes**.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card h-100 shadow-sm border-info">
+            <div class="card-body">
+              <h5 class="card-title text-info">
+                <i class="bi bi-people-fill icon-large"></i>Evaluación Personal
+              </h5>
+              <p class="card-text">
+                Calcula el **Déficit de Personal** (requerido vs. disponible) en
+                4 categorías: Administrativo, Obrero, Paramédico y Servicio
+                Médico.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card h-100 shadow-sm border-info">
+            <div class="card-body">
+              <h5 class="card-title text-info">
+                <i class="bi bi-lightning-charge-fill icon-large"></i>Servicios
+                Públicos
+              </h5>
+              <p class="card-text">
+                Monitorea la disponibilidad (Disp. Tanque, Disp. C/Prob, Sin
+                Servicio) de 8 servicios esenciales, como **Agua, Electricidad,
+                Gas y Aire Acondicionado**.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card h-100 shadow-sm border-info">
+            <div class="card-body">
+              <h5 class="card-title text-info">
+                <i class="bi bi-box-seam-fill icon-large"></i>Otros Servicios
+              </h5>
+              <p class="card-text">
+                Analiza el estado de Laboratorios, Imagenología, Farmacia y
+                Cocina, incluyendo la disponibilidad de **exámenes y
+                medicamentos**.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección de Diagnóstico Inicial (Ficha) -->
+      <h3 class="mt-5 text-center text-primary">
+        I. Módulo de Recolección: La Ficha de Diagnóstico
+      </h3>
+      <p class="lead text-center">
+        La Ficha permite el levantamiento estructurado de 7 módulos de datos por
+        institución.
+      </p>
+
+      <div class="row mb-5">
+        <div class="col-md-6">
+          <div class="card border-primary h-100">
+            <div class="card-header bg-primary text-white">
+              <h5 class="mb-0">Capacidad de Centralización de la Data</h5>
+            </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">
+                El prototipo maneja la data de **150 centros de salud** de
+                prueba.
+              </li>
+              <li class="list-group-item">
+                Permite catalogar centros por **Parroquia** y por **Tipo de
+                Institución** (Hospital I/II/III/IV, C.D.I., Módulo Barrio
+                Adentro, Veterinaria, etc.).
+              </li>
+              <li class="list-group-item">
+                Rastrea la adscripción institucional (MPPS, IVSS, ALCALDIA, GDC,
+                etc.).
+              </li>
+              <li class="list-group-item">
+                El sistema puede generar listados de **Proyectos de Mejoras**
+                (Máximo 5 por categoría, como *Ampliación de Pediatría* o
+                *Instalación de nueva bomba de agua*).
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-md-6 mt-3 mt-md-0">
+          <div class="card border-success h-100">
+            <div class="card-header bg-success text-white">
+              <h5 class="mb-0">Facilidad de Contacto y Reporte</h5>
+            </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">
+                Almacena la información de contacto (Celular y Correo) de las
+                **Autoridades** (Director, Sub-Director, Jefe de Servicios
+                Médicos).
+              </li>
+              <li class="list-group-item">
+                Registra la información del **Jefe de Mantenimiento** y el
+                **Enlace Institucional** para la coordinación de recursos.
+              </li>
+              <li class="list-group-item">
+                Permite geolocalizar los centros de salud mediante **Longitud y
+                Latitud**.
+              </li>
+              <li class="list-group-item">
+                Los reportes pueden exportarse en formatos útiles como
+                **Excel**.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección de Indicadores Críticos (Dashboards) - Se destaca la CAPACIDAD DEL SISTEMA -->
+      <h3 class="mt-5 text-center text-danger">
+        II. Capacidad de Diagnóstico Crítico mediante Dashboards
+      </h3>
+      <p class="lead text-center">
+        SISCOMRES genera **Dashboards de Indicadores** que, usando los datos de
+        la Ficha, permiten identificar y priorizar la asignación de recursos.
+      </p>
+
+      <div class="row g-4 mb-5">
+        <!-- Capacidad 1: Déficit de Personal -->
+        <div class="col-md-4">
+          <div class="card text-white bg-danger h-100">
+            <div class="card-header h5">ANÁLISIS DE RECURSOS HUMANOS</div>
+            <div class="card-body">
+              <h4 class="card-title fw-bold">
+                Déficit de Personal por Especialidad
+              </h4>
+              <p class="card-text">
+                El sistema **calcula la diferencia** entre el personal requerido
+                para una operación óptima y el personal actualmente disponible
+                (Personal Requerido: 52.615 / Personal Disponible: 26.117, en
+                los datos de prueba).
+              </p>
+              <p class="card-text">
+                Permite identificar las especialidades con mayor carencia, por
+                ejemplo, **Medicina General** o **Cardiología** (ambas con 53%
+                de déficit en la data de prueba) [Análisis de fuentes 2-28].
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Capacidad 2: Servicios Médicos Críticos -->
+        <div class="col-md-4">
+          <div class="card text-dark bg-warning h-100">
+            <div class="card-header h5">OPERATIVIDAD DE SERVICIOS</div>
+            <div class="card-body">
+              <h4 class="card-title fw-bold">
+                Medición de la Eficiencia (Tasa de Activación)
+              </h4>
+              <p class="card-text">
+                El sistema mide la **Tasa de Activación** (51% en datos de
+                prueba) y el total de servicios operativos (1440 en datos de
+                prueba).
+              </p>
+              <p class="card-text">
+                Identifica automáticamente el **Servicio Más Crítico** (aquel
+                con mayor inactividad), como **Medicina General** (33% de
+                inactividad reportada en los datos de prueba).
+              </p>
+              <p class="card-text">
+                Rastrea los servicios Inactivos y Activos con Problemas.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Capacidad 3: Infraestructura y Servicios Públicos -->
+        <div class="col-md-4">
+          <div class="card text-white bg-primary h-100">
+            <div class="card-header h5">DIAGNÓSTICO DE INFRAESTRUCTURA</div>
+            <div class="card-body">
+              <h4 class="card-title fw-bold">
+                Identificación de Áreas Críticas
+              </h4>
+              <p class="card-text">
+                El Dashboard reporta la **Operatividad General** (50% promedio
+                en datos de prueba).
+              </p>
+              <p class="card-text">
+                Permite señalar el área física más crítica, por ejemplo,
+                **Quirófanos** (reportada con 66% de condición general en los
+                datos de prueba).
+              </p>
+              <p class="card-text">
+                Totaliza los servicios públicos **Sin Servicio** (409 en datos
+                de prueba), siendo el **Aire Acondicionado** el más afectado
+                (38% sin servicio en datos de prueba).
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección de Capacidades Detalladas (Otros Servicios) -->
+      <h3 class="mt-5 text-center text-primary">
+        III. Capacidad de Análisis Detallado (Módulos V y VII)
+      </h3>
+      <p class="lead text-center">
+        SISCOMRES desglosa el diagnóstico en áreas de soporte vital y
+        seguimiento de proyectos.
+      </p>
+
+      <div class="row mb-5">
+        <div class="col-md-6">
+          <div class="card h-100 shadow">
+            <div class="card-header h5 bg-light">
+              <i class="bi bi-microscope"></i> Laboratorio e Imagenología
+            </div>
+            <div class="card-body">
+              <p class="card-text">
+                El sistema rastrea la disponibilidad de **54 posibles exámenes
+                de laboratorio** (Química Sanguínea, Perfiles, Serología, Heces,
+                Orina, Hematología), indicando el porcentaje de **Cobertura de
+                Laboratorio** (51% en datos de prueba).
+              </p>
+              <p class="card-text">
+                Permite analizar el estado de 7 servicios de Imagenología (e.g.,
+                **MAMOGRAFÍA, TOMOGRAFÍA, ULTRASONIDO**) por centro,
+                diferenciando cuáles están activos, con problemas, inactivos o
+                inexistentes.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 mt-3 mt-md-0">
+          <div class="card h-100 shadow">
+            <div class="card-header h5 bg-light">
+              <i class="bi bi-bandaid"></i> Farmacia y Proyectos Estratégicos
+            </div>
+            <div class="card-body">
+              <p class="card-text">
+                El sistema monitorea la **Disponibilidad de Farmacia** (52% de
+                medicamentos en stock en la prueba), categorizando por
+                medicamentos: **Básicos** (ej. Anti-gripal), **Alto Costo** (ej.
+                Oncológico) y **Especializados** (ej. Hipertensión, Diabetes,
+                Medicamentos Controlados).
+              </p>
+              <p class="card-text">
+                El módulo VII permite la planificación activa, al detallar hasta
+                5 **Proyectos de Mejoras** por área (Servicios Médicos,
+                Quirófanos, Hospitalización, Laboratorio, Farmacia y Servicios
+                Generales).
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Conclusión -->
+      <div class="text-center mt-5 mb-5 p-4 bg-light rounded shadow-lg">
+        <h3 class="text-success">Conclusión y Llamada a la Acción</h3>
+        <p class="lead">
+          El prototipo **SISCOMRES** demuestra la capacidad de transformar los
+          datos recopilados en la **Ficha de Diagnóstico Inicial** en
+          inteligencia operativa y estratégica mediante Dashboards y Reportes.
+        </p>
+        <p>
+          La Alcaldía Libertador requiere una herramienta que elimine la
+          ambigüedad en la priorización, permitiendo:
+        </p>
+        <ol>
+          <li>
+            La **medición precisa** del déficit de recursos humanos y
+            materiales.
+          </li>
+          <li>
+            La **visualización inmediata** del estado de los servicios (Médicos,
+            Infraestructura y Públicos).
+          </li>
+          <li>
+            El **seguimiento estructurado** de los Proyectos de Mejoras
+            planificados.
+          </li>
+        </ol>
+        <p class="fw-bold text-success">
+          SISCOMRES es la plataforma integral propuesta para respaldar la toma
+          de decisiones informadas en la Red de Salud de Caracas.
+        </p>
+        <p class="card-citas">
+          CONCEJO LEGISLATIVO DEL MUNICIPIO BOLIVARIANO LIBERTADOR
+        </p>
+      </div>
+    </div>
+
+    <!-- Script de Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
