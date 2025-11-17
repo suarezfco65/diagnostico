@@ -1,0 +1,179 @@
+<div class="container-fluid py-4">
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card summary-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title text-muted">Personal Requerido</h6>
+                            <h3 class="stats-value text-primary" id="personal-requerido">0</h3>
+                            <span class="badge bg-primary">TOTAL NECESARIO</span>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-users fa-2x text-primary"></i>
+                        </div>
+                    </div>
+                    <p class="card-text mt-2"><small class="text-muted">Personal necesario para operación óptima</small></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card summary-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title text-muted">Personal Disponible</h6>
+                            <h3 class="stats-value text-success" id="personal-disponible">0</h3>
+                            <span class="badge bg-success">ACTUALMENTE</span>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-user-check fa-2x text-success"></i>
+                        </div>
+                    </div>
+                    <p class="card-text mt-2"><small class="text-muted">Personal actualmente en funciones</small></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card summary-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title text-muted">Déficit de Personal</h6>
+                            <h3 class="stats-value text-danger" id="deficit-personal">0%</h3>
+                            <span class="badge bg-danger">FALTANTE</span>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-user-times fa-2x text-danger"></i>
+                        </div>
+                    </div>
+                    <p class="card-text mt-2"><small class="text-muted">Porcentaje de personal faltante</small></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card summary-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title text-muted">Área Más Crítica</h6>
+                            <h3 class="stats-value text-warning" id="area-critica-personal">N/A</h3>
+                            <span class="badge bg-warning" id="badge-critica-personal">PRIORIDAD</span>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-exclamation-triangle fa-2x text-warning"></i>
+                        </div>
+                    </div>
+                    <p class="card-text mt-2"><small class="text-muted">Área con mayor déficit de personal</small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Charts Row -->
+    <div class="row mb-4">
+        <!-- Distribución por Categoría -->
+        <div class="col-lg-6">
+            <div class="card chart-card">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Distribución y Déficit de Personal por Categoría</h5>
+                </div>
+                <div class="card-body">
+                    <div id="distribucionPersonalChart" class="chart-container" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mapa de Calor de Déficit -->
+        <div class="col-lg-6">
+            <div class="card chart-card">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Mapa de Calor - Déficit de Personal por Especialidad</h5>
+                </div>
+                <div class="card-body">
+                    <div id="heatmapDeficitPersonal" class="chart-container" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Análisis de Brechas -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card chart-card">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Análisis de Brechas por Tipo de Institución</h5>
+                </div>
+                <div class="card-body">
+                    <div id="brechasPersonalChart" class="chart-container" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Relación Personal-Servicios -->
+    <div class="row mb-4">
+        <div class="col-lg-6">
+            <div class="card chart-card">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Relación Personal vs Servicios Activos</h5>
+                </div>
+                <div class="card-body">
+                    <div id="relacionPersonalServiciosChart" class="chart-container" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Especialidades Médicas Críticas -->
+        <div class="col-lg-6">
+            <div class="card chart-card">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Especialidades Médicas con Mayor Déficit</h5>
+                </div>
+                <div class="card-body">
+                    <div id="especialidadesCriticasChart" class="chart-container" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tablas Detalladas -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card chart-card">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Detalle de Personal por Centro</h5>
+                    <div class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-outline-primary active" data-filter="all">Todos</button>
+                        <button type="button" class="btn btn-outline-success" data-filter="optimo">Óptimo</button>
+                        <button type="button" class="btn btn-outline-warning" data-filter="regular">Regular</button>
+                        <button type="button" class="btn btn-outline-danger" data-filter="critico">Crítico</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover personal-table">
+                            <thead>
+                                <tr>
+                                    <th>Centro de Salud</th>
+                                    <th>Servicios Médicos</th>
+                                    <th>Paramedicos</th>
+                                    <th>Administrativos</th>
+                                    <th>Obreros</th>
+                                    <th>Personal Total</th>
+                                    <th>Déficit Total</th>
+                                    <th>Ratio Personal/Servicios</th>
+                                    <th>Estado de Dotación</th>
+                                </tr>
+                            </thead>
+                            <tbody id="personalTableBody">
+                                <!-- Los datos de la tabla se generarán dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

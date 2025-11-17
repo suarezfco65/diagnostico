@@ -55,6 +55,30 @@
         .nav-tabs .nav-link.active {
             font-weight: 600;
         }
+        /* Estilos para tabs con muchos elementos */
+        .nav-tabs {
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        .nav-tabs .nav-item {
+            display: inline-block;
+            float: none;
+        }
+        /* Mejora visual para tabs */
+        .nav-tabs .nav-link {
+            border: 1px solid transparent;
+            border-bottom: none;
+            margin-bottom: -1px;
+        }
+        .nav-tabs .nav-link:hover {
+            border-color: #e9ecef #e9ecef #dee2e6;
+        }
+        .nav-tabs .nav-link.active {
+            color: #495057;
+            background-color: #fff;
+            border-color: #dee2e6 #dee2e6 #fff;
+        }
     </style>
 </head>
 <body class="bg-light">
@@ -66,11 +90,11 @@
         <div class="dashboard-header">
             <div class="row align-items-center">
                 <div class="col-md-8">
-                    <h1 class="display-5 fw-bold">Dashboards de Indicadores</h1>
-                    <p class="lead mb-0">Visualización centralizada de Operatividad, Infraestructura y Servicios</p>
+                    <h1 class="display-5 fw-bold">Dashboards de Indicadores SISCOMRES</h1>
+                    <p class="lead mb-0">Visualización integral de servicios de salud y recursos humanos</p>
                 </div>
                 <div class="col-md-4 text-md-end">
-                    <span class="badge bg-light text-dark fs-6">Plataforma SISCOMRES</span>
+                    <span class="badge bg-light text-dark fs-6">Plataforma Integral</span>
                 </div>
             </div>
         </div>
@@ -91,7 +115,17 @@
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="servicios-tab" data-bs-toggle="tab" data-bs-target="#servicios" type="button" role="tab" aria-controls="servicios" aria-selected="false">
+                <button class="nav-link" id="servicios-medicos-tab" data-bs-toggle="tab" data-bs-target="#servicios-medicos" type="button" role="tab" aria-controls="servicios-medicos" aria-selected="false">
+                    <i class="fas fa-stethoscope me-1"></i>Servicios Médicos
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="evaluacion-personal-tab" data-bs-toggle="tab" data-bs-target="#evaluacion-personal" type="button" role="tab" aria-controls="evaluacion-personal" aria-selected="false">
+                    <i class="fas fa-users me-1"></i>Evaluación Personal
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="servicios-publicos-tab" data-bs-toggle="tab" data-bs-target="#servicios-publicos" type="button" role="tab" aria-controls="servicios-publicos" aria-selected="false">
                     <i class="fas fa-bolt me-1"></i>Servicios Públicos
                 </button>
             </li>
@@ -109,7 +143,13 @@
             <div class="tab-pane fade" id="infraestructura" role="tabpanel" aria-labelledby="infraestructura-tab">
                 <!-- Contenido cargado dinámicamente -->
             </div>
-            <div class="tab-pane fade" id="servicios" role="tabpanel" aria-labelledby="servicios-tab">
+            <div class="tab-pane fade" id="servicios-medicos" role="tabpanel" aria-labelledby="servicios-medicos-tab">
+                <!-- Contenido cargado dinámicamente -->
+            </div>
+            <div class="tab-pane fade" id="evaluacion-personal" role="tabpanel" aria-labelledby="evaluacion-personal-tab">
+                <!-- Contenido cargado dinámicamente -->
+            </div>
+            <div class="tab-pane fade" id="servicios-publicos" role="tabpanel" aria-labelledby="servicios-publicos-tab">
                 <!-- Contenido cargado dinámicamente -->
             </div>
             <div class="tab-pane fade" id="otros-servicios" role="tabpanel" aria-labelledby="otros-servicios-tab">

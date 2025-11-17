@@ -1,0 +1,179 @@
+<div class="container-fluid py-4">
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card summary-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title text-muted">Servicios Activos</h6>
+                            <h3 class="stats-value text-success" id="servicios-medicos-activos">0</h3>
+                            <span class="badge bg-success">FUNCIONANDO</span>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-stethoscope fa-2x text-success"></i>
+                        </div>
+                    </div>
+                    <p class="card-text mt-2"><small class="text-muted">Total de servicios médicos operativos</small></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card summary-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title text-muted">Tasa de Activación</h6>
+                            <h3 class="stats-value text-info" id="tasa-activacion">0%</h3>
+                            <span class="badge bg-info">EFICIENCIA</span>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-bullseye fa-2x text-info"></i>
+                        </div>
+                    </div>
+                    <p class="card-text mt-2"><small class="text-muted">Porcentaje de servicios activos</small></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card summary-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title text-muted">Servicio Más Crítico</h6>
+                            <h3 class="stats-value text-danger" id="servicio-critico-med">N/A</h3>
+                            <span class="badge bg-danger" id="critico-badge-med">PRIORIDAD</span>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-exclamation-triangle fa-2x text-danger"></i>
+                        </div>
+                    </div>
+                    <p class="card-text mt-2"><small class="text-muted">Servicio con mayor inactividad</small></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card summary-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title text-muted">Centros Completos</h6>
+                            <h3 class="stats-value text-warning" id="centros-completos">0</h3>
+                            <span class="badge bg-warning">CAPACIDAD TOTAL</span>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-hospital-alt fa-2x text-warning"></i>
+                        </div>
+                    </div>
+                    <p class="card-text mt-2"><small class="text-muted">Centros con todos los servicios activos</small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Charts Row -->
+    <div class="row mb-4">
+        <!-- Estado General por Categoría -->
+        <div class="col-lg-6">
+            <div class="card chart-card">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Estado de Servicios Médicos por Categoría</h5>
+                </div>
+                <div class="card-body">
+                    <div id="estadoCategoriasChart" class="chart-container" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mapa de Calor de Servicios -->
+        <div class="col-lg-6">
+            <div class="card chart-card">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Mapa de Calor - Disponibilidad por Servicio</h5>
+                </div>
+                <div class="card-body">
+                    <div id="heatmapServiciosMedicos" class="chart-container" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Análisis de Brechas -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card chart-card">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Análisis de Brechas por Tipo de Institución</h5>
+                </div>
+                <div class="card-body">
+                    <div id="brechasInstitucionesChart" class="chart-container" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Distribución Geográfica -->
+    <div class="row mb-4">
+        <div class="col-lg-6">
+            <div class="card chart-card">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Distribución por Municipio/Parroquia</h5>
+                </div>
+                <div class="card-body">
+                    <div id="distribucionGeograficaChart" class="chart-container" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Servicios Esenciales vs Especializados -->
+        <div class="col-lg-6">
+            <div class="card chart-card">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Servicios Esenciales vs Especializados</h5>
+                </div>
+                <div class="card-body">
+                    <div id="esencialVsEspecializadoChart" class="chart-container" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tablas Detalladas -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card chart-card">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Detalle de Servicios Médicos por Centro</h5>
+                    <div class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-outline-primary active" data-filter="all">Todos</button>
+                        <button type="button" class="btn btn-outline-success" data-filter="alto">Alta Cobertura</button>
+                        <button type="button" class="btn btn-outline-warning" data-filter="medio">Media Cobertura</button>
+                        <button type="button" class="btn btn-outline-danger" data-filter="bajo">Baja Cobertura</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover servicios-medicos-table">
+                            <thead>
+                                <tr>
+                                    <th>Centro de Salud</th>
+                                    <th>Tipo Institución</th>
+                                    <th>Servicios Activos</th>
+                                    <th>Servicios con Problemas</th>
+                                    <th>Servicios Inactivos</th>
+                                    <th>Cobertura Total</th>
+                                    <th>Servicios Esenciales</th>
+                                    <th>Nivel de Complejidad</th>
+                                    <th>Estado General</th>
+                                </tr>
+                            </thead>
+                            <tbody id="serviciosMedicosTableBody">
+                                <!-- Los datos de la tabla se generarán dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

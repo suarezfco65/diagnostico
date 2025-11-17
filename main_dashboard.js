@@ -7,6 +7,7 @@ let dataCentrosDeSalud = [];
 let filteredData = []; // Almacena los datos filtrados actualmente
 let currentDashboardScript = null; // Almacena el módulo del dashboard activo
 let currentDashboardName = "operatividad"; // Dashboard inicial
+
 // Nombres legibles para las áreas
 const areaNames = {
   consultorios: "Consultorios",
@@ -16,6 +17,7 @@ const areaNames = {
   farmacia: "Farmacia",
   cocina: "Cocina",
 };
+
 // Colores para las condiciones
 const conditionColors = {
   buenas: "#2ecc71", // Verde
@@ -35,10 +37,20 @@ const dashboardMap = {
     js: "./dashboard-2.js",
     containerId: "infraestructura",
   },
-  servicios: {
+  "servicios-medicos": {
+    html: "dashboard-5_content.html",
+    js: "./dashboard-5.js",
+    containerId: "servicios-medicos",
+  },
+  "evaluacion-personal": {
+    html: "dashboard-6_content.html",
+    js: "./dashboard-6.js",
+    containerId: "evaluacion-personal",
+  },
+  "servicios-publicos": {
     html: "dashboard-3_content.html",
     js: "./dashboard-3.js",
-    containerId: "servicios",
+    containerId: "servicios-publicos",
   },
   "otros-servicios": {
     html: "dashboard-4_content.html",
@@ -156,16 +168,25 @@ async function fetchDashboardContent(url) {
   html = html.replace(/<div class="card mb-4">[\s\S]*?<\/div>\s*/i, "");
 
   // Eliminar referencias a los scripts, ya que se cargarán dinámicamente
-  html = html.replace(/<script[^>]*src="storage.js"[^>]*><\/script>/gi, "");
-  html = html.replace(/<script[^>]*src="auth.js"[^>]*><\/script>/gi, "");
-  html = html.replace(/<script[^>]*src="dashboard.js"[^>]*><\/script>/gi, "");
-  html = html.replace(/<script[^>]*src="dashboard-2.js"[^>]*><\/script>/gi, "");
-  html = html.replace(/<script[^>]*src="dashboard-3.js"[^>]*><\/script>/gi, "");
-  html = html.replace(/<script[^>]*src="dashboard-4.js"[^>]*><\/script>/gi, "");
-  html = html.replace(
-    /<script[^>]*src="https:\/\/cdn.jsdelivr.net\/npm\/bootstrap[^>]*><\/script>/gi,
-    ""
-  );
+  const scriptsToRemove = [
+    "storage.js",
+    "auth.js",
+    "dashboard.js",
+    "dashboard-2.js",
+    "dashboard-3.js",
+    "dashboard-4.js",
+    "dashboard-5.js",
+    "dashboard-6.js",
+    "bootstrap",
+  ];
+
+  scriptsToRemove.forEach((script) => {
+    const regex = new RegExp(
+      `<script[^>]*src="[^"]*${script}[^"]*"[^>]*><\\/script>`,
+      "gi"
+    );
+    html = html.replace(regex, "");
+  });
 
   html = html.replace(/<style>[\s\S]*?<\/style>/i, "");
 
@@ -177,7 +198,16 @@ async function fetchDashboardContent(url) {
  */
 async function loadDashboard(dashboardKey) {
   const config = dashboardMap[dashboardKey];
+  if (!config) {
+    console.error(`Dashboard no configurado: ${dashboardKey}`);
+    return;
+  }
+
   const container = document.getElementById(config.containerId);
+  if (!container) {
+    console.error(`Contenedor no encontrado: ${config.containerId}`);
+    return;
+  }
 
   // 1. Cargar el HTML (inserta los contenedores, ej. 'gaugeContainer')
   try {
@@ -209,6 +239,7 @@ async function loadDashboard(dashboardKey) {
       `Error al cargar o inicializar el script para ${dashboardKey}:`,
       error
     );
+    container.innerHTML += `<div class="alert alert-warning mt-3">Error al cargar los gráficos: ${error.message}</div>`;
   }
 }
 
@@ -244,18 +275,20 @@ function debugDataStructure() {
   if (dataCentrosDeSalud.length > 0) {
     const primerCentro = dataCentrosDeSalud[0];
     console.log("Primer centro:", primerCentro.datosInstitucion?.nombre);
-    console.log("Estructura infraestructura:", primerCentro.infraestructura);
+    console.log("Servicios médicos:", primerCentro.serviciosMedicos);
+    console.log("Personal institucion:", primerCentro.personalInstitucion);
+    console.log("Infraestructura:", primerCentro.infraestructura);
     console.log(
       "Servicios públicos:",
       primerCentro.infraestructura?.serviciosPublicos
     );
     console.log("Otros servicios:", primerCentro.otrosServicios);
 
-    // Verificar una área específica
-    if (primerCentro.infraestructura?.condiciones?.consultorios) {
+    // Verificar estructura de personal
+    if (primerCentro.personalInstitucion) {
       console.log(
-        "Datos consultorios:",
-        primerCentro.infraestructura.condiciones.consultorios
+        "Estructura personal:",
+        Object.keys(primerCentro.personalInstitucion)
       );
     }
   }
@@ -290,6 +323,7 @@ function initializeMainDashboard() {
       const targetId = event.target
         .getAttribute("data-bs-target")
         .replace("#", "");
+      console.log("Cambiando a dashboard:", targetId);
       loadDashboard(targetId);
     });
   });
