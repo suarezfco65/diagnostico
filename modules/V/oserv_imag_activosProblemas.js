@@ -30,6 +30,7 @@ const oserv_imag_activosProblemas = {
   ],
   chart: (instituciones) => {
     FUNCTIONS_BY_SECTIONS.IV.chartDensity(
+      "Servicios",
       "de Imagenologias",
       "Activos con Problemas",
       8
