@@ -361,6 +361,96 @@
         </div>
       </div>
 
+
+
+        <!-- Sección de Potencial de Mejora -->
+        <h2 class="mt-5 mb-4 text-center text-secondary">IV. Potencial de Mejora: Inteligencia Operativa SISCOMRES</h2>
+        <p class="lead text-center">La <strong>Ficha de Diagnóstico</strong> captura información crítica y detallada que, al ser agregada y visualizada, podría transformar la planificación de la Alcaldía. Estas mejoras demuestran el potencial estratégico completo del sistema SISCOMRES.</p>
+
+        <div class="row g-4 mb-5">
+            
+            <!-- Mejora 1: Causalidad y Contexto Operativo -->
+            <div class="col-md-6">
+                <div class="card h-100 shadow border-secondary">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0"><i class="bi bi-chat-square-text-fill"></i> 1. Análisis de Causalidad y Contexto Cualitativo</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="fw-bold">El sistema ya captura el <i>por qué</i> de las fallas, permitiendo crear Dashboards de Causalidad:</p>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <strong>Razón de Inactividad de Servicios:</strong> El módulo IV (Servicios Médicos) registra una <strong>Observación</strong> por servicio inactivo, detallando la causa (ej., "Inactivo: Sin insumos", "Inactivo: Problemas técnicos", "Inactivo: Requiere mantenimiento") [1-5].
+                                <br><small class="text-muted">Capacidad: Agregar las causas comunes para identificar la principal barrera operativa: ¿Recursos humanos, fallas de equipo o insumos?</small>
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Contexto de Infraestructura y Servicios Públicos:</strong> La ficha registra observaciones específicas (ej., "Cortes diarios" para Electricidad, "No tiene" para A/A) [6] y una <strong>Observación general</strong> sobre la infraestructura (ej., "Falta de ventilación en general") [7, 8].
+                                <br><small class="text-muted">Capacidad: Generar un mapa de calor de las "Observaciones más Frecuentes" por parroquia, proporcionando contexto humano a las métricas de operatividad.</small>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mejora 2: Gestión de Proyectos y Seguimiento de Fases -->
+            <div class="col-md-6">
+                <div class="card h-100 shadow border-secondary">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0"><i class="bi bi-kanban-fill"></i> 2. Monitoreo de Proyectos y Fases de Inversión</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="fw-bold">El Módulo VII permite la gestión centralizada de la planificación, lo cual actualmente no se refleja en los Dashboards:</p>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <strong>Seguimiento por Fase:</strong> La ficha permite registrar hasta 5 <strong>Proyectos de Mejoras</strong> en seis categorías diferentes (Servicios Médicos, Quirófanos, Hospitalización, Laboratorio, Farmacia y Servicios Generales), asignando una <strong>Fase</strong> a cada proyecto (ej., "Ampliación del área de pediatría (Fase 3)") [9-11].
+                                <br><small class="text-muted">Capacidad: Un Dashboard de Proyectos podría mostrar el total de proyectos en "Fase 3" (Ejecución avanzada) vs. "Fase 1" (Planificación), optimizando la asignación de capital.</small>
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Visualización de Proyectos Clave:</strong> El sistema ya recopila proyectos detallados como la "Instalación de nueva bomba de agua" [10, 11] o la "Compra de analizador automatizado" [10, 12].
+                                <br><small class="text-muted">Capacidad: Filtrar centros por la existencia de un proyecto crítico (ej., Centros que requieren <i>Adquisición de nuevo equipo de anestesia</i> en Quirófanos).</small>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+             <!-- Mejora 3: Detalle Operativo y Frecuencia de Servicios -->
+            <div class="col-md-12">
+                <div class="card h-100 shadow border-secondary">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0"><i class="bi bi-clock-fill"></i> 3. Análisis de Disponibilidad Horaria (Cobertura Real)</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="fw-bold">Actualmente, los dashboards solo muestran si un servicio está "Activo" [13]. El sistema captura información más profunda en el Módulo IV:</p>
+                        <ul class="list-group list-group-horizontal-md flex-wrap">
+                            <li class="list-group-item border-0">
+                                <strong>Días y Horarios de Prestación:</strong> Para cada servicio médico activo, se registra el campo </strong>"PRESTACIÓN SERVICIO (Día y Horario)"</strong> [3, 4, 14-16]. Por ejemplo, un servicio puede estar activo solo los "Lunes, Sábado | Horarios: 9:00 - 12:00" [3].
+                            </li>
+                            <li class="list-group-item border-0">
+                                <strong>Oportunidad de Reporte:</strong> Si se activa esta métrica, se podría evaluar la <strong>Cobertura Diurna vs. Nocturna</strong> o la <strong>Frecuencia Semanal</strong> por parroquia, identificando si la baja operatividad se debe a la ausencia total del servicio o a horarios de atención limitados.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Mejora 4: Verificación Visual -->
+            <div class="col-md-12">
+                <div class="card h-100 shadow border-secondary">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0"><i class="bi bi-camera-fill"></i> 4. Verificación y Georreferenciación</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">
+                            La ficha de diagnóstico permite adjuntar la <strong>Foto de la Fachada</strong> del centro de salud [17, 18] y registra las coordenadas geográficas (<strong>Longitud y Latitud</strong>) [17, 18].
+                        </p>
+                        <p class="card-text">
+                            <small class="text-muted">Capacidad: Integrar estas fotos y coordenadas en los reportes detallados y/o un mapa dinámico para realizar una <strong>auditoría visual y geográfica</strong> rápida, validando la existencia y estado exterior del centro de salud, lo cual complementa la información tabular.</small>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
       <!-- Conclusión -->
     <div class="text-center mt-5 mb-5 p-4 bg-light rounded shadow-lg">
     <h3 class="text-success">Conclusión y Llamada a la Acción</h3>
