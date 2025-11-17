@@ -29,6 +29,7 @@ const oserv_coc_activosProblemas = {
   ],
   chart: (instituciones) => {
     FUNCTIONS_BY_SECTIONS.IV.chartDensity(
+      "Servicios",
       "de Cocina",
       "Activos con Problemas",
       8
